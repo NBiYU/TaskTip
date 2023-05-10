@@ -1,0 +1,38 @@
+﻿<Page x:Class="TaskTip.Views.TaskTipView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TaskTip.Views"
+        mc:Ignorable="d" Width="200">
+
+    <Grid Background="White">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0"  HorizontalAlignment="Stretch"  Margin="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <!--<Image Grid.Column="0" Source="pack://application:,,,/Resources/Trash.png" HorizontalAlignment="Left"></Image>-->
+            <TextBox Grid.Column="1" x:Name="Title" Text="" HorizontalAlignment="Center" BorderThickness="0" IsReadOnly="True"/>
+            <!--<Button Grid.Column="2" x:Name="Closed" HorizontalAlignment="Right" Background="Transparent" BorderThickness="0" 
+                        >
+                    <Image Source="pack://application:,,,/Resources/Close.png" Stretch="UniformToFill"/>
+                </Button>-->
+        </Grid>
+        <Line Grid.Row="1" x:Name="CompletedLine" X1="0" Y1="1" X2="200" Y2="1" Stroke="DimGray" StrokeThickness="1" ></Line>
+        <StackPanel Grid.Row="2" Orientation="Vertical" Margin="10">
+            <TextBox x:Name="TaskTimePlan" BorderThickness="0" IsReadOnly="True" HorizontalAlignment="Center"></TextBox>
+            <TextBox x:Name="Text" MinLines="1" BorderThickness="0"  HorizontalAlignment="Center"
+                            FontSize="12" SelectionStart="5" IsReadOnly="True">
+            </TextBox>
+        </StackPanel>
+    </Grid>
+
+</Page>
