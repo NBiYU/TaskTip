@@ -340,15 +340,22 @@ namespace TaskTip.ViewModels
                 if (ChangedValue.Count != 0)
                 {
                     if (ChangedValue.ContainsKey(nameof(TaskFilePath)))
+                    {
                         DirMove(GlobalVariable.TaskFilePath, TaskFilePath);
+                    }
+
 
                     if (ChangedValue.ContainsKey(nameof(MenoFilePath)))
+                    {
                         DirMove(GlobalVariable.MenoFilePath, MenoFilePath);
+                    }
 
                     GlobalVariable.SaveConfig(ChangedValue);
                     MessageBox.Show("设置已保存");
                     ChangedValue.Clear();
                     AutoStart(AutoStartUp);
+                    TaskLoadChanged?.Invoke(TaskFilePath, EventArgs.Empty);
+                    MenoLoadChanged?.Invoke(MenoFilePath, EventArgs.Empty);
                 }
                 else
                 {
@@ -451,6 +458,7 @@ namespace TaskTip.ViewModels
                 throw new Exception($"目标文件夹：{dirPath}不存在");
             }
             AllFileMove(sPath,dirPath);
+
         }
 
         private void AllFileMove(string sPath, string dirPath)
@@ -562,6 +570,8 @@ namespace TaskTip.ViewModels
 #pragma warning disable CS0067 // 从不使用事件“CustomSetViewModel.ImagePathCahnged”
         public static event EventHandler ImagePathChanged;
 #pragma warning restore CS0067 // 从不使用事件“CustomSetViewModel.ImagePathCahnged”
+        public static event EventHandler TaskLoadChanged;
+        public static event EventHandler MenoLoadChanged;
 
 
         /// <summary>

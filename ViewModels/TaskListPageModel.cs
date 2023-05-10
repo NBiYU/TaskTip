@@ -48,9 +48,12 @@ namespace TaskTip.ViewModels
         /// 生成一个新的TaskListItem空控件
         /// </summary>
         /// <returns></returns>
-        private TaskListItemUserControl AddTaskListItemControl()
+        private TaskListItemUserControl AddTaskListItemControl(string guid)
         {
+            if(string.IsNullOrEmpty(guid)) guid = Guid.NewGuid().ToString();
             var taskControl = new TaskListItemUserControl();
+            var taskControlModel = taskControl.TaskGrid.DataContext as TaskListItemUserControlModel;
+            taskControlModel.GUID = guid;
             FocusManager.AddGotFocusHandler(taskControl, GotFocusText);
             //FocusManager.SetFocusedElement(control,control.EditTaskTitle);
             //Keyboard.Focus(taskControl.EditTaskTitle);
@@ -105,7 +108,7 @@ namespace TaskTip.ViewModels
         /// </summary>
         private void AddTaskList()
         {
-            TaskMenoList.Insert(0, AddTaskListItemControl());
+            TaskMenoList.Insert(0, AddTaskListItemControl(Guid.NewGuid().ToString()));
             TaskListChanged?.Invoke(TaskMenoList, null);
         }
 
@@ -276,12 +279,11 @@ namespace TaskTip.ViewModels
         /// 加载Task文件夹对应路径的全部文件并生成控件
         /// </summary>
         /// <param name="fileType"></param>
-        private ObservableCollection<TaskListItemUserControl> LoadReadTaskFile(string fileType)
+        private void LoadReadTaskFile(string dirPath)
         {
-            var dirPath = ConfigurationManager.AppSettings.Get(fileType);
 
             if (string.IsNullOrEmpty(dirPath))
-                return new ObservableCollection<TaskListItemUserControl>();
+                return ;
 
             if (!Directory.Exists(dirPath))
                 Directory.CreateDirectory(dirPath);
@@ -291,9 +293,9 @@ namespace TaskTip.ViewModels
             //    taskMenoList = new ObservableCollection<TaskListItemUserControl>();
             //}
 
-            var taskListControl = new ObservableCollection<TaskListItemUserControl>();
+            var taskListControl = new List<TaskListItemUserControl>();
 
-            var filePaths = Directory.GetFiles(dirPath);
+            var filePaths = Directory.GetFiles(dirPath,"*.task");
 
 
             foreach (var filePath in filePaths)
@@ -302,23 +304,19 @@ namespace TaskTip.ViewModels
                 var endIndex = filePath.LastIndexOf('.');
                 var text = filePath.Substring(startIndex, endIndex - startIndex);
 
-                if (!filePath.EndsWith(ConfigurationManager.AppSettings.Get("EndFileFormat")))
-                    continue;
-
                 if (startIndex == -1 || endIndex == -1)
                     continue;
 
-                var taskControl = AddTaskListItemControl();
-                taskControl.Guid.Text = text;
+                var taskControl = AddTaskListItemControl(text);
                 taskListControl.Add(taskControl);
             }
 
             if (taskListControl.Count == 0)
             {
-                taskListControl.Add(AddTaskListItemControl());
+                taskListControl.Add(AddTaskListItemControl(Guid.NewGuid().ToString()));
             }
 
-            return taskListControl;
+            TaskMenoList = new ObservableCollection<TaskListItemUserControl>(taskListControl);
         }
 
         public TaskListPageModel()
@@ -339,10 +337,11 @@ namespace TaskTip.ViewModels
             DeleteTaskJob.DeleteMsg += DeleteListItem;
             TaskListItemUserControl.IsCompleteMsg += IsCompleted;
             TaskListItemUserControlModel.TaskSchedule += AddTaskScheduleJob;
+            CustomSetViewModel.TaskLoadChanged += (sender, args) => LoadReadTaskFile(sender.ToString());
 
             taskMenoWidth = SystemParameters.WorkArea.Height / 3;
 
-            TaskMenoList = new ObservableCollection<TaskListItemUserControl>(LoadReadTaskFile("TaskFilePath"));
+            LoadReadTaskFile(ConfigurationManager.AppSettings["TaskFilePath"]!);
             SortList();
 
             TaskListChanged?.Invoke(TaskMenoList, EventArgs.Empty);

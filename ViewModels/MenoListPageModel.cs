@@ -11,6 +11,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using TaskTip.Services;
 using TaskTip.Views;
 
 namespace TaskTip.ViewModels
@@ -184,12 +185,11 @@ namespace TaskTip.ViewModels
         /// 加载Meno文件夹对应路径的全部文件并生成控件
         /// </summary>
         /// <param name="fileType"></param>
-        private ObservableCollection<Button> LoadReadMenoFile(string fileType)
+        private void LoadReadMenoFile(string dirPath)
         {
-            var dirPath = ConfigurationManager.AppSettings[fileType];
 
             if(string.IsNullOrEmpty(dirPath))
-                return new ObservableCollection<Button>();
+                return ;
 
             if (!Directory.Exists(dirPath))
                 Directory.CreateDirectory(dirPath);
@@ -243,7 +243,7 @@ namespace TaskTip.ViewModels
             if (tempMenoList.Count == 0)
                 tempMenoList.Add(AddMenoButtonControl(DateTime.Now.ToString("yyyy-MM-dd")));
 
-            return new ObservableCollection<Button>(tempMenoList.OrderBy(x => DateTime.Parse(x.Content.ToString())));
+            MenoButtonList = new ObservableCollection<Button>(tempMenoList.OrderBy(x => DateTime.Parse(x.Content.ToString())));
         }
 
         /// <summary>
@@ -252,9 +252,9 @@ namespace TaskTip.ViewModels
         /// <param name="starTime"></param>
         private void SelectDateTimeRangeFile(DateTime starTime)
         {
-            var menoListControl = LoadReadMenoFile("MenoFilePath");
+            LoadReadMenoFile(ConfigurationManager.AppSettings["MenoFilePath"]!);
 
-            MenoButtonList = new ObservableCollection<Button>(menoListControl.Where(x => DateTime.Compare(starTime, DateTime.Parse(x.Content.ToString())) <= 0));
+            MenoButtonList = new ObservableCollection<Button>(MenoButtonList.Where(x => DateTime.Compare(starTime, DateTime.Parse(x.Content.ToString())) <= 0));
         }
 
 
@@ -266,11 +266,12 @@ namespace TaskTip.ViewModels
             SelectDateTimeNow = DateTime.Now;
             CurrentUid = "";
 
-            MenoButtonList = LoadReadMenoFile("MenoFilePath");
+            LoadReadMenoFile(ConfigurationManager.AppSettings["MenoFilePath"]!);
 
 
 
             FloatingView.OpenTaskMenoUI += AutoBuildDateButton;
+            CustomSetViewModel.MenoLoadChanged += (sender, args) => LoadReadMenoFile(sender.ToString());
         }
     }
 }

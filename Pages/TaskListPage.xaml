@@ -13,7 +13,7 @@
             <viewModel:TaskListPageModel x:Key="TaskListPageModel"></viewModel:TaskListPageModel>
         </ResourceDictionary>
     </Page.Resources>
-    <Grid DataContext="{Binding Source={StaticResource TaskListPageModel}}">
+    <Grid  DataContext="{Binding Source={StaticResource TaskListPageModel}}">
         <hc:SimplePanel Grid.Row="0" x:Name="TaskListPanel"  HorizontalAlignment="Stretch" Margin="5">
             <Border BorderThickness="0.5" BorderBrush="Gray" CornerRadius="0,0,6,6">
                 <ListBox  ItemsSource="{Binding TaskMenoList}" 

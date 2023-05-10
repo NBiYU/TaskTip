@@ -8,6 +8,7 @@ using System.Configuration;
 using System.IO;
 using System.Text;
 using System.Windows;
+using TaskTip.Models;
 using TaskTip.Services;
 using TaskTip.Views;
 using MessageBox = System.Windows.MessageBox;
@@ -310,6 +311,25 @@ namespace TaskTip.ViewModels
 
         #endregion
 
+        #region 功能函数
+
+        private void PropertySetValue(string propertyName,object model)
+        {
+            try
+            {
+                var thisProperty = this.GetType().GetProperty(propertyName);
+                var modelProperty = model.GetType().GetProperty(propertyName);
+                if (thisProperty == null || modelProperty == null)
+                    throw new Exception($"{propertyName}  :  内置属性与读取到的属性不一致");
+
+                thisProperty.SetValue(this, modelProperty.GetValue(model));
+            }
+            catch (Exception e)
+            {
+                throw new Exception($"{propertyName}转换失败：异常{e}");
+            }
+        }
+
         #region 文件处理
 
         /// <summary>
@@ -329,7 +349,7 @@ namespace TaskTip.ViewModels
                 CompletedDateTime = DateTime.Now;
             }
 
-            var text = new
+            var text = new TaskFileModel()
             {
                 IsCompleted = IsCompleted,
                 TaskTimePlan = TaskTimePlan,
@@ -358,7 +378,7 @@ namespace TaskTip.ViewModels
 
                 try
                 {
-                    JObject readJson = JsonConvert.DeserializeObject<JObject>(text);
+                    var readJson = JsonConvert.DeserializeObject<TaskFileModel>(text);
 
                     if (readJson == null)
                     {
@@ -367,15 +387,16 @@ namespace TaskTip.ViewModels
                     }
 
                     isInitialize = true;
-                    foreach (var property in readJson.Properties())
+                    foreach (var property in readJson.GetType().GetProperties())
                     {
-                        this.GetType().GetProperty(property.Name)
-                            .SetValue(this, GlobalVariable.ValueToType(property.Value.ToString()));
+                        PropertySetValue(property.Name,readJson);
                     }
+
+                    
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"错误：{GUID}中出现未解析字段或不完整\n{ex.Message}");
+                    MessageBox.Show($"错误：{GUID}中出现未解析字段或不完整\n{ex}");
                 }
             }
 
@@ -406,13 +427,13 @@ namespace TaskTip.ViewModels
             }
             catch (Exception e)
             {
-                return $"异常:{e.Message}";
+                return $"异常:{e}";
             }
         }
 
 
         #endregion
-
+        #endregion
 
         /// <summary>
         /// Model初始化
@@ -439,4 +460,5 @@ namespace TaskTip.ViewModels
             InitUserControlModel();
         }
     }
+
 }

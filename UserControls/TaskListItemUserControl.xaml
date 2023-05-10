@@ -13,7 +13,7 @@
     </UserControl.Resources>
 
 
-    <Grid Background="#00000000" HorizontalAlignment="Stretch"
+    <Grid Background="#00000000" HorizontalAlignment="Stretch" x:Name="TaskGrid"
           DataContext="{Binding Source={StaticResource ListItemUserControlModel}}"  
     >
         <Grid.RowDefinitions>
