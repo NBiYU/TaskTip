@@ -33,7 +33,12 @@ namespace TaskTip.Views
         //    this.Top = GlobalVariable.FloatingView.Top - GlobalVariable.TaskMenoView.Height + GlobalVariable.FloatingView.Height;
         //}
 
-
+        public bool IsClosed { get; set; }=false;
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            IsClosed = true;
+        }
         private void TaskMenoView_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             base.DragMove();

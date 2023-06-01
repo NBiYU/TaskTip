@@ -22,6 +22,7 @@ namespace TaskTip.Views
     public partial class CustomSetView : Window
     {
         public static event EventHandler CustomWindowStateChanged;
+        public bool IsClosed { get; set; }=false;
         public CustomSetView()
         {
             InitializeComponent();
@@ -37,5 +38,10 @@ namespace TaskTip.Views
             base.OnActivated(e);
         }
 
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            IsClosed = true;
+        }
     }
 }

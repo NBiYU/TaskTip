@@ -105,7 +105,7 @@ namespace TaskTip.ViewModels
             }
             else
             {
-                GlobalVariable.FloatingTitleViewHide();
+                GlobalVariable.FloatingTitleStyleViewHide();
             }
             GlobalVariable.CustomSetViewShow();
         }

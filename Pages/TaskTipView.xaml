@@ -4,9 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TaskTip.Views"
-        mc:Ignorable="d" Width="200">
+        xmlns:hc="https://handyorg.github.io/handycontrol"
+        mc:Ignorable="d" Width="200" >
 
-    <Grid Background="White">
+    <Grid Background="White" >
 
         <Grid.RowDefinitions>
             <RowDefinition Height="35"></RowDefinition>
@@ -20,17 +21,19 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <!--<Image Grid.Column="0" Source="pack://application:,,,/Resources/Trash.png" HorizontalAlignment="Left"></Image>-->
-            <TextBox Grid.Column="1" x:Name="Title" Text="" HorizontalAlignment="Center" BorderThickness="0" IsReadOnly="True"/>
+            <TextBox Grid.Column="0" x:Name="Title" Text=""  HorizontalAlignment="Left" BorderThickness="0" IsReadOnly="True"/>
+            <Button Grid.Column="2" Content="关闭"  HorizontalAlignment="Right" Command="hc:ControlCommands.CloseWindow" 
+                    CommandParameter="{Binding RelativeSource={RelativeSource Self}}"></Button>
             <!--<Button Grid.Column="2" x:Name="Closed" HorizontalAlignment="Right" Background="Transparent" BorderThickness="0" 
                         >
                     <Image Source="pack://application:,,,/Resources/Close.png" Stretch="UniformToFill"/>
                 </Button>-->
         </Grid>
         <Line Grid.Row="1" x:Name="CompletedLine" X1="0" Y1="1" X2="200" Y2="1" Stroke="DimGray" StrokeThickness="1" ></Line>
-        <StackPanel Grid.Row="2" Orientation="Vertical" Margin="10">
-            <TextBox x:Name="TaskTimePlan" BorderThickness="0" IsReadOnly="True" HorizontalAlignment="Center"></TextBox>
+        <StackPanel Grid.Row="2" Orientation="Vertical" Margin="10" HorizontalAlignment="Center">
+            <TextBox x:Name="TaskTimePlan" IsReadOnly="True" BorderThickness="0" HorizontalAlignment="Center"></TextBox>
             <TextBox x:Name="Text" MinLines="1" BorderThickness="0"  HorizontalAlignment="Center"
-                            FontSize="12" SelectionStart="5" IsReadOnly="True">
+                                FontSize="12"  IsReadOnly="True" TextWrapping="Wrap">
             </TextBox>
         </StackPanel>
     </Grid>

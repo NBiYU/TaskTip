@@ -64,6 +64,7 @@
                                 <ToggleButton Grid.Column="1" Style="{StaticResource ToggleButtonSwitch}" HorizontalAlignment="Right" 
                                       IsChecked="{Binding AutoStartUp}"/>
                             </Grid>
+                            <Button Command="{Binding TestCommand}"></Button>
                         </StackPanel>
 
 

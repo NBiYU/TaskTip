@@ -1,10 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
-using System.Threading;
 using System.Windows;
 using TaskTip.Services;
-using ConfigurationManager = System.Configuration.ConfigurationManager;
 
 namespace TaskTip
 {
@@ -16,20 +13,28 @@ namespace TaskTip
         public MainWindow()
         {
             //this.WindowState = WindowState.Minimized;
-            var configPath = Process.GetCurrentProcess().MainModule?.FileName.Replace("TaskTip.exe", "config.txt");
+            var processPath = Process.GetCurrentProcess().MainModule?.FileName;
+            var configPath = processPath!.Replace("TaskTip.exe", "config.txt");
 
             if (File.Exists(configPath))
             {
                 GlobalVariable.TaskMenoViewHide();
 
                 if (GlobalVariable.IsFloatingImageStyle) GlobalVariable.FloatingViewShow();
-                else GlobalVariable.FloatingTitleViewShow();
+                else GlobalVariable.FloatingTitleStyleViewShow();
             }
             else
             {
+                var taskDir = processPath.Replace("TaskTip.exe", "TaskFile");
+                var menoDir = processPath.Replace("TaskTip.exe", "MenoFile");
+
+                if (!Directory.Exists(taskDir)) Directory.CreateDirectory(taskDir);
+                if (!Directory.Exists(menoDir)) Directory.CreateDirectory(menoDir);
+
                 File.WriteAllText(configPath, "Test");
                 GlobalVariable.CustomSetViewShow();
             }
+
             InitializeComponent();
             this.Close();
         }

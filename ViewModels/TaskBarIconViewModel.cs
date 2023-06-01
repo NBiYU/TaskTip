@@ -1,8 +1,8 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Configuration;
 using System.Windows.Input;
-using CommunityToolkit.Mvvm.ComponentModel;
 using TaskTip.Services;
 using Application = System.Windows.Application;
 
@@ -38,7 +38,7 @@ namespace TaskTip.ViewModels
                     }
                     else
                     {
-                        GlobalVariable.FloatingTitleView.Hide();
+                        GlobalVariable.FloatingTitleStyleViewHide();
                     }
                 })).Value;
             }

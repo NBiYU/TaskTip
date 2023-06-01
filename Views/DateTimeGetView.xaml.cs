@@ -19,9 +19,17 @@ namespace TaskTip.Views
     /// </summary>
     public partial class DateTimeGetView : Window
     {
+
+        public bool IsClosed { get; set; }=false;
         public DateTimeGetView()
         {
             InitializeComponent();
         }
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            IsClosed = true;
+        }
+
     }
 }

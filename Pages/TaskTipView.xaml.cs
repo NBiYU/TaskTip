@@ -28,5 +28,6 @@ namespace TaskTip.Views
             this.Text.Text = text;
             this.TaskTimePlan.Text = taskTimePlan.ToString("yyyy-MM-dd HH:mm:ss");
         }
+
     }
 }

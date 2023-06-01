@@ -45,6 +45,7 @@ namespace TaskTip.Services
                 ? Process.GetCurrentProcess().MainModule?.FileName.Replace("TaskTip.exe", "MenoFile")!
                 : ConfigurationManager.AppSettings[nameof(MenoFilePath)]!;
         }
+
         /// <summary>
         /// 悬浮窗宽度
         /// </summary>
@@ -187,78 +188,100 @@ namespace TaskTip.Services
 
         #region 窗口初始化
         public static FloatingView FloatingView { get; set; } = new FloatingView();
-        public static FloatingTitleView FloatingTitleView { get; set; } = new FloatingTitleView();
+        public static FloatingTitleStyleView FloatingTitleStyleView { get; set; } = new FloatingTitleStyleView();
         public static TaskMenoView TaskMenoView { get; set; } = new TaskMenoView();
         public static CustomSetView CustomSetView { get; set; } = new CustomSetView();
         #endregion
 
         #region 窗口显示状态管理
 
-        public static void FloatingViewShow()
-        {
-            if (FloatingView == null)
-            {
-                FloatingView = new FloatingView();
-            }
-            FloatingView.Show();
-        }
-        public static void FloatingTitleViewShow()
-        {
-            if (FloatingTitleView == null)
-            {
-                FloatingTitleView = new FloatingTitleView();
-            }
-            FloatingTitleView.Show();
-        }
-        public static void TaskMenoViewShow()
-        {
-            if (TaskMenoView == null)
-            {
-                TaskMenoView = new TaskMenoView();
-            }
-            TaskMenoView.Show();
-        }
-        public static void CustomSetViewShow()
-        {
-            if (CustomSetView == null)
-            {
-                CustomSetView = new CustomSetView();
-            }
-            CustomSetView.Show();
-        }
+            #region Floating
 
-        public static void FloatingViewHide()
-        {
-            if (FloatingView == null)
+            public static void FloatingViewShow()
             {
-                FloatingView = new FloatingView();
+
+                if (FloatingView.IsClosed)
+                {
+                    FloatingView = new FloatingView();
+                }
+                FloatingView.Show();
             }
-            FloatingView.Hide();
-        }
-        public static void FloatingTitleViewHide()
-        {
-            if (FloatingTitleView == null)
+
+            public static void FloatingViewHide()
             {
-                FloatingTitleView = new FloatingTitleView();
+                if (FloatingView.IsClosed)
+                {
+                    FloatingView = new FloatingView();
+                }
+                FloatingView.Hide();
             }
-            FloatingTitleView.Hide();
-        }
-        public static void TaskMenoViewHide()
-        {
-            if (TaskMenoView == null)
+
+            #endregion
+
+            #region FloatingTitleStyle
+
+            public static void FloatingTitleStyleViewShow()
             {
-                TaskMenoView = new TaskMenoView();
+                if (FloatingTitleStyleView.IsClosed)
+                {
+                    FloatingTitleStyleView = new FloatingTitleStyleView();
+                }
+                FloatingTitleStyleView.Show();
             }
-            TaskMenoView.Hide();
-        }
-        public static void CustomSetViewHide()
-        {
-            if (CustomSetView == null)
+
+            public static void FloatingTitleStyleViewHide()
             {
-                CustomSetView = new CustomSetView();
+                if (FloatingTitleStyleView.IsClosed)
+                {
+                    FloatingTitleStyleView = new FloatingTitleStyleView();
+                }
+                FloatingTitleStyleView.Hide();
             }
-            CustomSetView.Hide();
-        }
+
+            #endregion
+
+            #region TaskMeno
+
+            public static void TaskMenoViewShow()
+            {
+                if (TaskMenoView.IsClosed)
+                {
+                    TaskMenoView = new TaskMenoView();
+                }
+                TaskMenoView.Show();
+            }
+            public static void TaskMenoViewHide()
+            {
+                if (TaskMenoView.IsClosed)
+                {
+                    TaskMenoView = new TaskMenoView();
+                }
+                TaskMenoView.Hide();
+            }
+
+            #endregion
+
+            #region CustomSet
+
+            public static void CustomSetViewShow()
+            {
+                if (CustomSetView.IsClosed)
+                {
+                    CustomSetView = new CustomSetView();
+                }
+                CustomSetView.Show();
+            }
+
+            public static void CustomSetViewHide()
+            {
+                if (CustomSetView.IsClosed)
+                {
+                    CustomSetView = new CustomSetView();
+                }
+                CustomSetView.Hide();
+            }
+
+            #endregion
 
 
         #endregion

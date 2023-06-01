@@ -15,15 +15,15 @@ using System.Windows.Shapes;
 namespace TaskTip.Views
 {
     /// <summary>
-    /// FloatingTitleView.xaml 的交互逻辑
+    /// FloatingTitleStyleView.xaml 的交互逻辑
     /// </summary>
-    public  class FloatingTitleView : Window
+    public partial class FloatingTitleStyleView : Window
     {
+        public FloatingTitleStyleView()
+        {
+            InitializeComponent();
+        }
         public bool IsClosed { get; set; } = false;
-        //public FloatingTitleView()
-        //{
-        //    InitializeComponent();
-        //}
         private void FloatingTitleView_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             base.DragMove();
@@ -34,6 +34,5 @@ namespace TaskTip.Views
             base.OnClosed(e);
             IsClosed = true;
         }
-
     }
 }

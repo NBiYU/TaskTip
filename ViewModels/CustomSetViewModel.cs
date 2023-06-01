@@ -1,23 +1,29 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using HandyControl.Controls;
+using HandyControl.Data;
 using Microsoft.Win32;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 using TaskTip.Services;
 using TaskTip.Views;
 using File = System.IO.File;
 using MessageBox = System.Windows.MessageBox;
+using Path = System.IO.Path;
 
 namespace TaskTip.ViewModels
 {
-    internal class CustomSetViewModel : ObservableObject
+    internal partial class CustomSetViewModel : ObservableObject
     {
 
         private bool isClose = false;
@@ -316,7 +322,7 @@ namespace TaskTip.ViewModels
             }
             else
             {
-                GlobalVariable.FloatingTitleViewShow();
+                GlobalVariable.FloatingTitleStyleViewShow();
             }
 
             isClose = false;
@@ -460,7 +466,6 @@ namespace TaskTip.ViewModels
             AllFileMove(sPath,dirPath);
 
         }
-
         private void AllFileMove(string sPath, string dirPath)
         {
             var allFile = Directory.GetFiles(sPath, "*.task");

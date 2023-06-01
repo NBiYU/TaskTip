@@ -115,7 +115,7 @@ namespace TaskTip.ViewModels
             }
             else
             {
-                GlobalVariable.FloatingTitleViewShow();
+                GlobalVariable.FloatingTitleStyleViewShow();
             }
 
         }

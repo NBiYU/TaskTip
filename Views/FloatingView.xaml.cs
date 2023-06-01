@@ -90,5 +90,12 @@ namespace TaskTip.Views
             }
             base.DragMove();
         }
+
+        public bool IsClosed { get; set; }=false;
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            IsClosed = true;
+        }
     }
 }

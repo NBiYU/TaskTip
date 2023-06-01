@@ -1,14 +1,14 @@
-﻿using HandyControl.Controls;
-using HandyControl.Data;
+﻿using System;
+using HandyControl.Controls;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Quartz;
-using System;
 using System.ComponentModel;
 using System.Configuration;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using HandyControl.Data;
 using TaskTip.Views;
 using MessageBox = System.Windows.MessageBox;
 
@@ -45,11 +45,13 @@ namespace TaskTip.Services
                 return Task.CompletedTask;
             }
 
-            Application.Current.Dispatcher.Invoke(() => {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
                 Notification.Show(new TaskTipView(json.GetValue("EditTextTitle")?.ToString(),
                     json.GetValue("EditTextText")?.ToString(),
                     DateTime.Parse(json.GetValue("TaskTimePlan")?.ToString())), ShowAnimation.HorizontalMove);
             });
+
             //Growl.InfoGlobal(json.GetValue("EditTextTitle")?.ToString());
 
             return Task.CompletedTask;
