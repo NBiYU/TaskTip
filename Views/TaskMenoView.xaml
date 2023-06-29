@@ -70,9 +70,10 @@
                             <Frame Source="../Pages/MenoListPage.xaml" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"></Frame>
                         </TabItem>
                         <!--<TabItem Header="笔记" x:Name="NotedForMsg">
-                            <Frame Source="../Pages/NotePage.xaml" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"></Frame>
+                            <Frame Source="../Pa.ges/NotePage.xaml" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"></Frame>
                         </TabItem>-->
                     </TabControl>
+
                 </Border>
             </Grid>
         </Border>

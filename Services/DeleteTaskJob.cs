@@ -14,7 +14,7 @@ namespace TaskTip.Services
         public Task Execute(IJobExecutionContext context)
         {
             var guid = context.JobDetail.Key.ToString().Substring(context.JobDetail.Key.ToString().IndexOf("Job") + 3);
-
+            
 
             DeleteMsg?.Invoke(guid, null);
 
