@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Configuration;
 using System.IO;
@@ -13,10 +14,6 @@ namespace TaskTip.ViewModels
 
     internal class FloatingViewModel : ObservableObject
     {
-#pragma warning disable CS0649 // 从未对字段“FloatingViewModel.ClickEventHandler”赋值，字段将一直保持其默认值 null
-        public EventHandler ClickEventHandler;
-#pragma warning restore CS0649 // 从未对字段“FloatingViewModel.ClickEventHandler”赋值，字段将一直保持其默认值 null
-
 
         #region 悬浮窗属性
         /// <summary>
@@ -38,9 +35,7 @@ namespace TaskTip.ViewModels
             set => SetProperty(ref floatingSetHeight, value);
         }
 
-#pragma warning disable CS0649 // 从未对字段“FloatingViewModel.radiusXValue”赋值，字段将一直保持其默认值 0
         private double radiusXValue;
-#pragma warning restore CS0649 // 从未对字段“FloatingViewModel.radiusXValue”赋值，字段将一直保持其默认值 0
         /// <summary>
         /// 矩形起始点X轴
         /// </summary>
@@ -100,25 +95,42 @@ namespace TaskTip.ViewModels
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ConfigValueChanged(object sender, EventArgs e)
+        private void ConfigValueChanged(string sender)
         {
-            var size = sender?.ToString().Split(':');
-            FloatingSetHeight = double.Parse(size == null ? ConfigurationManager.AppSettings.Get(nameof(FloatingSetHeight)) : size[0]);
-            FloatingSetWidth = double.Parse(size == null ? ConfigurationManager.AppSettings.Get(nameof(FloatingSetWidth)) : size[1]);
+            if (string.IsNullOrEmpty(sender))
+            {
+                FloatingSetHeight = GlobalVariable.FloatingSetHeight;
+                FloatingSetHeight = GlobalVariable.FloatingSetWidth;
+            }
+            else
+            {
+                var size = sender.Split(':');
+                FloatingSetHeight = double.Parse(size[0]);
+                FloatingSetWidth = double.Parse(size[1]);
+            }
+
+
             RadiusXValue = this.FloatingSetWidth / 5;
             RadiusXValue = this.FloatingSetHeight / 5;
+
             RectangleGeometryValue = new Rect(0, 0, this.FloatingSetWidth, this.FloatingSetHeight);
+        }
+
+        private void InitRegister()
+        {
+            WeakReferenceMessenger.Default.Register<string, string>(this, Const.CONST_CONFIG_CHANGED, (obj, msg) => ConfigValueChanged(msg));
+            WeakReferenceMessenger.Default.Register<string, string>(this, Const.CONST_FLAOTING_SIZE_CHANGED, (obj, msg) => ConfigValueChanged(msg));
         }
 
         public FloatingViewModel()
         {
-            var iPath = ConfigurationManager.AppSettings["FloatingBgPath"];
-            ImagePath = new Uri( string.IsNullOrEmpty(iPath) ? "pack://application:,,,/Resources/ErrorImage.png" : iPath);
+
+            var iPath = GlobalVariable.FloatingBgPath;
+            ImagePath = new Uri(string.IsNullOrEmpty(iPath) ? "pack://application:,,,/Resources/ErrorImage.png" : iPath);
             FloatingSetWidth = SystemParameters.WorkArea.Height / 10;
             FloatingSetHeight = SystemParameters.WorkArea.Height / 10;
 
-            GlobalVariable.ConfigChanged += ConfigValueChanged;
-            CustomSetViewModel.FloatingSizeEvent += ConfigValueChanged;
+            InitRegister();
         }
     }
 }

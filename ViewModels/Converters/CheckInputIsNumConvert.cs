@@ -8,19 +8,29 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace TaskTip.Converters
+namespace TaskTip.ViewModels.Converters
 {
-    class FixesInputIsNumConvert:IValueConverter
+    class CheckInputIsNumConvert : IValueConverter
     {
         Regex regex = new Regex(@"^[0-9]+$");
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return Regex.Replace(value.ToString()!, regex.ToString(),"");
+            Brush brush = new SolidColorBrush(Colors.Transparent);
+            if (regex.IsMatch(value.ToString()!))
+            {
+                brush = new SolidColorBrush(Colors.Gray);
+            }
+            else
+            {
+                brush = new SolidColorBrush(Colors.Red);
+            }
+
+            return brush;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return Regex.Replace(value.ToString()!, regex.ToString(), "");
+            throw new NotImplementedException();
         }
     }
 }

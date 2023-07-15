@@ -29,5 +29,19 @@ namespace TaskTip.Views
             this.TaskTimePlan.Text = taskTimePlan.ToString("yyyy-MM-dd HH:mm:ss");
         }
 
+        private void MenuItem1_OnClick(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void MenuItem2_OnClick(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void MenuItem3_OnClick(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

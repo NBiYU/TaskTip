@@ -6,13 +6,13 @@
         xmlns:local="clr-namespace:TaskTip.Views"
         xmlns:viewModel="clr-namespace:TaskTip.ViewModels"
         xmlns:hc="https://handyorg.github.io/handycontrol"
-        mc:Ignorable="d" ShowInTaskbar="False" WindowStyle="None" 
-        Background="Transparent" AllowsTransparency="True" >
+        mc:Ignorable="d" ShowInTaskbar="False" WindowStyle="None" WindowStartupLocation="CenterScreen"
+        AllowsTransparency="True" Background="Transparent">
 
     <Window.Resources>
         <viewModel:DateTimeGetViewModel x:Key="DateTimeGetViewModel"/>
     </Window.Resources>
-    <Grid Background="Transparent" >
+    <Grid   HorizontalAlignment="Center" VerticalAlignment="Center">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -33,24 +33,11 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <TextBlock x:Name="Guid" Visibility="Collapsed" Text="{Binding SourceGuid,Mode=TwoWay}"></TextBlock>
-            <hc:CalendarWithClock x:Name="CalendarWithClock" Margin="5" DisplayDateTime="{Binding SelectTaskPlanTime}" SelectedDateTime="{Binding SelectTaskPlanTime}"/>
+            <hc:CalendarWithClock Grid.Row="0" x:Name="CalendarWithClock" Background="Transparent" ShowConfirmButton="True" 
+                                  Margin="5"  />
 
             <!--></Calendar>-->
-            <Grid Grid.Row="1" HorizontalAlignment="Center">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0"  Margin="0,0,15,15" Background="DodgerBlue" Width="100"
-                        Content="确认" BorderThickness="1.5"
-                        Command="{Binding ConfirmCommand}"/>
-
-                <Button Grid.Column="1" Margin="15,0,0,15" Background="Red" Width="100"
-                        Content="取消" BorderThickness="1.5"
-                        Command="{Binding CancelCommand}"
-                        />
-            </Grid>
 
         </Grid>
     </Grid>

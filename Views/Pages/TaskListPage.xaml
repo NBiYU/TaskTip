@@ -3,7 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:TaskTip.Pages"
+      xmlns:local="clr-namespace:TaskTip.Views"
       xmlns:hc="https://handyorg.github.io/handycontrol"
       xmlns:viewModel="clr-namespace:TaskTip.ViewModels"
       mc:Ignorable="d" >
@@ -11,13 +11,32 @@
     <Page.Resources>
         <ResourceDictionary>
             <viewModel:TaskListPageModel x:Key="TaskListPageModel"></viewModel:TaskListPageModel>
+            <SolidColorBrush x:Key="SelectedBackgroundBrush" Color="White" />
         </ResourceDictionary>
     </Page.Resources>
     <Grid  DataContext="{Binding Source={StaticResource TaskListPageModel}}">
-        <hc:SimplePanel Grid.Row="0" x:Name="TaskListPanel"  HorizontalAlignment="Stretch" Margin="5">
+        <hc:SimplePanel Grid.Row="0" x:Name="TaskListPanel"  HorizontalAlignment="Stretch" >
             <Border BorderThickness="0.5" BorderBrush="Gray" CornerRadius="0,0,6,6">
-                <ListBox  ItemsSource="{Binding TaskMenoList}" 
+                <ListBox  ItemsSource="{Binding TaskList}" Padding="0"
                                               HorizontalAlignment="Stretch" BorderThickness="0" Background="Transparent">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBoxItem">
+                                        <Border Background="{TemplateBinding Background}">
+                                            <ContentPresenter />
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter  Property="Background" Value="{StaticResource SelectedBackgroundBrush}" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
                 </ListBox>
             </Border>
             <Button x:Name="NewTask" Width="50" Height="50" Padding="0" Background="White" 
@@ -28,13 +47,13 @@
                 </Button.Clip>
                 +
             </Button>
-            <Button x:Name="SendDaily" Width="50" Height="50" Padding="0" Background="White" 
+            <Button x:Name="SendDaily" Width="50" Height="50" Padding="0" Background="White"  
                                     HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,20,80"
                                     Command="{Binding SendDailyMessageCommand}">
                 <Button.Clip>
-                    <EllipseGeometry Center="25,25" RadiusX="24" RadiusY="24" ></EllipseGeometry>
+                    <EllipseGeometry Center="25,25" RadiusX="24" RadiusY="24"></EllipseGeometry>
                 </Button.Clip>
-                <Image Source="pack://application:,,,/Resources/Send.png" Stretch="Uniform" Width="25" Height="25"></Image>
+                <Image Source="pack://application:,,,/Resources/Send.png" Stretch="Uniform" Width="25" Height="25" />
             </Button>
 
             <hc:GotoTop Animated="True" AutoHiding="True" AnimationTime="500" 

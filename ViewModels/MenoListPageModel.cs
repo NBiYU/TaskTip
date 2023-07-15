@@ -11,6 +11,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using TaskTip.Services;
 using TaskTip.Views;
 
@@ -38,9 +39,9 @@ namespace TaskTip.ViewModels
                 SetProperty(ref menoEditText, value);
                 if (MenoButtonList?.FirstOrDefault(x => x.Uid == CurrentUid) != null)
                     WriteMenoFile(
-                        ConfigurationManager.AppSettings.Get("MenoFilePath") + "\\" +
+                        GlobalVariable.MenoFilePath + "\\" +
                         MenoButtonList?.FirstOrDefault(x => x.Uid == CurrentUid).Content +
-                        ConfigurationManager.AppSettings.Get("EndFileFormat"));
+                        GlobalVariable.EndFileFormat);
             }
         }
 
@@ -125,8 +126,8 @@ namespace TaskTip.ViewModels
         private void SelectedButtonChanged()
         {
             var btnControl = menoButtonList?.FirstOrDefault(x => x.Uid == CurrentUid);
-            var path = ConfigurationManager.AppSettings.Get("MenoFilePath") + "\\" + btnControl.Content +
-                       ConfigurationManager.AppSettings.Get("EndFileFormat");
+            var path = GlobalVariable.MenoFilePath + "\\" + btnControl.Content + GlobalVariable.EndFileFormat;
+
             if (File.Exists(path))
             {
                 var text = File.ReadAllText(path);
@@ -170,7 +171,7 @@ namespace TaskTip.ViewModels
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void AutoBuildDateButton(object sender, EventArgs e)
+        private void AutoBuildDateButton()
         {
             if (menoButtonList.Count == 0 ||
                 menoButtonList[menoButtonList.Count - 1].Content.ToString() != DateTime.Now.ToString("yyyy-MM-dd"))
@@ -188,8 +189,8 @@ namespace TaskTip.ViewModels
         private void LoadReadMenoFile(string dirPath)
         {
 
-            if(string.IsNullOrEmpty(dirPath))
-                return ;
+            if (string.IsNullOrEmpty(dirPath))
+                return;
 
             if (!Directory.Exists(dirPath))
                 Directory.CreateDirectory(dirPath);
@@ -204,7 +205,7 @@ namespace TaskTip.ViewModels
                 var endIndex = filePath.LastIndexOf('.');
                 var text = filePath.Substring(startIndex, endIndex - startIndex);
 
-                if (!filePath.EndsWith(ConfigurationManager.AppSettings["EndFileFormat"]))
+                if (!filePath.EndsWith(GlobalVariable.EndFileFormat))
                     continue;
 
                 if (startIndex == -1 || endIndex == -1)
@@ -252,26 +253,29 @@ namespace TaskTip.ViewModels
         /// <param name="starTime"></param>
         private void SelectDateTimeRangeFile(DateTime starTime)
         {
-            LoadReadMenoFile(ConfigurationManager.AppSettings["MenoFilePath"]!);
+            LoadReadMenoFile(GlobalVariable.MenoFilePath!);
 
             MenoButtonList = new ObservableCollection<Button>(MenoButtonList.Where(x => DateTime.Compare(starTime, DateTime.Parse(x.Content.ToString())) <= 0));
         }
 
-
+        private void InitRegister()
+        {
+            WeakReferenceMessenger.Default.Register<string, string>(this, Const.CONST_MENO_RELOAD, (obj, msg) => LoadReadMenoFile(msg));
+            WeakReferenceMessenger.Default.Register<object, string>(this, Const.CONST_OPEN_APPLICATTION,
+                (obj, msg) => { AutoBuildDateButton(); });
+        }
 
         public MenoListPageModel()
         {
+
             menoButtonList = new ObservableCollection<Button>();
             DataStartTime = DateTime.MinValue;
             SelectDateTimeNow = DateTime.Now;
             CurrentUid = "";
 
-            LoadReadMenoFile(ConfigurationManager.AppSettings["MenoFilePath"]!);
+            LoadReadMenoFile(GlobalVariable.MenoFilePath!);
 
-
-
-            FloatingView.OpenTaskMenoUI += AutoBuildDateButton;
-            CustomSetViewModel.MenoLoadChanged += (sender, args) => LoadReadMenoFile(sender.ToString());
+            InitRegister();
         }
     }
 }

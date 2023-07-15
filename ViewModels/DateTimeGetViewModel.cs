@@ -1,16 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
+using CommunityToolkit.Mvvm.Messaging;
+using TaskTip.Services;
 
 namespace TaskTip.ViewModels
 {
     internal class DateTimeGetViewModel : ObservableObject
     {
-        /// <summary>
-        /// 通知外部时间选择结果
-        /// </summary>
-        public static event EventHandler DateTimeCalendarEvent;
-
 
         #region 属性
 
@@ -19,6 +16,14 @@ namespace TaskTip.ViewModels
         {
             get => selectTaskPlanTime;
             set => SetProperty(ref selectTaskPlanTime, value);
+        }
+
+        private DateTime _displayTaskDateTime;
+
+        public DateTime DisplayTaskDateTime
+        {
+            get => _displayTaskDateTime;
+            set => SetProperty(ref _displayTaskDateTime, value);
         }
 
         private string sourceGuid;
@@ -51,7 +56,7 @@ namespace TaskTip.ViewModels
         /// </summary>
         private void Confirm()
         {
-            DateTimeCalendarEvent?.Invoke(SourceGuid + ";" + SelectTaskPlanTime, null);
+            WeakReferenceMessenger.Default.Send(SourceGuid + ";" + SelectTaskPlanTime, Const.CONST_DATETIME_RETURN);
         }
 
         /// <summary>
@@ -59,7 +64,7 @@ namespace TaskTip.ViewModels
         /// </summary>
         private void Cancel()
         {
-            DateTimeCalendarEvent?.Invoke("" + ";" + SelectTaskPlanTime, null);
+            WeakReferenceMessenger.Default.Send("" + ";" + SelectTaskPlanTime, Const.CONST_DATETIME_RETURN);
         }
 
         #endregion

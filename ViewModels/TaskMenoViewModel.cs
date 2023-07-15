@@ -5,8 +5,11 @@ using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using CommunityToolkit.Mvvm.Messaging;
+using TaskTip.Pages;
 using TaskTip.Services;
 using TaskTip.Views;
 
@@ -14,8 +17,13 @@ namespace TaskTip.ViewModels
 {
     internal class TaskMenoViewModel : ObservableRecipient
     {
-        # region 窗体属性
+        #region 窗体属性
 
+
+        public RecordPage FrameRecordPage
+        {
+            get => GlobalVariable.RecordPage;
+        }
 
         private double taskMenoWidth;
         public double TaskMenoWidth
@@ -109,7 +117,7 @@ namespace TaskTip.ViewModels
         private void MiniWinodow()
         {
             GlobalVariable.TaskMenoViewHide();
-            if (bool.Parse(ConfigurationManager.AppSettings.Get("IsFloatingImageStyle")))
+            if (GlobalVariable.IsFloatingImageStyle)
             {
                 GlobalVariable.FloatingViewShow();
             }
@@ -129,12 +137,17 @@ namespace TaskTip.ViewModels
             GlobalVariable.TaskMenoViewHide();
         }
 
-        private void TaskListPageModelOnTaskListChanged(object sender, EventArgs e)
+        private void TaskListPageModelOnTaskListChanged(ObservableCollection<TaskListItemUserControl> sender)
         {
             Title =
-                $"还有 {((ObservableCollection<TaskListItemUserControl>)sender).Count(x => x.IsCompleted.IsChecked == false)} 个任务未完成";
+                $"还有 {sender.Count(x => x.IsCompleted.IsChecked == false)} 个任务未完成";
         }
 
+        private void InitRegister()
+        {
+            WeakReferenceMessenger.Default.Register<ObservableCollection<TaskListItemUserControl>, string>(this, Const.CONST_TASK_LIST_CHANGED,
+                (obj, msg) => { TaskListPageModelOnTaskListChanged(msg); });
+        }
 
         /// <summary>
         /// 界面事件初始化
@@ -145,10 +158,10 @@ namespace TaskTip.ViewModels
             MiniCommand = new RelayCommand(MiniWinodow);
             SetCommand = new RelayCommand(SetWindowShow);
 
-            TaskListPageModel.TaskListChanged += TaskListPageModelOnTaskListChanged;
-
             taskMenoWidth = SystemParameters.WorkArea.Height / 3;
             taskMenoHeight = SystemParameters.WorkArea.Width / 3;
+
+            InitRegister();
 
         }
 

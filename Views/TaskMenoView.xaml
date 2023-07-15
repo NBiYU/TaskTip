@@ -13,7 +13,7 @@
         WindowStyle="None" 
         AllowsTransparency="True" Background="Transparent" 
         OpacityMask="Green" ResizeMode="NoResize"  Topmost="True"
-         MouseLeftButtonDown="TaskMenoView_OnMouseLeftButtonDown"
+        MouseLeftButtonDown="TaskMenoView_OnMouseLeftButtonDown"
         >
     <Window.Resources>
         <views:TaskMenoViewModel x:Key="TaskMenoViewModel"/>
@@ -64,16 +64,21 @@
                     <!--功能栏-->
                     <TabControl  TabStripPlacement="Top" Background="Transparent" >
                         <TabItem Header="任务" >
-                            <Frame Source="../Pages/TaskListPage.xaml" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"></Frame>
+                            <Frame Source="../Views/Pages/TaskListPage.xaml" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"></Frame>
                         </TabItem>
-                        <TabItem Header="记事" x:Name="NotedForDaily" >
+                        <!--<TabItem Header="记事" x:Name="NotedForDaily" >
                             <Frame Source="../Pages/MenoListPage.xaml" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"></Frame>
                         </TabItem>
-                        <!--<TabItem Header="笔记" x:Name="NotedForMsg">
-                            <Frame Source="../Pa.ges/NotePage.xaml" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"></Frame>
+                        <TabItem Header="笔记" x:Name="NotedForMsg">
+                            <Frame Source="../Pages/NotePage.xaml" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"></Frame>
                         </TabItem>-->
+                        <TabItem Header="记录" x:Name="RecordForMsg">
+                            <Frame Content="{Binding FrameRecordPage}"></Frame>
+                        </TabItem>
+                        <TabItem Header="乐子" x:Name="HappyEvent">
+                            <Frame Source="WebApiClientUI/HappyPage.xaml"></Frame>
+                        </TabItem>
                     </TabControl>
-
                 </Border>
             </Grid>
         </Border>

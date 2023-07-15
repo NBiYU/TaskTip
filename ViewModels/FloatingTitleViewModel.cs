@@ -5,15 +5,26 @@ using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Media;
+using CommunityToolkit.Mvvm.Messaging;
 using TaskTip.Services;
 using TaskTip.Views;
+using TaskTip.Pages;
+
 namespace TaskTip.ViewModels
 {
     internal class FloatingTitleViewModel : ObservableObject
     {
 
         #region 属性
+
+        public RecordPage FrameRecordPage
+        {
+            get => GlobalVariable.RecordPage;
+        }
+
         private string _title;
         public string Title
         {
@@ -99,7 +110,7 @@ namespace TaskTip.ViewModels
 
         private void ShowSetHandle()
         {
-            if (bool.Parse(ConfigurationManager.AppSettings.Get("IsFloatingImageStyle")))
+            if (GlobalVariable.IsFloatingImageStyle)
             {
                 GlobalVariable.FloatingViewHide();
             }
@@ -114,10 +125,10 @@ namespace TaskTip.ViewModels
 
         #region  外部引用事件函数处理
 
-        private void TaskListPageModelOnTaskListChanged(object sender, EventArgs e)
+        private void TaskListPageModelOnTaskListChanged(ObservableCollection<TaskListItemUserControl> sender)
         {
             Title =
-                $"还有 {((ObservableCollection<TaskListItemUserControl>)sender).Count(x => x.IsCompleted.IsChecked == false)} 个任务未完成";
+                $"还有 {sender.Count(x => x.IsCompleted.IsChecked == false)} 个任务未完成";
         }
 
         #endregion
@@ -131,6 +142,12 @@ namespace TaskTip.ViewModels
 
         }
 
+        private void InitRegister()
+        {
+            WeakReferenceMessenger.Default.Register<ObservableCollection<TaskListItemUserControl>, string>(this, Const.CONST_TASK_LIST_CHANGED,
+                (obj, msg) => { TaskListPageModelOnTaskListChanged(msg); });
+        }
+
         public FloatingTitleViewModel()
         {
             ButtonVisibility = Visibility.Collapsed;
@@ -138,9 +155,10 @@ namespace TaskTip.ViewModels
             TitleBorderBrush = new SolidColorBrush(Colors.Gray);
             InitControlImage();
 
+
             ButtonVisibilityChangedCommand = new RelayCommand(ButtonVisibilityChangedHandle);
             ShowSetCommand = new RelayCommand(ShowSetHandle);
-            TaskListPageModel.TaskListChanged += TaskListPageModelOnTaskListChanged;
+            InitRegister();
         }
     }
 }

@@ -4,7 +4,12 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
+using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.Configuration;
+using TaskTip.Pages;
 using TaskTip.Views;
+using ConfigurationManager = System.Configuration.ConfigurationManager;
 using MessageBox = System.Windows.MessageBox;
 
 namespace TaskTip.Services
@@ -13,6 +18,7 @@ namespace TaskTip.Services
     {
 
         #region 共享属性
+
         /// <summary>
         /// 悬浮窗图片路径
         /// </summary>
@@ -20,6 +26,7 @@ namespace TaskTip.Services
         {
             get => ConfigurationManager.AppSettings[nameof(FloatingBgPath)] ?? "";
         }
+
         /// <summary>
         /// 悬浮窗图片自动大小
         /// </summary>
@@ -27,23 +34,46 @@ namespace TaskTip.Services
         {
             get => ValueToType(ConfigurationManager.AppSettings[nameof(AutoSizeImage)] ?? "false");
         }
+
+        /// <summary>
+        /// 软件文件夹保存路径
+        /// </summary>
+        public static string TaskTipPath
+        {
+            get => string.IsNullOrEmpty(ConfigurationManager.AppSettings[nameof(TaskTipPath)])
+                ? Process.GetCurrentProcess().MainModule?.FileName.Split("TaskTip.exe")[0]!
+                : ConfigurationManager.AppSettings[nameof(TaskTipPath)]!;
+        }
+
         /// <summary>
         /// 任务文件保存路径
         /// </summary>
         public static string TaskFilePath
         {
-            get => string.IsNullOrEmpty(ConfigurationManager.AppSettings[nameof(TaskFilePath)])
-                ? Process.GetCurrentProcess().MainModule?.FileName.Replace("TaskTip.exe", "TaskFile")!
-                : ConfigurationManager.AppSettings[nameof(TaskFilePath)]!;
+            get => TaskTipPath + "\\" + nameof(TaskFilePath);
         }
+
         /// <summary>
         /// 记事文件保存路径
         /// </summary>
         public static string MenoFilePath
         {
-            get => string.IsNullOrEmpty(ConfigurationManager.AppSettings[nameof(MenoFilePath)])
-                ? Process.GetCurrentProcess().MainModule?.FileName.Replace("TaskTip.exe", "MenoFile")!
-                : ConfigurationManager.AppSettings[nameof(MenoFilePath)]!;
+            get => TaskTipPath + "\\" + nameof(MenoFilePath);
+        }
+
+        /// <summary>
+        /// 记录文件路径
+        /// </summary>
+        public static string RecordFilePath
+        {
+            get => TaskTipPath + "\\" + nameof(RecordFilePath);
+        }
+        /// <summary>
+        /// 目录树配置文件
+        /// </summary>
+        public static string MenuTreeConfigPath
+        {
+            get => TaskTipPath + "\\" + "MenuTreeConfig.json";
         }
 
         /// <summary>
@@ -51,7 +81,7 @@ namespace TaskTip.Services
         /// </summary>
         public static double FloatingSetWidth
         {
-            get =>  ValueToType(ConfigurationManager.AppSettings[nameof(FloatingSetWidth)] ?? "0");
+            get => ValueToType(ConfigurationManager.AppSettings[nameof(FloatingSetWidth)] ?? "0");
         }
         /// <summary>
         /// 悬浮窗高度
@@ -96,21 +126,26 @@ namespace TaskTip.Services
             get => ValueToType(ConfigurationManager.AppSettings[nameof(DeleteTimes)] ?? "99");
         }
 
+        public static bool IsEnableAutoDelete
+        {
+            get => ValueToType(ConfigurationManager.AppSettings[nameof(IsEnableAutoDelete)] ?? "false");
+        }
+
         public static Configuration Configurations =
             ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
-        
+        public static IConfiguration JsonConfiguration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+
         #endregion
 
-        /// <summary>
-        /// 通知外部配置更改
-        /// </summary>
-        public static event EventHandler ConfigChanged;
 
-        /// <summary>
-        /// 通知外部矩形形状更改
-        /// </summary>
-        public static event EventHandler RectangleChanged;
+        #region 静态页面
+
+        public static RecordPage RecordPage = new();
+
+        #endregion
+
+        #region 配置操作
 
         /// <summary>
         /// 刷入配置
@@ -149,11 +184,11 @@ namespace TaskTip.Services
                 Configurations.Save();
                 ConfigurationManager.RefreshSection("appSettings");
 
-                ConfigChanged?.Invoke(null, null);
+                WeakReferenceMessenger.Default.Send<string, string>(string.Empty, Const.CONST_CONFIG_CHANGED);
             }
-            catch
+            catch (Exception e)
             {
-                MessageBox.Show("数据刷入配置错误");
+                MessageBox.Show($"数据刷入配置错误:{e.Message}");
             }
         }
 
@@ -186,104 +221,143 @@ namespace TaskTip.Services
             return val;
         }
 
+        #endregion
+
+        # region  注册信使
+
+        # endregion
+
         #region 窗口初始化
-        public static FloatingView FloatingView { get; set; } = new FloatingView();
-        public static FloatingTitleStyleView FloatingTitleStyleView { get; set; } = new FloatingTitleStyleView();
-        public static TaskMenoView TaskMenoView { get; set; } = new TaskMenoView();
-        public static CustomSetView CustomSetView { get; set; } = new CustomSetView();
+
+        public static FloatingView FloatingView { get; set; } = new();
+        public static TaskMenoView TaskMenoView { get; set; } = new();
+        public static FloatingTitleStyleView FloatingTitleStyleView { get; set; } = new();
+        public static CustomSetView CustomSetView { get; set; } = new();
         #endregion
 
         #region 窗口显示状态管理
 
-            #region Floating
+        #region Floating
 
-            public static void FloatingViewShow()
+        public static void FloatingViewShow()
+        {
+
+            if (FloatingView.IsClosed)
             {
-
-                if (FloatingView.IsClosed)
-                {
-                    FloatingView = new FloatingView();
-                }
-                FloatingView.Show();
+                FloatingView = new FloatingView();
             }
+            FloatingView.Show();
+        }
 
-            public static void FloatingViewHide()
+        public static void FloatingViewHide()
+        {
+            if (FloatingView.IsClosed)
             {
-                if (FloatingView.IsClosed)
-                {
-                    FloatingView = new FloatingView();
-                }
-                FloatingView.Hide();
+                FloatingView = new FloatingView();
             }
+            FloatingView.Hide();
+        }
 
-            #endregion
-
-            #region FloatingTitleStyle
-
-            public static void FloatingTitleStyleViewShow()
+        public static void FloatingViewClose()
+        {
+            if (!FloatingView.IsClosed)
             {
-                if (FloatingTitleStyleView.IsClosed)
-                {
-                    FloatingTitleStyleView = new FloatingTitleStyleView();
-                }
-                FloatingTitleStyleView.Show();
+                FloatingView.Close();
             }
+        }
 
-            public static void FloatingTitleStyleViewHide()
+        #endregion
+
+        #region FloatingTitleStyle
+
+        public static void FloatingTitleStyleViewShow()
+        {
+            if (FloatingTitleStyleView.IsClosed)
             {
-                if (FloatingTitleStyleView.IsClosed)
-                {
-                    FloatingTitleStyleView = new FloatingTitleStyleView();
-                }
-                FloatingTitleStyleView.Hide();
+                FloatingTitleStyleView = new FloatingTitleStyleView();
             }
+            FloatingTitleStyleView.Show();
+        }
 
-            #endregion
-
-            #region TaskMeno
-
-            public static void TaskMenoViewShow()
+        public static void FloatingTitleStyleViewHide()
+        {
+            if (FloatingTitleStyleView.IsClosed)
             {
-                if (TaskMenoView.IsClosed)
-                {
-                    TaskMenoView = new TaskMenoView();
-                }
-                TaskMenoView.Show();
+                FloatingTitleStyleView = new FloatingTitleStyleView();
             }
-            public static void TaskMenoViewHide()
+            FloatingTitleStyleView.Hide();
+        }
+
+        public static void FloatingTitleStyleViewClose()
+        {
+            if (!FloatingTitleStyleView.IsClosed)
             {
-                if (TaskMenoView.IsClosed)
-                {
-                    TaskMenoView = new TaskMenoView();
-                }
-                TaskMenoView.Hide();
+                FloatingTitleStyleView.Close();
             }
+        }
+        #endregion
 
-            #endregion
+        #region TaskMeno
 
-            #region CustomSet
-
-            public static void CustomSetViewShow()
+        public static void TaskMenoViewShow()
+        {
+            if (TaskMenoView.IsClosed)
             {
-                if (CustomSetView.IsClosed)
-                {
-                    CustomSetView = new CustomSetView();
-                }
-                CustomSetView.Show();
+                TaskMenoView = new TaskMenoView();
             }
-
-            public static void CustomSetViewHide()
+            TaskMenoView.Show();
+        }
+        public static void TaskMenoViewHide()
+        {
+            if (TaskMenoView.IsClosed)
             {
-                if (CustomSetView.IsClosed)
-                {
-                    CustomSetView = new CustomSetView();
-                }
-                CustomSetView.Hide();
+                TaskMenoView = new TaskMenoView();
             }
+            TaskMenoView.Hide();
+        }
 
-            #endregion
+        public static void TaskMenoViewClose()
+        {
+            if (!TaskMenoView.IsClosed)
+            {
+                TaskMenoView.Close();
+            }
+        }
+
+        #endregion
+
+        #region CustomSet
+
+        public static void CustomSetViewShow()
+        {
+            if (CustomSetView.IsClosed)
+            {
+                CustomSetView = new CustomSetView();
+            }
+            CustomSetView.Show();
+        }
+
+        public static void CustomSetViewHide()
+        {
+            if (CustomSetView.IsClosed)
+            {
+                CustomSetView = new CustomSetView();
+            }
+            CustomSetView.Hide();
+        }
+
+        public static void CustomSetViewClose()
+        {
+            if (!CustomSetView.IsClosed)
+            {
+                CustomSetView.Close();
+            }
+        }
+
+        #endregion
 
 
         #endregion
+
     }
 }

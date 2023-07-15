@@ -1,31 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace TaskTip.Converters
+namespace TaskTip.ViewModels.Converters
 {
-    class CheckInputIsNumConvert:IValueConverter
+    public class TaskProgressConvert : IValueConverter
     {
-        Regex regex = new Regex(@"^[0-9]+$");
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            Brush brush = new SolidColorBrush(Colors.Transparent);
-            if (regex.IsMatch(value.ToString()!))
-            {
-                brush = new SolidColorBrush(Colors.Gray);
-            }else
-            {
-                brush = new SolidColorBrush(Colors.Red);
-            }
+            if (value is not TaskStatus val) return null;
 
-            return brush;
+            return value switch
+            {
+                TaskStatus.Runtime => Colors.DodgerBlue,
+                TaskStatus.Timeout => Colors.Red,
+                TaskStatus.Undefined => Colors.Azure,
+                TaskStatus.Complete => "#FF7EC7",
+                _ => Colors.Blue
+            };
         }
+
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {

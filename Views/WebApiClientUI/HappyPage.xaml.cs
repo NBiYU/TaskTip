@@ -13,21 +13,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace TaskTip.Views
+namespace TaskTip.Pages.WebApiClientUI
 {
     /// <summary>
-    /// TaskListItemUserControl.xaml 的交互逻辑
+    /// HappyPage.xaml 的交互逻辑
     /// </summary>
-    public partial class TaskListItemUserControl : UserControl
+    public partial class HappyPage : Page
     {
-        public static event EventHandler IsCompleteMsg;
-        public TaskListItemUserControl()
+        public HappyPage()
         {
             InitializeComponent();
-        }
-        private void IsCompleted_OnChecked(object sender, RoutedEventArgs e)
-        {
-            IsCompleteMsg?.Invoke(this.Guid.Text, null);
         }
     }
 }

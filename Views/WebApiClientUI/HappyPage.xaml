@@ -1,0 +1,23 @@
+﻿<Page x:Class="TaskTip.Pages.WebApiClientUI.HappyPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:TaskTip.Pages.WebApiClientUI"
+      mc:Ignorable="d" 
+      Title="HappyPage">
+
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <TabControl  TabStripPlacement="Left" >
+            <TabItem Header="每日乐子" >
+                <Frame Source="EverydayEventPage.xaml"></Frame>
+            </TabItem>
+            <TabItem Header="热点">
+                <Frame Source="HotEventPage.xaml"></Frame>
+            </TabItem>
+            <TabItem Header="翻译">
+                <Frame Source="TransFormLanguagePage.xaml"></Frame>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Page>

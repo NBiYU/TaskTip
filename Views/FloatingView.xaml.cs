@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using CommunityToolkit.Mvvm.Messaging;
 using TaskTip.Services;
 using TaskTip.ViewModels;
 
@@ -22,7 +23,6 @@ namespace TaskTip.Views
     /// </summary>
     public partial class FloatingView : Window
     {
-        public static event EventHandler OpenTaskMenoUI;
         public FloatingView()
         {
 
@@ -32,11 +32,17 @@ namespace TaskTip.Views
             this.Left = screenWidth * 0.5;
             this.Top = screenHeight * 0.5;
 
-            WindowStyleChanged(null, null);
+            WindowStyleChanged(null);
 
             InitializeComponent();
-            GlobalVariable.ConfigChanged += WindowStyleChanged;
-            CustomSetViewModel.FloatingSizeEvent += WindowStyleChanged;
+
+            InitRegister();
+        }
+
+        private void InitRegister()
+        {
+            WeakReferenceMessenger.Default.Register<string, string>(this, Const.CONST_CONFIG_CHANGED, (obj, msg) => WindowStyleChanged(msg));
+            WeakReferenceMessenger.Default.Register<string, string>(this, Const.CONST_FLAOTING_SIZE_CHANGED, (obj, msg) => WindowStyleChanged(msg));
         }
 
         /// <summary>
@@ -44,19 +50,19 @@ namespace TaskTip.Views
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void WindowStyleChanged(object sender, EventArgs e)
+        private void WindowStyleChanged(string sender)
         {
-            var size = sender?.ToString().Split(':');
 
-            if (sender != null)
+
+            if (!string.IsNullOrEmpty(sender))
             {
-
+                var size = sender.Split(':');
                 SetWindowStyle((double.Parse(size[0]), double.Parse(size[1])), (Left, Top));
                 return;
 
             }
             SetWindowStyle(
-                ((double.Parse(ConfigurationManager.AppSettings["FloatingSetWidth"])), (double.Parse(ConfigurationManager.AppSettings["FloatingSetHeight"]))),
+                (GlobalVariable.FloatingSetWidth, GlobalVariable.FloatingSetHeight),
                 (this.Left, this.Top));
 
         }
@@ -83,15 +89,15 @@ namespace TaskTip.Views
                 GlobalVariable.TaskMenoView.Left = Left + widthRatio;
                 GlobalVariable.TaskMenoView.Top = Top + heightRatio;
 
-                OpenTaskMenoUI?.Invoke(DateTime.Now, null);
-
+                WeakReferenceMessenger.Default.Send(new { }, Const.CONST_OPEN_APPLICATTION);
+                //OpenTaskMenoUI?.Invoke(DateTime.Now, null);
                 GlobalVariable.TaskMenoViewShow();
                 this.Hide();
             }
             base.DragMove();
         }
 
-        public bool IsClosed { get; set; }=false;
+        public bool IsClosed { get; set; } = false;
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);

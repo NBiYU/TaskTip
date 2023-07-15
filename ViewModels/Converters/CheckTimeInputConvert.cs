@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace TaskTip.Converters
+namespace TaskTip.ViewModels.Converters
 {
-    class CheckTimeInputConvert:IValueConverter
+    class CheckTimeInputConvert : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

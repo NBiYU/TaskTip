@@ -12,6 +12,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using CommunityToolkit.Mvvm.Messaging;
+using TaskTip.Services;
 
 namespace TaskTip.Views
 {
@@ -21,8 +23,7 @@ namespace TaskTip.Views
     /// </summary>
     public partial class CustomSetView : Window
     {
-        public static event EventHandler CustomWindowStateChanged;
-        public bool IsClosed { get; set; }=false;
+        public bool IsClosed { get; set; } = false;
         public CustomSetView()
         {
             InitializeComponent();
@@ -34,7 +35,7 @@ namespace TaskTip.Views
 
         protected override void OnActivated(EventArgs e)
         {
-            CustomWindowStateChanged?.Invoke(null, null);
+            //WeakReferenceMessenger.Default.Send<string,string>(string.Empty,Const.CONST_SHOW_CUSTOM);
             base.OnActivated(e);
         }
 
@@ -43,5 +44,6 @@ namespace TaskTip.Views
             base.OnClosed(e);
             IsClosed = true;
         }
+
     }
 }

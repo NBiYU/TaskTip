@@ -39,7 +39,7 @@ namespace TaskTip.Services
 
             JObject json = JsonConvert.DeserializeObject<JObject>(File.ReadAllText(path));
 
-            if (json == null && json.GetValue("EditTextTitle") == null)
+            if (json == null && json?.GetValue("EditTextTitle") == null)
             {
                 MessageBox.Show($"【log】{path}中并没有找到对应的JSON文件数据");
                 return Task.CompletedTask;

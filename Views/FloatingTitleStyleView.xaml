@@ -99,10 +99,16 @@
             </Border.Background>
             <TabControl Background="Transparent">
                 <TabItem Header="任务">
-                    <Frame Source="../Pages/TaskListPage.xaml" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+                    <Frame Source="../Views/Pages/TaskListPage.xaml" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
                 </TabItem>
-                <TabItem Header="记事">
+                <!--<TabItem Header="记事">
                     <Frame Source="../Pages/MenoListPage.xaml" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+                </TabItem>-->
+                <TabItem Header="记录">
+                    <Frame Content="{Binding FrameRecordPage}"></Frame>
+                </TabItem>
+                <TabItem Header="乐子" x:Name="HappyEvent">
+                    <Frame Source="WebApiClientUI/HappyPage.xaml"></Frame>
                 </TabItem>
             </TabControl>
         </Border>

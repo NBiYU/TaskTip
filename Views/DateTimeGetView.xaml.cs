@@ -20,7 +20,7 @@ namespace TaskTip.Views
     public partial class DateTimeGetView : Window
     {
 
-        public bool IsClosed { get; set; }=false;
+        public bool IsClosed { get; set; } = false;
         public DateTimeGetView()
         {
             InitializeComponent();
@@ -31,5 +31,9 @@ namespace TaskTip.Views
             IsClosed = true;
         }
 
+        private void UIElement_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            base.DragMove();
+        }
     }
 }

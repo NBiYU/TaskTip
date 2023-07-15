@@ -1,22 +1,19 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using HandyControl.Controls;
-using HandyControl.Data;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Win32;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using TaskTip.Services;
 using TaskTip.Views;
+using Application = System.Windows.Application;
 using File = System.IO.File;
 using MessageBox = System.Windows.MessageBox;
 using Path = System.IO.Path;
@@ -30,23 +27,22 @@ namespace TaskTip.ViewModels
         private bool isError = false;
 
         #region 属性
-        
+
         private bool _autoStartUp;
         /// <summary>
         /// 是否开机自启
         /// </summary>
         public bool AutoStartUp
         {
-            get=>_autoStartUp;
+            get => _autoStartUp;
             set
             {
                 SetProperty(ref _autoStartUp, value);
                 ChangedValueSave(nameof(AutoStartUp), AutoStartUp);
             }
         }
-
-
         private bool _isFloatingImageStyle;
+        #region 悬浮窗设置属性
         public bool IsFloatingImageStyle
         {
             get => _isFloatingImageStyle;
@@ -54,12 +50,10 @@ namespace TaskTip.ViewModels
             {
                 SetProperty(ref _isFloatingImageStyle, value);
                 ChangedValueSave(nameof(IsFloatingImageStyle), IsFloatingImageStyle);
+                IsFloatingStyleChanged();
                 AutoSizeImage = true;
             }
         }
-
-
-        #region 悬浮窗设置属性
 
         private bool _autoSizeImage;
         /// <summary>
@@ -72,7 +66,6 @@ namespace TaskTip.ViewModels
             {
                 SetProperty(ref _autoSizeImage, value);
                 ChangedValueSave(nameof(AutoSizeImage), _autoSizeImage);
-                FloatingSetVisibility = _autoSizeImage ? Visibility.Collapsed : Visibility.Visible;
                 FloatingViewState();
             }
         }
@@ -87,7 +80,7 @@ namespace TaskTip.ViewModels
             set
             {
                 SetProperty(ref _floatingSetWidth, value);
-                FloatingSizeEvent?.Invoke($"{FloatingSetWidth}:{FloatingSetHeight}", null);
+                WeakReferenceMessenger.Default.Send($"{FloatingSetWidth}:{FloatingSetHeight}", Const.CONST_FLAOTING_SIZE_CHANGED);
                 ChangedValueSave(nameof(FloatingSetWidth), _floatingSetWidth);
             }
         }
@@ -103,7 +96,7 @@ namespace TaskTip.ViewModels
             set
             {
                 SetProperty(ref _floatingSetHeight, value);
-                FloatingSizeEvent?.Invoke($"{FloatingSetWidth}:{FloatingSetHeight}", null);
+                WeakReferenceMessenger.Default.Send($"{FloatingSetWidth}:{FloatingSetHeight}", Const.CONST_FLAOTING_SIZE_CHANGED);
                 ChangedValueSave(nameof(FloatingSetHeight), _floatingSetHeight);
             }
         }
@@ -168,46 +161,29 @@ namespace TaskTip.ViewModels
             }
         }
 
-        private string _menoFilePath;
-        public string MenoFilePath
-        {
-            get
-            {
-                if (Directory.Exists(_menoFilePath))
-                    return _menoFilePath;
-                else
-                    return "";
-            }
-            set
-            {
-                SetProperty(ref _menoFilePath, value);
-                ChangedValueSave(nameof(MenoFilePath), MenoFilePath);
-            }
-        }
-
         #endregion
 
 
         #region 任务属性
 
-        private string _taskFilePath;
+        private string _taskTipPath;
         /// <summary>
         /// 任务保存路径
         /// </summary>
-        public string TaskFilePath
+        public string TaskTipPath
         {
             get
             {
-                if (Directory.Exists(_taskFilePath))
-                    return _taskFilePath;
+                if (Directory.Exists(_taskTipPath))
+                    return _taskTipPath;
                 else
                     return "";
-            } 
+            }
             set
             {
                 if (string.IsNullOrEmpty(value)) return;
-                SetProperty(ref _taskFilePath, value);
-                ChangedValueSave(nameof(TaskFilePath), TaskFilePath);
+                SetProperty(ref _taskTipPath, value);
+                ChangedValueSave(nameof(TaskTipPath), TaskTipPath);
             }
         }
 
@@ -256,6 +232,18 @@ namespace TaskTip.ViewModels
             }
         }
 
+        private bool _isEnableAutoDelete;
+
+        public bool IsEnableAutoDelete
+        {
+            get => _isEnableAutoDelete;
+            set
+            {
+                SetProperty(ref _isEnableAutoDelete, value);
+                ChangedValueSave(nameof(IsEnableAutoDelete), IsEnableAutoDelete);
+            }
+        }
+
         #endregion
 
 
@@ -274,8 +262,7 @@ namespace TaskTip.ViewModels
         public RelayCommand SaveDataCommand { get; set; }
         public RelayCommand MiniCommand { get; set; }
         public RelayCommand GetImageFilePathCommand { get; set; }
-        public RelayCommand GetTaskFilePathCommand { get; set; }
-        public RelayCommand GetMenoFilePathCommand { get; set; }
+        public RelayCommand GetTaskTipPathCommand { get; set; }
 
         #endregion
 
@@ -286,19 +273,12 @@ namespace TaskTip.ViewModels
         /// </summary>
         private void CloseView()
         {
-            var isEmptyMsg = string.Empty;
-            isEmptyMsg += string.IsNullOrWhiteSpace(ConfigurationManager.AppSettings[nameof(FloatingBgPath)]) ? "悬浮窗背景不能为空\n" : "";
-            isEmptyMsg += string.IsNullOrWhiteSpace(ConfigurationManager.AppSettings[nameof(TaskFilePath)]) ? "保存路径不能为空\n" : "";
-            isEmptyMsg += string.IsNullOrWhiteSpace(ConfigurationManager.AppSettings[nameof(MenoFilePath)]) ? "记事路径不能为空\n" : "";
-            isEmptyMsg += !Regex.IsMatch(DeleteTimes, @"^[0-9]+$") ? "计划删除天数格式异常" : "";
-            isEmptyMsg += !Regex.IsMatch(DailyTaskEndTime, @"^\d{1,2}:\d{1,2}?$") ? "每日截时间格式异常" : "";
-
-            if (!string.IsNullOrWhiteSpace(isEmptyMsg))
+            var errMsg = CheckConfig();
+            if (!string.IsNullOrEmpty(errMsg))
             {
-                MessageBox.Show(isEmptyMsg.TrimEnd('\n'));
+                MessageBox.Show(errMsg, "关闭失败");
                 return;
             }
-
 
             if (ChangedValue.Count != 0)
             {
@@ -314,7 +294,6 @@ namespace TaskTip.ViewModels
 
             ChangedValue.Clear();
 
-            GlobalVariable.CustomSetViewHide();
 
             if (GlobalVariable.IsFloatingImageStyle)
             {
@@ -324,6 +303,10 @@ namespace TaskTip.ViewModels
             {
                 GlobalVariable.FloatingTitleStyleViewShow();
             }
+
+            //GlobalVariable.CustomSetViewHide();
+            GlobalVariable.CustomSetViewHide();
+
 
             isClose = false;
         }
@@ -343,25 +326,26 @@ namespace TaskTip.ViewModels
         {
             try
             {
+                var errMsg = CheckConfig();
+                if (!string.IsNullOrEmpty(errMsg))
+                {
+                    MessageBox.Show(errMsg, "保存失败");
+                    return;
+                }
+
                 if (ChangedValue.Count != 0)
                 {
-                    if (ChangedValue.ContainsKey(nameof(TaskFilePath)))
+                    if (ChangedValue.ContainsKey(nameof(TaskTipPath)))
                     {
-                        DirMove(GlobalVariable.TaskFilePath, TaskFilePath);
-                    }
-
-
-                    if (ChangedValue.ContainsKey(nameof(MenoFilePath)))
-                    {
-                        DirMove(GlobalVariable.MenoFilePath, MenoFilePath);
+                        PathChanged();
                     }
 
                     GlobalVariable.SaveConfig(ChangedValue);
                     MessageBox.Show("设置已保存");
                     ChangedValue.Clear();
                     AutoStart(AutoStartUp);
-                    TaskLoadChanged?.Invoke(TaskFilePath, EventArgs.Empty);
-                    MenoLoadChanged?.Invoke(MenoFilePath, EventArgs.Empty);
+                    WeakReferenceMessenger.Default.Send(GlobalVariable.TaskFilePath, Const.CONST_TASK_RELOAD);
+                    WeakReferenceMessenger.Default.Send(GlobalVariable.MenoFilePath, Const.CONST_MENO_RELOAD);
                 }
                 else
                 {
@@ -376,6 +360,29 @@ namespace TaskTip.ViewModels
 
         }
 
+        private void PathChanged()
+        {
+            var taskPath = TaskTipPath + "\\" + nameof(GlobalVariable.TaskFilePath);
+            var recordPath = TaskTipPath + "\\" + nameof(GlobalVariable.RecordFilePath);
+            Directory.CreateDirectory(taskPath);
+            Directory.CreateDirectory(recordPath);
+            DirMove(GlobalVariable.TaskFilePath, taskPath);
+            DirMove(GlobalVariable.RecordFilePath, recordPath);
+            var jsonPath = TaskTipPath + "\\MenuTreeConfig.json";
+            if (File.Exists(jsonPath))
+            {
+                if (MessageBox.Show("MenuTreeConfig.json文件已存在，是否覆盖", "文件移动", MessageBoxButton.YesNo,
+                        MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    File.Delete(jsonPath);
+                    File.Move(GlobalVariable.MenuTreeConfigPath, jsonPath);
+                }
+            }
+
+            MenuItemUserControlModel.isLoad = false;
+            GlobalVariable.RecordPage = new();
+        }
+
         /// <summary>
         /// 任务路径更改处理函数
         /// </summary>
@@ -385,19 +392,8 @@ namespace TaskTip.ViewModels
             if (string.IsNullOrWhiteSpace(dirPath))
                 return;
 
-            TaskFilePath = dirPath;
+            TaskTipPath = dirPath;
         }
-
-        private void GetMenoDirPath()
-        {
-            var dirPath = GetDirPath();
-            if (string.IsNullOrWhiteSpace(dirPath))
-                return;
-
-            MenoFilePath = dirPath;
-        }
-
-
         /// <summary>
         /// 图片获取处理函数
         /// </summary>
@@ -427,27 +423,31 @@ namespace TaskTip.ViewModels
         /// <summary>
         /// 悬浮窗事件
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ShowCustom(object sender, EventArgs e)
+        private void ShowCustom()
         {
             FloatingViewState();
         }
-
-        //private void DailyTaskEndTimeHandler(object sender, EventArgs e)
-        //{
-        //    ChangedValueSave(nameof(DailyTaskEndTime), DailyTaskEndTime);
-        //}
 
 
         #endregion
 
         #region 功能函数
 
-        private void ConfigChangedHandler(object sender,EventArgs e)
+        public string CheckConfig()
         {
-            TaskFilePath = GlobalVariable.TaskFilePath;
-            MenoFilePath = GlobalVariable.MenoFilePath;
+            var isEmptyMsg = string.Empty;
+            isEmptyMsg += string.IsNullOrWhiteSpace(FloatingBgPath) ? "悬浮窗背景不能为空\n" : "";
+            isEmptyMsg += string.IsNullOrWhiteSpace(TaskTipPath) ? "保存路径不能为空\n" : "";
+            isEmptyMsg += !Regex.IsMatch(DeleteTimes, @"^[0-9]+$") ? "计划删除天数格式异常" : "";
+            isEmptyMsg += !Regex.IsMatch(DailyTaskEndTime, @"^\d{1,2}:\d{1,2}?$") ? "每日截时间格式异常" : "";
+
+
+            return isEmptyMsg;
+        }
+
+        private void ConfigChangedHandler()
+        {
+            TaskTipPath = GlobalVariable.TaskTipPath;
         }
         /// <summary>
         /// 所有文件移动
@@ -463,7 +463,7 @@ namespace TaskTip.ViewModels
             {
                 throw new Exception($"目标文件夹：{dirPath}不存在");
             }
-            AllFileMove(sPath,dirPath);
+            AllFileMove(sPath, dirPath);
 
         }
         private void AllFileMove(string sPath, string dirPath)
@@ -473,7 +473,7 @@ namespace TaskTip.ViewModels
             {
                 var sfileName = Path.GetFileName(file);
                 var dfilePath = Path.Combine(dirPath, sfileName);
-                File.Move(file,dfilePath);
+                File.Move(file, dfilePath);
             }
         }
         /// <summary>  
@@ -569,15 +569,19 @@ namespace TaskTip.ViewModels
         }
 
 
-        /// <summary>
-        /// 通知外部图片路径更换
-        /// </summary>
-#pragma warning disable CS0067 // 从不使用事件“CustomSetViewModel.ImagePathCahnged”
-        public static event EventHandler ImagePathChanged;
-#pragma warning restore CS0067 // 从不使用事件“CustomSetViewModel.ImagePathCahnged”
-        public static event EventHandler TaskLoadChanged;
-        public static event EventHandler MenoLoadChanged;
+        private void IsFloatingStyleChanged()
+        {
+            if (IsFloatingImageStyle)
+            {
+                GlobalVariable.FloatingTitleStyleViewClose();
+            }
+            else
+            {
+                GlobalVariable.FloatingViewClose();
+                GlobalVariable.TaskMenoViewClose();
+            }
 
+        }
 
         /// <summary>
         /// 预览自定义尺寸悬浮窗
@@ -585,28 +589,28 @@ namespace TaskTip.ViewModels
         private void FloatingViewState()
         {
             if (AutoSizeImage)
+            {
+                FloatingSetVisibility = Visibility.Collapsed;
                 GlobalVariable.FloatingViewHide();
+            }
             else
+            {
                 GlobalVariable.FloatingViewShow();
+                FloatingSetVisibility = Visibility.Visible;
+            }
         }
 
-        /// <summary>
-        /// 改变悬浮窗尺寸委托
-        /// </summary>
-        public static EventHandler FloatingSizeEvent;
 
-        public CustomSetViewModel()
+        private void InitRegister()
         {
-            CloseViewCommand = new RelayCommand(CloseView);
-            MiniCommand = new RelayCommand(MiniView);
-            SaveDataCommand = new RelayCommand(SaveData);
-            GetImageFilePathCommand = new RelayCommand(FloatingImageChanged);
-            GetTaskFilePathCommand = new RelayCommand(GetTaskDirPath);
-            GetMenoFilePathCommand = new RelayCommand(GetMenoDirPath);
+            WeakReferenceMessenger.Default.Register<string, string>(this, Const.CONST_SHOW_CUSTOM, (obj, msg) => ShowCustom());
+            WeakReferenceMessenger.Default.Register<string, string>(this, Const.CONST_CONFIG_CHANGED, (obj, msg) => ConfigChangedHandler());
+        }
 
+        private void InitProperty()
+        {
             FloatingBgPath = GlobalVariable.FloatingBgPath;
-            TaskFilePath = GlobalVariable.TaskFilePath;
-            MenoFilePath = GlobalVariable.MenoFilePath;
+            TaskTipPath = GlobalVariable.TaskTipPath;
             DeleteTimes = GlobalVariable.DeleteTimes.ToString();
             IsFloatingImageStyle = GlobalVariable.IsFloatingImageStyle;
 
@@ -616,10 +620,23 @@ namespace TaskTip.ViewModels
             DailyTaskEndTime = GlobalVariable.DailyTaskEndTime;
 
             FloatingMaxHeight = SystemParameters.WorkArea.Height;
-            floatingMaxWidth = SystemParameters.WorkArea.Width;
+            FloatingMaxWidth = SystemParameters.WorkArea.Width;
 
-            CustomSetView.CustomWindowStateChanged += ShowCustom;
-            GlobalVariable.ConfigChanged += ConfigChangedHandler;
+            IsEnableAutoDelete = GlobalVariable.IsEnableAutoDelete;
         }
+
+        public CustomSetViewModel()
+        {
+
+            CloseViewCommand = new RelayCommand(CloseView);
+            MiniCommand = new RelayCommand(MiniView);
+            SaveDataCommand = new RelayCommand(SaveData);
+            GetImageFilePathCommand = new RelayCommand(FloatingImageChanged);
+            GetTaskTipPathCommand = new RelayCommand(GetTaskDirPath);
+
+            InitProperty();
+            InitRegister();
+        }
+
     }
 }

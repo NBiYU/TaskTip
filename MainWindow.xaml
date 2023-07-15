@@ -7,7 +7,7 @@
         xmlns:hc="https://handyorg.github.io/handycontrol"
         mc:Ignorable="d"
         ShowInTaskbar="False" WindowStyle="None" 
-        AllowsTransparency="True" Background="#00000000"
+        AllowsTransparency="True" Background="#00000000" 
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <local:MainWindow x:Key="MainWindow"/>

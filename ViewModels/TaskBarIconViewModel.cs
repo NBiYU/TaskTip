@@ -8,7 +8,7 @@ using Application = System.Windows.Application;
 
 namespace TaskTip.ViewModels
 {
-    public class TaskBarIconViewModel:ObservableObject
+    public class TaskBarIconViewModel : ObservableObject
     {
         /// <summary>
         /// 显示悬浮窗
@@ -19,7 +19,14 @@ namespace TaskTip.ViewModels
             {
                 return new Lazy<RelayCommand>(() => new RelayCommand(() =>
                 {
-                    Application.Current.MainWindow = new MainWindow();
+                    if (GlobalVariable.IsFloatingImageStyle)
+                    {
+                        GlobalVariable.FloatingViewShow();
+                    }
+                    else
+                    {
+                        GlobalVariable.FloatingTitleStyleViewShow();
+                    }
                 })).Value;
             }
         }
@@ -32,9 +39,9 @@ namespace TaskTip.ViewModels
             get
             {
                 return new Lazy<RelayCommand>(() => new RelayCommand(() => {
-                    if (bool.Parse(ConfigurationManager.AppSettings.Get("IsFloatingImageStyle")))
+                    if (GlobalVariable.IsFloatingImageStyle)
                     {
-                        GlobalVariable.FloatingView.Hide();
+                        GlobalVariable.FloatingViewHide();
                     }
                     else
                     {

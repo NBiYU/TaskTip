@@ -4,10 +4,12 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Quartz;
 using System;
+using System.ComponentModel;
 using System.Configuration;
 using System.IO;
 using System.Text;
 using System.Windows;
+using CommunityToolkit.Mvvm.Messaging;
 using TaskTip.Models;
 using TaskTip.Services;
 using TaskTip.Views;
@@ -151,6 +153,10 @@ namespace TaskTip.ViewModels
                 SetProperty(ref taskTimePlan, value);
                 ToolTaskTime = taskTimePlan.ToString("yyyy-MM-dd HH:mm:ss");
 
+                CurrentTaskStatus = TaskTimePlan == DateTime.MinValue ? TaskStatus.Undefined :
+                    IsCompleted ? TaskStatus.Complete :
+                    TaskTimePlan > DateTime.Now ? TaskStatus.Runtime : TaskStatus.Timeout;
+
                 SaveDataText();
                 TaskTipTimer();
                 TaskDeleteTimer();
@@ -168,6 +174,13 @@ namespace TaskTip.ViewModels
             set => SetProperty(ref toolTaskTime,
                 "计划 " + value + "完成");
 
+        }
+
+        private TaskStatus _currentTaskStatus;
+        public TaskStatus CurrentTaskStatus
+        {
+            get => _currentTaskStatus;
+            set => SetProperty(ref _currentTaskStatus, value);
         }
 
 #pragma warning disable CS0169 // 从不使用字段“TaskListItemUserControlModel.completedDateTime”
@@ -206,13 +219,13 @@ namespace TaskTip.ViewModels
             }
 
 
-            if ((TaskTimePlan - DateTime.Now).TotalDays >= int.Parse(ConfigurationManager.AppSettings["DeleteTimes"]))
+            if ((TaskTimePlan - DateTime.Now).TotalDays >= GlobalVariable.DeleteTimes)
             {
                 MessageBox.Show("计划时间于或等于定时删除时间，请调整");
                 return;
             }
 
-            if (!File.Exists($@"{ConfigurationManager.AppSettings["TaskFilePath"]}\{GUID}.task"))
+            if (!File.Exists($@"{GlobalVariable.TaskFilePath}\{GUID}.task"))
             {
                 return;
             }
@@ -226,14 +239,14 @@ namespace TaskTip.ViewModels
                 .StartAt(TaskTimePlan)
                 .Build();
 
-            TaskSchedule?.Invoke((job, trigger), null);
+            WeakReferenceMessenger.Default.Send(new { Job = job, Trigger = trigger }, Const.CONST_SCHEDULE_CREATE);
 
         }
 
 
         private void TaskDeleteTimer()
         {
-            if (!File.Exists($@"{ConfigurationManager.AppSettings["TaskFilePath"]}\{GUID}.task"))
+            if (!File.Exists($@"{GlobalVariable.TaskFilePath}\{GUID}.task") && !GlobalVariable.IsEnableAutoDelete)
             {
                 return;
             }
@@ -243,10 +256,10 @@ namespace TaskTip.ViewModels
                 .Build();
 
             ITrigger trigger = TriggerBuilder.Create().WithIdentity($"DeleteTrigger{GUID}")
-                .StartAt(TaskTimePlan.AddDays(int.Parse(ConfigurationManager.AppSettings["DeleteTimes"])) < DateTime.Now
-                    ? DateTimeOffset.Now.AddMinutes(1) : TaskTimePlan.AddDays(int.Parse(ConfigurationManager.AppSettings["DeleteTimes"]))).Build();
+                .StartAt(TaskTimePlan.AddDays(GlobalVariable.DeleteTimes) < DateTime.Now
+                    ? DateTimeOffset.Now.AddMinutes(1) : TaskTimePlan.AddDays(GlobalVariable.DeleteTimes)).Build();
 
-            TaskSchedule?.Invoke((job, trigger), null);
+            WeakReferenceMessenger.Default.Send(new { Job = job, Trigger = trigger }, Const.CONST_SCHEDULE_CREATE);
         }
 
         #endregion
@@ -254,32 +267,12 @@ namespace TaskTip.ViewModels
 
         #endregion
 
-        #region 事件
-
-        /// <summary>
-        /// 通知时间调度添加
-        /// </summary>
-        public static event EventHandler TaskSchedule;
-
-        /// <summary>
-        /// 通知外部删除自身
-        /// </summary>
-        public static event EventHandler DeleteMsg;
-
-        ///// <summary>
-        ///// 通知外部状态变更
-        ///// </summary>
-        //public static event EventHandler IsCompleteMsg;
-
-        #endregion
-
-
         /// <summary>
         /// 删除事件推送
         /// </summary>
         public void DeleteSendMsg()
         {
-            DeleteMsg?.Invoke(GUID, null);
+            WeakReferenceMessenger.Default.Send(GUID, Const.CONST_DELETE_LISTITEM);
         }
 
 
@@ -292,7 +285,7 @@ namespace TaskTip.ViewModels
         {
             taskTime = new DateTimeGetView();
             taskTime.Guid.Text = GUID;
-            taskTime.CalendarWithClock.SelectedDateTime = TaskTimePlan == DateTime.MinValue ? DateTime.Now : TaskTimePlan;
+            taskTime.CalendarWithClock.Confirmed += SelectTaskPlanReceiver;
             taskTime.Show();
         }
 
@@ -301,11 +294,17 @@ namespace TaskTip.ViewModels
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void SelectTaskPlanReceiver(object sender, EventArgs e)
+        private void SelectTaskPlanReceiver()
         {
-            var recevie = sender.ToString().Split(';');
-            if (GUID == recevie[0])
-                TaskTimePlan = DateTime.Parse(recevie[1]) == DateTime.MinValue ? DateTime.Now : DateTime.Parse(recevie[1]);
+            //var recevie = taskTime.CalendarWithClock.SelectedDateTime.ToString().Split(';');
+            //if (GUID == recevie[0])
+            //{
+            //    TaskTimePlan = DateTime.Parse(recevie[1]);
+            //}
+
+            TaskTimePlan = DateTime.Parse(taskTime.CalendarWithClock.SelectedDateTime.ToString());
+
+
             taskTime?.Close();
         }
 
@@ -313,7 +312,7 @@ namespace TaskTip.ViewModels
 
         #region 功能函数
 
-        private void PropertySetValue(string propertyName,object model)
+        private void PropertySetValue(string propertyName, object model)
         {
             try
             {
@@ -340,8 +339,8 @@ namespace TaskTip.ViewModels
             if (isInitialize)
                 return;
             isInitialize = true;
-            var path = ConfigurationManager.AppSettings.Get("TaskFilePath") + "\\" + GUID + ConfigurationManager.AppSettings.Get("EndFileFormat");
-            TaskTimePlan = TaskTimePlan == DateTime.MinValue ? DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")) : taskTimePlan;
+            var path = GlobalVariable.TaskFilePath + "\\" + GUID + GlobalVariable.EndFileFormat;
+            TaskTimePlan = taskTimePlan;
 
 
             if (IsCompleted)
@@ -369,7 +368,7 @@ namespace TaskTip.ViewModels
         /// </summary>
         private void ReadFileTextData()
         {
-            var path = ConfigurationManager.AppSettings.Get("TaskFilePath") + "\\" + GUID + ConfigurationManager.AppSettings.Get("EndFileFormat");
+            var path = GlobalVariable.TaskFilePath + "\\" + GUID + GlobalVariable.EndFileFormat;
 
             if (File.Exists(path))
             {
@@ -389,10 +388,10 @@ namespace TaskTip.ViewModels
                     isInitialize = true;
                     foreach (var property in readJson.GetType().GetProperties())
                     {
-                        PropertySetValue(property.Name,readJson);
+                        PropertySetValue(property.Name, readJson);
                     }
 
-                    
+
                 }
                 catch (Exception ex)
                 {
@@ -435,18 +434,31 @@ namespace TaskTip.ViewModels
         #endregion
         #endregion
 
+
+        private void InitRegister()
+        {
+            //WeakReferenceMessenger.Default.Register<string,string>(this,Const.CONST_DATETIME_RETURN,
+            //    (obj, msg) => { SelectTaskPlanReceiver(msg);});
+        }
+
         /// <summary>
         /// Model初始化
         /// </summary>
         public void InitUserControlModel()
         {
+
             VisibilityEditText = Visibility.Collapsed;
             CompleteVisibility = Visibility.Collapsed;
 
+            //CurrentTaskStatus = TaskTimePlan == DateTime.MinValue ? TaskStatus.Undefined :
+            //    IsCompleted  ? TaskStatus.Complete :
+            //    TaskTimePlan > DateTime.Now ? TaskStatus.Runtime: TaskStatus.Timeout;
+
             DelCommand = new RelayCommand(DeleteSendMsg);
             SelectTaskPlanCommand = new RelayCommand(SelectTaskPlanHandler);
-            DateTimeGetViewModel.DateTimeCalendarEvent += SelectTaskPlanReceiver;
+            InitRegister();
         }
+
         public TaskListItemUserControlModel()
         {
             GUID = Guid.NewGuid().ToString();
@@ -461,4 +473,15 @@ namespace TaskTip.ViewModels
         }
     }
 
+    public enum TaskStatus
+    {
+        [Description("完成")]
+        Complete,
+        [Description("超时")]
+        Timeout,
+        [Description("执行中")]
+        Runtime,
+        [Description("未定义")]
+        Undefined
+    }
 }

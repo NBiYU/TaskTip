@@ -1,0 +1,76 @@
+﻿<Page x:Class="TaskTip.Pages.RecordPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:TaskTip.Pages"
+      xmlns:viewModel="clr-namespace:TaskTip.ViewModels"
+      xmlns:view ="clr-namespace:TaskTip.UserControls"
+      xmlns:hc="https://handyorg.github.io/handycontrol"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      
+      Title="RecordPage">
+    <Page.Resources>
+        <ResourceDictionary>
+            <viewModel:RecordPageModel x:Key="RecordPageModel"/>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <Grid Margin="0,5" DataContext="{Binding Source={StaticResource RecordPageModel}}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0">
+            <hc:ScrollViewer  Visibility="{Binding SidewaysVisibility}"   x:Name="MenuG">
+                <view:MenuItemUserControl  x:Name="MenuItemRoot" HorizontalAlignment="Left" />
+            </hc:ScrollViewer>
+        </Grid>
+
+        <Grid Grid.Column="1"  Margin="5,0,5,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <ToggleButton Grid.Column="0" Command="{Binding ShowSideMenuCommand}" >三</ToggleButton>
+                <TextBox Grid.Column="1" Margin="5,5,5,5" FontSize="15" FontWeight="DemiBold" 
+                         Padding="10,0,0,0" IsEnabled="{Binding OtherControlIsEnable}"
+                         Text="{Binding CurrentTitle}" TabIndex="0" KeyDown="UIElement_OnKeyDown">
+                    <hc:Interaction.Triggers>
+                        <hc:EventTrigger EventName="TextChanged">
+                            <hc:InvokeCommandAction Command="{Binding EditTextChangedCommand}"></hc:InvokeCommandAction>
+                        </hc:EventTrigger>
+                    </hc:Interaction.Triggers>
+                </TextBox>
+                <Button Grid.Column="2" IsEnabled="{Binding OtherControlIsEnable}" Content="保存" Command="{Binding SaveCommand}"></Button>
+                <Border Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,0,0" 
+                        Height="5" Width="5" CornerRadius="50,50,50,50" Visibility="{Binding TextChangedVisibility}">
+                    <Border.Background>
+                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                            <GradientStop Color="Red"></GradientStop>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                </Border>
+            </Grid>
+            <Grid Grid.Row="1" IsEnabled="{Binding OtherControlIsEnable}">
+                <TextBox AcceptsReturn="True" AcceptsTab="True" VerticalScrollBarVisibility="Auto" Text="{Binding CurrentText}"
+                         HorizontalContentAlignment="Left" VerticalContentAlignment="Top" TabIndex="1" TextWrapping="Wrap">
+                    <hc:Interaction.Triggers>
+                        <hc:EventTrigger EventName="TextChanged">
+                            <hc:InvokeCommandAction Command="{Binding EditTextChangedCommand}"></hc:InvokeCommandAction>
+                        </hc:EventTrigger>
+                    </hc:Interaction.Triggers>
+                </TextBox>
+            </Grid>
+        </Grid>
+    </Grid>
+</Page>

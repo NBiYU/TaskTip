@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using TaskTip.Services;
 using TaskTip.Views;
 
@@ -31,12 +32,12 @@ namespace TaskTip.ViewModels
         /// <summary>
         /// 待完成的任务集合
         /// </summary>
-        private ObservableCollection<TaskListItemUserControl> taskMenoList;
+        private ObservableCollection<TaskListItemUserControl> taskList;
 
-        public ObservableCollection<TaskListItemUserControl> TaskMenoList
+        public ObservableCollection<TaskListItemUserControl> TaskList
         {
-            get => taskMenoList;
-            set { SetProperty(ref taskMenoList, value); }
+            get => taskList;
+            set { SetProperty(ref taskList, value); }
         }
 
 
@@ -50,7 +51,7 @@ namespace TaskTip.ViewModels
         /// <returns></returns>
         private TaskListItemUserControl AddTaskListItemControl(string guid)
         {
-            if(string.IsNullOrEmpty(guid)) guid = Guid.NewGuid().ToString();
+            if (string.IsNullOrEmpty(guid)) guid = Guid.NewGuid().ToString();
             var taskControl = new TaskListItemUserControl();
             var taskControlModel = taskControl.TaskGrid.DataContext as TaskListItemUserControlModel;
             taskControlModel.GUID = guid;
@@ -71,21 +72,18 @@ namespace TaskTip.ViewModels
         {
             var taskControl = (TaskListItemUserControl)sender;
             Keyboard.ClearFocus();
-            for (int i = 0; i < taskMenoList.Count; i++)
+            for (int i = 0; i < taskList.Count; i++)
             {
-                if (TaskMenoList[i].Guid.Text == taskControl.Guid.Text)
+                if (TaskList[i].Guid.Text == taskControl.Guid.Text)
                 {
-                    TaskMenoList[i].EditTaskText.Visibility = Visibility.Visible;
-                    if (TaskMenoList[i].EditTaskTitle.IsFocused)
-                        Keyboard.Focus(TaskMenoList[i].EditTaskTitle);
+                    TaskList[i].EditTaskText.Visibility = Visibility.Visible;
+                    if (TaskList[i].EditTaskTitle.IsFocused)
+                        Keyboard.Focus(TaskList[i].EditTaskTitle);
                     continue;
                 }
-                TaskMenoList[i].EditTaskText.Visibility = Visibility.Collapsed;
+                TaskList[i].EditTaskText.Visibility = Visibility.Collapsed;
             }
         }
-
-
-        public static event EventHandler TaskListChanged;
 
         #region 控件指令
         /// <summary>
@@ -108,8 +106,8 @@ namespace TaskTip.ViewModels
         /// </summary>
         private void AddTaskList()
         {
-            TaskMenoList.Insert(0, AddTaskListItemControl(Guid.NewGuid().ToString()));
-            TaskListChanged?.Invoke(TaskMenoList, null);
+            TaskList.Insert(0, AddTaskListItemControl(Guid.NewGuid().ToString()));
+            WeakReferenceMessenger.Default.Send(TaskList, Const.CONST_TASK_LIST_CHANGED);
         }
 
 
@@ -118,8 +116,8 @@ namespace TaskTip.ViewModels
         /// </summary>
         private void SendDailyMessage()
         {
-            var dirPath = ConfigurationManager.AppSettings["TaskFilePath"];
-            var outEndTime = ConfigurationManager.AppSettings["DailyTaskEndTime"];
+            var dirPath = GlobalVariable.TaskFilePath;
+            var outEndTime = GlobalVariable.DailyTaskEndTime;
 
             if (!Directory.Exists(dirPath))
             {
@@ -130,7 +128,7 @@ namespace TaskTip.ViewModels
             var filePaths = Directory.GetFiles(dirPath);
             var todayTask = new List<string>();
             var tomorrowTask = new List<string>();
-            var isCreateTomorrowPlan = bool.Parse(ConfigurationManager.AppSettings["IsCreateTomorrowPlan"]);
+            var isCreateTomorrowPlan = GlobalVariable.IsCreateTomorrowPlan;
 
             //从文件中获取当天的任务内容
             foreach (var filePath in filePaths)
@@ -189,15 +187,15 @@ namespace TaskTip.ViewModels
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void DeleteListItem(object sender, EventArgs e)
+        private void DeleteListItem(string sender)
         {
-            var path = ConfigurationManager.AppSettings.Get("TaskFilePath") + "\\" + (string)sender + ConfigurationManager.AppSettings.Get("EndFileFormat");
+            var path = GlobalVariable.TaskFilePath + "\\" + (string)sender + GlobalVariable.EndFileFormat;
 
 
             try
             {
-                var tipJovKey = new JobKey($"Tip{sender.ToString()}");
-                var deleteJovKey = new JobKey($"Delete{sender.ToString()}");
+                var tipJovKey = new JobKey($"Tip{sender}");
+                var deleteJovKey = new JobKey($"Delete{sender}");
                 if (scheduler.CheckExists(tipJovKey).Result)
                 {
                     scheduler.DeleteJob(tipJovKey);
@@ -208,8 +206,8 @@ namespace TaskTip.ViewModels
                     scheduler.DeleteJob(deleteJovKey);
                 }
 
-                TaskMenoList.Remove(TaskMenoList.FirstOrDefault(x => x.Guid.Text == sender.ToString()));
-                TaskListChanged?.Invoke(TaskMenoList, null);
+                TaskList.Remove(TaskList.FirstOrDefault(x => x.Guid.Text == sender));
+                WeakReferenceMessenger.Default.Send(TaskList, Const.CONST_TASK_LIST_CHANGED);
 
             }
             catch
@@ -217,8 +215,8 @@ namespace TaskTip.ViewModels
                 //抛出异常一般为定时删除任务存在线程占用，所以开个线程来进行删除
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    TaskMenoList.Remove(TaskMenoList.FirstOrDefault(x => x.Guid.Text == sender.ToString() && x.IsCompleted.IsChecked == true));
-                    TaskListChanged?.Invoke(TaskMenoList, null);
+                    TaskList.Remove(TaskList.FirstOrDefault(x => x.Guid.Text == sender && x.IsCompleted.IsChecked == true));
+                    WeakReferenceMessenger.Default.Send(TaskList, Const.CONST_TASK_LIST_CHANGED);
                 });
             }
 
@@ -234,12 +232,10 @@ namespace TaskTip.ViewModels
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void AddTaskScheduleJob(object sender, EventArgs e)
+        private void AddTaskScheduleJob(dynamic sender)
         {
-            IJobDetail job;
-            ITrigger trigger;
-
-            (job, trigger) = ((IJobDetail, ITrigger))sender;
+            IJobDetail job = sender.Job;
+            ITrigger trigger = sender.Trigger;
 
             string errorMsg = scheduler.CheckExists(job.Key).Result
                 ? scheduler.DeleteJob(job.Key).Result ? "" : $"替换{job.Key}作业异常"
@@ -256,22 +252,22 @@ namespace TaskTip.ViewModels
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void IsCompleted(object sender, EventArgs e)
+        private void IsCompleted(object sender)
         {
-            var isCompleteItem = taskMenoList.FirstOrDefault(x => x.Guid.Text == sender.ToString());
+            var isCompleteItem = TaskList.FirstOrDefault(x => x.Guid.Text == sender.ToString());
 
 
             if (isCompleteItem != null)
             {
-                TaskListChanged?.Invoke(TaskMenoList, null);
+                WeakReferenceMessenger.Default.Send(TaskList, Const.CONST_TASK_LIST_CHANGED);
                 SortList();
             }
         }
 
         private void SortList()
         {
-            TaskMenoList =
-                new ObservableCollection<TaskListItemUserControl>(TaskMenoList.OrderBy(x => x.IsCompleted.IsChecked));
+            TaskList =
+                new ObservableCollection<TaskListItemUserControl>(TaskList.OrderBy(x => x.IsCompleted.IsChecked));
         }
 
 
@@ -283,7 +279,7 @@ namespace TaskTip.ViewModels
         {
 
             if (string.IsNullOrEmpty(dirPath))
-                return ;
+                return;
 
             if (!Directory.Exists(dirPath))
                 Directory.CreateDirectory(dirPath);
@@ -295,7 +291,7 @@ namespace TaskTip.ViewModels
 
             var taskListControl = new List<TaskListItemUserControl>();
 
-            var filePaths = Directory.GetFiles(dirPath,"*.task");
+            var filePaths = Directory.GetFiles(dirPath, "*.task");
 
 
             foreach (var filePath in filePaths)
@@ -316,13 +312,23 @@ namespace TaskTip.ViewModels
                 taskListControl.Add(AddTaskListItemControl(Guid.NewGuid().ToString()));
             }
 
-            TaskMenoList = new ObservableCollection<TaskListItemUserControl>(taskListControl);
+            TaskList = new ObservableCollection<TaskListItemUserControl>(taskListControl);
         }
+
+        private void InitRegister()
+        {
+            WeakReferenceMessenger.Default.Register<string, string>(this, Const.CONST_TASK_RELOAD, (obj, msg) => { LoadReadTaskFile(msg); });
+            WeakReferenceMessenger.Default.Register<string, string>(this, Const.CONST_DELETE_LISTITEM, (obj, msg) => { DeleteListItem(msg); });
+            WeakReferenceMessenger.Default.Register<string, string>(this, Const.CONST_COMPLETE_TASK_GUID, (obj, msg) => { IsCompleted(msg); });
+            WeakReferenceMessenger.Default.Register<dynamic, string>(this, Const.CONST_SCHEDULE_CREATE,
+                (obj, msg) => { AddTaskScheduleJob(msg); });
+        }
+
 
         public TaskListPageModel()
         {
             //需要增加路径不存在判断
-            taskMenoList = new ObservableCollection<TaskListItemUserControl>();
+            taskList = new ObservableCollection<TaskListItemUserControl>();
 
 
             schedulerFactory = new StdSchedulerFactory();
@@ -332,19 +338,14 @@ namespace TaskTip.ViewModels
             SendDailyMessageCommand = new RelayCommand(SendDailyMessage);
             AddTaskListCommand = new RelayCommand(AddTaskList);
 
-
-            TaskListItemUserControlModel.DeleteMsg += DeleteListItem;
-            DeleteTaskJob.DeleteMsg += DeleteListItem;
-            TaskListItemUserControl.IsCompleteMsg += IsCompleted;
-            TaskListItemUserControlModel.TaskSchedule += AddTaskScheduleJob;
-            CustomSetViewModel.TaskLoadChanged += (sender, args) => LoadReadTaskFile(sender.ToString());
-
             taskMenoWidth = SystemParameters.WorkArea.Height / 3;
 
-            LoadReadTaskFile(ConfigurationManager.AppSettings["TaskFilePath"]!);
+            InitRegister();
+
+            LoadReadTaskFile(GlobalVariable.TaskFilePath!);
             SortList();
 
-            TaskListChanged?.Invoke(TaskMenoList, EventArgs.Empty);
+            WeakReferenceMessenger.Default.Send(TaskList, Const.CONST_TASK_LIST_CHANGED);
         }
     }
 }

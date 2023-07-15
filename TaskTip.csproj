@@ -9,12 +9,15 @@
 
 
   <ItemGroup>
+    <None Remove="appsettings.json" />
     <None Remove="Resources\Clock.png" />
     <None Remove="Resources\Close.png" />
     <None Remove="Resources\ErrorImage.png" />
     <None Remove="Resources\favicon.ico" />
+    <None Remove="Resources\InitImage.png" />
     <None Remove="Resources\Minimize.png" />
     <None Remove="Resources\R-C.gif" />
+    <None Remove="Resources\Refresh.png" />
     <None Remove="Resources\Save.png" />
     <None Remove="Resources\Send.png" />
     <None Remove="Resources\Setting.png" />
@@ -34,12 +37,26 @@
     </COMReference>
   </ItemGroup>
 
+
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0" />
     <PackageReference Include="HandyControl" Version="3.4.0" />
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0-preview.6.23329.7" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0-preview.6.23329.7" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0-preview.6.23329.7" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Quartz" Version="3.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HttpWebApi\HttpWebApi.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -55,10 +72,16 @@
     <Resource Include="Resources\favicon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\InitImage.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\Minimize.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\R-C.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Refresh.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Save.png">
