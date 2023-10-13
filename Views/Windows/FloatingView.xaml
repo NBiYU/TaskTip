@@ -1,0 +1,38 @@
+﻿<Window x:Class="TaskTip.Views.FloatingView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TaskTip.Views"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:viewModels="clr-namespace:TaskTip.ViewModels"
+        xmlns:windowModel="clr-namespace:TaskTip.ViewModels.WindowModel"
+        mc:Ignorable="d"
+        WindowStyle="None" Background="#00000000" 
+        Topmost="True"  ResizeMode="NoResize" Icon="{StaticResource Favicon}"
+        AllowsTransparency="True" ShowInTaskbar="False"  
+        MouseLeftButtonDown="FloatingView_OnMouseLeftButtonDown"
+>
+
+    <Window.Resources>
+        <windowModel:FloatingViewModel x:Key="FloatingViewModel"></windowModel:FloatingViewModel>
+    </Window.Resources>
+
+    <hc:TransitioningContentControl  
+        DataContext="{Binding Source={StaticResource FloatingViewModel}}" >
+        <Border  CornerRadius="10,10,10,10" >
+
+            <Image x:Name="FloatingBgImage" 
+                   Source="{Binding ImagePath}" Stretch="Fill"  
+            >
+                <Image.Clip>
+                    <RectangleGeometry 
+                        RadiusX="{Binding RadiusXValue}" RadiusY="{Binding RadiusYValue}" 
+                        Rect="{Binding RectangleGeometryValue}" 
+                    >
+                    </RectangleGeometry>
+                </Image.Clip>
+            </Image>
+        </Border>
+    </hc:TransitioningContentControl>
+</Window>

@@ -1,0 +1,55 @@
+﻿<Page x:Class="TaskTip.Views.FictionPage.FictionCategoryPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:viewModel="clr-namespace:TaskTip.ViewModels.FictionPageVM"
+      xmlns:local="clr-namespace:TaskTip.Views.FictionPage" 
+      xmlns:hc="https://handyorg.github.io/handycontrol" xmlns:system="clr-namespace:System;assembly=mscorlib"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="FictionCategoryPage">
+
+    <Page.DataContext >
+        <viewModel:FictionCategoryVM />
+    </Page.DataContext>
+    
+    <Grid>
+        
+        <TabControl x:Name="TabSelect" Background="Transparent" SelectedIndex="0"  ItemsSource="{Binding Headers}" TabStripPlacement="Left">
+            <hc:Interaction.Triggers>
+                <hc:EventTrigger EventName="SelectionChanged">
+                    <hc:InvokeCommandAction 
+                        Command="{Binding TabSelectChangedCommand}" 
+                        CommandParameter="{Binding ElementName=TabSelect,Path=SelectedItem}"/>
+                </hc:EventTrigger>
+            </hc:Interaction.Triggers>
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+            <TabControl.ContentTemplate>
+                <DataTemplate>
+                    <Grid DataContext="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Page}}">
+                        <ScrollViewer  x:Name="ListScroll" >
+                            <ListBox  Background="Transparent" BorderThickness="0" 
+                                      hc:ScrollViewerAttach.IsDisabled="True"
+                                      ItemContainerStyle="{StaticResource ListItemNoneSelect}"
+                                      ItemsSource="{Binding CategoriaContents}" >
+                            </ListBox>
+                            <hc:Interaction.Triggers>
+                                <hc:EventTrigger EventName="ScrollChanged">
+                                    <hc:InvokeCommandAction Command="{Binding ScrollChangedCommand}" CommandParameter="{Binding ElementName=ListScroll}"></hc:InvokeCommandAction>
+                                </hc:EventTrigger>
+                            </hc:Interaction.Triggers>
+                        </ScrollViewer>
+                        <hc:LoadingCircle  Visibility="{Binding LoadingVisibility}" />
+                        <TextBlock Foreground="Red" FontSize="15" HorizontalAlignment="Center" Background="Transparent"  VerticalAlignment="Bottom"  Text="{Binding ListDesc}" Visibility="{Binding DescVisibility}"/>
+                    </Grid>
+
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+        </TabControl>
+    </Grid>
+</Page>

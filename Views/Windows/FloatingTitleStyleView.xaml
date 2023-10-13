@@ -1,0 +1,117 @@
+﻿<Window x:Class="TaskTip.Views.FloatingTitleStyleView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:TaskTip.ViewModels"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:converts="clr-namespace:TaskTip.ViewModels.Converters"
+        xmlns:windowModel="clr-namespace:TaskTip.ViewModels.WindowModel"
+        WindowStyle="None" ShowInTaskbar="False" Topmost="True" AllowsTransparency="True"  Background="Transparent"
+        MouseLeftButtonDown="FloatingTitleView_OnMouseLeftButtonDown" Icon="{StaticResource Favicon}">
+    <Window.DataContext>
+        <windowModel:FloatingTitleViewModel/>
+    </Window.DataContext>
+    <Window.Resources>
+       
+        <converts:ThemeColorConvert x:Key="ThemeColorConvert"></converts:ThemeColorConvert>
+    </Window.Resources>
+    <Grid Width="400" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0" Margin="13,15,13,0" Height="60"
+                CornerRadius="12,12,12,12" BorderBrush="{Binding TitleBorderBrush}"  BorderThickness="2" Background="{DynamicResource ThemeBackgroundColor}">
+            <Grid >
+                <Grid.ColumnDefinitions>
+                    <!--任务数量，收起(扩展)，设置-->
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Margin="10" Text="{Binding Title}" FontSize="20" VerticalAlignment="Center"></TextBlock>
+                <Button Grid.Column="1" Margin="10"  Width="40" Height="40" Padding="0" BorderThickness="0" Background="Transparent"
+                    Command="{Binding ButtonVisibilityChangedCommand}" >
+                    <hc:AnimationPath x:Name="ShowTaskAnimationPath" VerticalAlignment="Center" Duration="0:0:3"   Stretch="Uniform"  StrokeThickness="2" Stroke="{DynamicResource InfoBrush}" Data="{Binding ShowButtonGeometry}"/>
+                </Button>
+                <Button Grid.Column="2" Margin="10" Width="40" Height="40" Padding="5" BorderThickness="0" Command="{Binding ShowSetCommand}" Background="Transparent">
+                    <!--<Image Source="pack://application:,,,/Resources/Setting.png"></Image>-->
+                    <hc:AnimationPath x:Name="SettingAnimationPath" VerticalAlignment="Center" Duration="0:0:3"   Stretch="Uniform"  StrokeThickness="2" Stroke="{DynamicResource InfoBrush}" 
+                                      Data="M3990 7490 c-157 -12 -334 -37 -374 -54 -50 -21 -114 -83 -140 -135
+                                            -13 -25 -63 -160 -112 -298 l-89 -253 -35 -11 c-19 -7 -76 -29 -126 -51 l-91
+                                            -39 -269 128 -269 128 -80 0 c-96 -1 -121 -12 -250 -114 -226 -179 -503 -467
+                                            -625 -649 -40 -61 -57 -140 -43 -206 6 -28 66 -166 133 -307 l122 -257 -52
+                                            -128 -52 -129 -252 -89 c-285 -101 -328 -121 -373 -168 -48 -50 -69 -110 -90
+                                            -253 -25 -180 -25 -615 0 -795 35 -241 64 -273 353 -377 109 -39 236 -84 280
+                                            -99 l81 -28 44 -109 c24 -60 48 -119 52 -130 7 -17 -17 -76 -112 -276 -132
+                                            -276 -147 -318 -137 -387 9 -70 36 -120 123 -229 211 -265 525 -559 680 -636
+                                            58 -29 69 -31 135 -27 68 5 90 14 336 131 l264 126 91 -39 c51 -21 108 -45
+                                            128 -53 35 -14 37 -19 98 -188 34 -96 78 -221 99 -278 30 -84 47 -115 85 -157
+                                            26 -29 65 -59 87 -68 94 -38 463 -72 665 -62 178 9 390 34 447 52 64 21 122
+                                            65 151 116 14 24 67 162 119 307 71 202 98 266 113 272 11 4 69 28 128 53
+                                            l108 44 267 -126 267 -127 80 0 c102 0 132 15 285 137 232 187 555 540 617
+                                            674 22 48 25 66 21 123 -5 59 -18 93 -132 333 l-126 267 40 98 c23 54 47 112
+                                            54 128 12 28 29 36 222 104 344 122 358 128 405 174 57 57 75 102 94 241 36
+                                            259 36 572 0 832 -19 140 -39 188 -104 246 -43 39 -76 53 -328 143 l-281 100
+                                            -12 35 c-7 19 -30 76 -51 126 l-40 91 127 267 c135 288 149 334 125 423 -45
+                                            166 -574 712 -798 824 -57 29 -69 31 -131 27 -62 -5 -92 -16 -335 -132 l-266
+                                            -126 -93 39 c-51 22 -109 46 -128 54 -33 13 -38 21 -72 118 -163 465 -176 494
+                                            -248 544 -54 37 -105 51 -265 68 -183 21 -402 27 -545 17z m435 -572 c4 -4 48
+                                            -120 97 -259 49 -138 101 -269 115 -290 38 -58 84 -87 191 -123 117 -40 250
+                                            -94 343 -141 92 -47 157 -60 217 -46 26 7 157 64 290 128 l244 115 41 -38
+                                            c112 -103 174 -166 239 -236 l70 -78 -116 -243 c-63 -134 -120 -265 -126 -292
+                                            -14 -63 -1 -123 45 -214 47 -94 101 -226 141 -345 37 -108 66 -154 122 -191
+                                            20 -13 151 -65 291 -114 140 -50 257 -93 260 -97 8 -8 8 -481 -1 -489 -4 -4
+                                            -121 -48 -260 -97 -141 -50 -271 -103 -295 -119 -55 -38 -82 -86 -134 -234
+                                            -23 -66 -68 -176 -101 -245 -71 -151 -83 -195 -68 -264 6 -28 63 -160 126
+                                            -293 l115 -243 -58 -67 c-63 -72 -282 -283 -294 -283 -4 0 -92 41 -195 91
+                                            -300 144 -317 150 -389 151 -59 0 -77 -6 -203 -65 -77 -37 -194 -85 -261 -108
+                                            -143 -49 -202 -85 -238 -146 -14 -24 -65 -156 -113 -291 l-88 -247 -38 -7
+                                            c-49 -9 -356 -10 -417 -2 l-45 6 -87 247 c-48 135 -98 265 -111 288 -39 68
+                                            -84 97 -233 148 -75 26 -192 74 -261 107 -140 66 -187 79 -257 68 -28 -5 -149
+                                            -56 -292 -124 -135 -64 -248 -115 -252 -114 -19 7 -196 178 -269 258 l-79 89
+                                            115 241 c63 133 119 262 125 286 18 70 4 128 -65 274 -36 74 -83 189 -106 255
+                                            -22 66 -52 137 -65 157 -48 73 -70 83 -461 222 l-161 57 -7 82 c-8 104 -8 230
+                                            0 333 l7 82 246 87 c280 100 294 106 339 149 43 40 55 63 103 204 22 64 71
+                                            179 107 257 63 131 67 144 67 210 0 76 8 56 -179 447 l-65 137 88 98 c74 82
+                                            188 192 252 240 13 11 57 -7 256 -102 132 -63 262 -119 287 -125 71 -16 119
+                                            -4 276 70 80 38 195 85 257 105 122 40 179 74 218 133 14 21 66 153 116 294
+                                            l92 257 36 4 c56 7 449 3 456 -5z 
+                                            M4050 5574 c-14 -2 -56 -9 -95 -15 -161 -26 -357 -106 -513 -211 -99
+                                            -66 -273 -241 -340 -343 -96 -145 -162 -302 -199 -475 -13 -63 -18 -128 -18
+                                            -255 0 -127 5 -192 18 -255 113 -526 507 -917 1037 -1026 105 -22 352 -25 460
+                                            -5 171 31 363 108 512 208 97 65 250 213 320 310 117 163 200 358 234 553 23
+                                            131 15 389 -16 510 -61 244 -162 430 -329 604 -248 258 -546 391 -901 401 -80
+                                            2 -156 2 -170 -1z m225 -564 c389 -56 663 -386 642 -775 -22 -397 -339 -696
+                                            -737 -696 -197 0 -362 66 -503 200 -483 461 -174 1256 498 1280 17 0 62 -4
+                                            100 -9z"/>
+                </Button>
+            </Grid>
+        </Border>
+
+        <Border CornerRadius="0,0,12,12" BorderBrush="{Binding TitleBorderBrush}" BorderThickness="2"
+                Grid.Row="1" Visibility="{Binding ButtonVisibility}" Margin="13,-14,13,13">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0.5,1" EndPoint="0.5,0">
+                    <GradientStop Color="White"></GradientStop>
+                </LinearGradientBrush>
+            </Border.Background>
+            <TabControl Background="Transparent">
+                <TabItem Header="任务">
+                    <Frame Source="../../Views/Pages/TaskListPage.xaml" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+                </TabItem>
+                <!--<TabItem Header="记事">
+                    <Frame Source="../Pages/MenoListPage.xaml" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+                </TabItem>-->
+                <TabItem Header="记录">
+                    <Frame Content="{Binding FrameRecordPage}"></Frame>
+                </TabItem>
+                <TabItem Header="乐子" x:Name="HappyEvent">
+                    <Frame Source="../WebApiClientUI/HappyPage.xaml"></Frame>
+                </TabItem>
+            </TabControl>
+        </Border>
+    </Grid>
+</Window>
+

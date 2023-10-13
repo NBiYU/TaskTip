@@ -1,0 +1,27 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <BitmapImage x:Key="ArrowsFullscreen" UriSource="/Resources/Sources/Image/arrows_fullscreen.png"></BitmapImage>
+    <BitmapImage x:Key="Clock" UriSource="/Resources/Sources/Image/Clock.png"></BitmapImage>
+    <BitmapImage x:Key="Close" UriSource="/Resources/Sources/Image/Close.png"></BitmapImage>
+    <BitmapImage x:Key="ErrorImage" UriSource="/Resources/Sources/Image/ErrorImage.png"></BitmapImage>
+    <BitmapImage x:Key="Favicon" UriSource="/Resources/Sources/Image/favicon.ico"></BitmapImage>
+    <BitmapImage x:Key="Fullscreen" UriSource="/Resources/Sources/Image/fullscreen.png"></BitmapImage>
+    <BitmapImage x:Key="InitImage" UriSource="/Resources/Sources/Image/InitImage.png"></BitmapImage>
+    <BitmapImage x:Key="Minimize" UriSource="/Resources/Sources/Image/Minimize.png"></BitmapImage>
+    <BitmapImage x:Key="Refresh" UriSource="/Resources/Sources/Image/Refresh.png"></BitmapImage>
+    <BitmapImage x:Key="Save" UriSource="/Resources/Sources/Image/Save.png"></BitmapImage>
+    <BitmapImage x:Key="Send" UriSource="/Resources/Sources/Image/Send.png"></BitmapImage>
+    <BitmapImage x:Key="Setting" UriSource="/Resources/Sources/Image/Setting.png"></BitmapImage>
+    <BitmapImage x:Key="Trash" UriSource="/Resources/Sources/Image/bin_delete_file_garbage_recycle_remove_trash.png"></BitmapImage>
+    <BitmapImage x:Key="Move" UriSource="/Resources/Sources/Image/Copy_Paste_Move_Square.png"></BitmapImage>
+    <BitmapImage x:Key="Rename" UriSource="/Resources/Sources/Image/rename_regular_icon.png"></BitmapImage>
+    <BitmapImage x:Key="File" UriSource="/Resources/Sources/Image/fileinterfacesymboloftextpapersheet.png"></BitmapImage>
+    <BitmapImage x:Key="OpenFolder" UriSource="/Resources/Sources/Image/archive-archives-document-folder-open.png"></BitmapImage>
+    <BitmapImage x:Key="Folder" UriSource="/Resources/Sources/Image/line-60_icon-icons.com.png"></BitmapImage>
+    <BitmapImage x:Key="Searching" UriSource="/Resources/Sources/Image/SearchNetwork.gif"></BitmapImage>
+    <BitmapImage x:Key="Search" UriSource="/Resources/Sources/Image/Search.png"></BitmapImage>
+    <BitmapImage x:Key="Downloading" UriSource="/Resources/Sources/Image/Downloading.gif"></BitmapImage>
+    <BitmapImage x:Key="WaitDownload" UriSource="/Resources/Sources/Image/WaitDownload.png"></BitmapImage>
+    <BitmapImage x:Key="Error" UriSource="/Resources/Sources/Image/Error.png"></BitmapImage>
+    <BitmapImage x:Key="Success" UriSource="/Resources/Sources/Image/Success.png"></BitmapImage>
+</ResourceDictionary>

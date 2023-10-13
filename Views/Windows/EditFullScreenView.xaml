@@ -1,0 +1,26 @@
+﻿<Window x:Class="TaskTip.Views.Windows.EditFullScreenView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TaskTip.Views.Windows"
+        xmlns:viewModel="clr-namespace:TaskTip.ViewModels"
+        xmlns:windowModel="clr-namespace:TaskTip.ViewModels.WindowModel"
+        xmlns:converts="clr-namespace:TaskTip.ViewModels.Converters"
+        mc:Ignorable="d"
+        Title="全屏编辑" Height="450" Width="800" Icon="{StaticResource Favicon}" WindowStyle="None" Background="Transparent" AllowsTransparency="True"
+        MouseLeftButtonDown="EditFullScreenView_OnMouseLeftButtonDown">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <windowModel:EditFullScreenViewModel x:Key="EditFullScreenViewModel"/>
+            <converts:ThemeColorConvert x:Key="ThemeColorConvert"></converts:ThemeColorConvert>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid DataContext="{Binding Source={StaticResource EditFullScreenViewModel}}">
+        <Border BorderThickness="1" BorderBrush="Gray"  CornerRadius="7,7,10,10" Background="{DynamicResource ThemeBackgroundColor}">
+            <Frame Content="{Binding FrameRecordPage}"></Frame>
+        </Border>
+    </Grid>
+</Window>

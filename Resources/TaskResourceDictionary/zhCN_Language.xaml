@@ -1,0 +1,10 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=System.Runtime">
+    <system:String x:Key="SoftWareExplain">本软件为开源代码，请勿商用，违者必究</system:String>
+    <system:String x:Key="Fictions">书架</system:String>
+    <system:String x:Key="FictionCategory">分类</system:String>
+    <system:String x:Key="FictionSearch">搜索</system:String>
+    <system:String x:Key="FictionAccount">个人</system:String>
+
+</ResourceDictionary>

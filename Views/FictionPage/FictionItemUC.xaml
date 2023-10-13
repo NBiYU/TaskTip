@@ -1,0 +1,59 @@
+﻿<UserControl x:Class="TaskTip.Views.FictionPage.FictionItemUC"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TaskTip.Views.FictionPage"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid HorizontalAlignment="Stretch"  Height="50" MouseLeftButtonDown="ButtonBase_OnClick" >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.2*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Grid.ToolTip>
+            <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="书名："/>
+                    <TextBlock x:Name="BookNameToolTip"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="作者名："/>
+                    <TextBlock x:Name="AuthorNameToolTip"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="简介："/>
+                    <TextBlock x:Name="DescToolTip"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="最后更新时间："/>
+                    <TextBlock x:Name="LastUpdateTimeToolTip"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid.ToolTip>
+        <Image Grid.Column="0" x:Name="CoverImage" Source="{StaticResource ErrorImage}" MaxHeight="50" MaxWidth="50"/>
+        <Grid Grid.Column="1" Margin="5,0,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="FictionName" Grid.Column="0" FontSize="12" FontWeight="Bold" Text="FictionName"/>
+                <TextBlock x:Name="AuthorName" Grid.Column="1" Text="Author" Margin="5,0,0,0"/>
+            </Grid>
+            <TextBlock x:Name="LastUpdateTime" Grid.Row="1" Text="2022.03.12 12:55:55"/>
+        </Grid>
+        <Button Grid.Column="2" x:Name="Refresh"  Click="Refresh_OnClick" Padding="0" BorderThickness="0" Margin="10,0,0,0" HorizontalAlignment="Right" Background="Transparent">
+            <Image Source="{StaticResource Refresh}"></Image>
+        </Button>
+        <Button Grid.Column="3" x:Name="Delete"  Click="Delete_OnClick" Padding="0" BorderThickness="0" Margin="10,0,10,0" MaxHeight="25" HorizontalAlignment="Right" Background="Transparent">
+            <Image Source="{StaticResource Close}"></Image>
+        </Button>
+    </Grid>
+</UserControl>

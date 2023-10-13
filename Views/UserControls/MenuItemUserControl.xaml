@@ -1,0 +1,203 @@
+﻿<UserControl x:Class="TaskTip.UserControls.MenuItemUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TaskTip.UserControls"
+             xmlns:viewModel ="clr-namespace:TaskTip.ViewModels"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
+             mc:Ignorable="d" 
+             x:Name="MenuItem"
+             >
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <viewModel:MenuItemUserControlModel x:Key="MenuItemUserControlModel"></viewModel:MenuItemUserControlModel>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid Margin="4,0,0,0" DataContext="{Binding Source={StaticResource MenuItemUserControlModel}}" 
+          x:Name="RecordGrid" HorizontalAlignment="Stretch" MaxWidth="200" Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock x:Name="Guid" Text="{Binding GUID}" Visibility="Collapsed" IsEnabled="{Binding IsDirectory}"/>
+
+
+        <TextBox x:Name="BoxGrid"  Grid.Row="0"   HorizontalAlignment="Stretch">
+            <TextBox.Template>
+                <ControlTemplate TargetType="TextBox">
+                    <Grid Background="{StaticResource ThemeBackground}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <CheckBox x:Name="MoveCheckItem"  Grid.Column="0" IsChecked="{Binding MoveCheck}" Visibility="{Binding NodeMoveVisibility}">
+                            <hc:Interaction.Triggers>
+                                <hc:EventTrigger EventName="Checked">
+                                    <hc:InvokeCommandAction Command="{Binding CheckChangedCommand}" CommandParameter="{Binding ElementName=Guid,Path=Text}"></hc:InvokeCommandAction>
+                                </hc:EventTrigger>
+                            </hc:Interaction.Triggers>
+                        </CheckBox>
+                        <TextBlock Grid.Column="1" x:Name="LabelBlock" Text="{Binding Title}"  HorizontalAlignment="Left" VerticalAlignment="Center" Width="180" >
+                            <TextBlock.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="添加文件夹" IsEnabled="{Binding IsDirectory}" Command="{Binding AddDirectoryCommand}">
+                                        <MenuItem.Icon>
+                                            <Image Source="{StaticResource Folder}"></Image>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem  Header="添加文件" IsEnabled="{Binding IsDirectory}" Command="{Binding AddFileCommand}">
+                                        <MenuItem.Icon>
+                                            <Image Source="{StaticResource File}"></Image>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem  Header="重命名" IsEnabled="{Binding IsNode}" Command="{Binding RemarkCommand}" >
+                                        <MenuItem.Icon>
+                                            <Image Source="{StaticResource Rename}"></Image>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem  Header="移动" IsEnabled="{Binding IsNode}" Command="{Binding NodeMoveCommand}"
+                                               CommandParameter="{Binding ElementName=Guid,Path=Text}" >
+                                        <MenuItem.Icon>
+                                            <Image Source="{StaticResource Move}"></Image>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem  Header="删除" IsEnabled="{Binding IsNode}" Command="{Binding RemoveItemCommand}" 
+                                          CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}">
+                                        <MenuItem.Icon>
+                                            <Image Source="{StaticResource Trash}"></Image>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                </ContextMenu>
+                            </TextBlock.ContextMenu>
+                            <hc:Interaction.Triggers>
+                                <hc:EventTrigger EventName="MouseLeftButtonDown">
+                                    <hc:InvokeCommandAction Command="{Binding DoubleClickCommand}" ></hc:InvokeCommandAction>
+                                </hc:EventTrigger>
+                            </hc:Interaction.Triggers>
+                            <TextBlock.ToolTip>
+                                <Grid   >
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid Grid.Row="0" >
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Path Grid.Column="0" Data="M5,7 L50,7"  Stroke="Aqua" StrokeThickness="2" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding Title}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,5,0" FontWeight="Bold"/>
+                                        <Path Grid.Column="2" Data="M5,7 L50,7" Stroke="Aqua"  StrokeThickness="2" HorizontalAlignment="Center"/>
+                                    </Grid>
+                                    <Grid Grid.Row="1">
+                                        <ListBox ItemsSource="{Binding DirItems}" BorderThickness="0" Visibility="{Binding DirVisibility}">
+                                            <ListBox.ItemContainerStyle>
+                                                <Style TargetType="ListBoxItem">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="ListBoxItem">
+                                                                <Grid>
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="Auto"/>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <Border Grid.Column="0" CornerRadius="50,50,50,50" Width="10" Height="10" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                                        <Border.Background>
+                                                                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                                                                <GradientStop Color="Aquamarine"></GradientStop>
+                                                                            </LinearGradientBrush>
+                                                                        </Border.Background>
+                                                                    </Border>
+                                                                    <TextBlock Grid.Column="1"  VerticalAlignment="Center" Text="{TemplateBinding Content}" Margin="5,0,0,0"></TextBlock>
+                                                                </Grid>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </ListBox.ItemContainerStyle>
+                                        </ListBox>
+                                    </Grid>
+                                    <Grid Grid.Row="2">
+                                        <ListBox ItemsSource="{Binding FileItems}" BorderThickness="0" Visibility="{Binding DirVisibility}">
+                                            <ListBox.ItemContainerStyle>
+                                                <Style TargetType="ListBoxItem">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="ListBoxItem">
+                                                                <Grid>
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="Auto"/>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <Border Grid.Column="0" CornerRadius="50,50,50,50" Width="10" Height="10" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                                        <Border.Background>
+                                                                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                                                                <GradientStop Color="Blue"></GradientStop>
+                                                                            </LinearGradientBrush>
+                                                                        </Border.Background>
+                                                                    </Border>
+                                                                    <TextBlock Grid.Column="1"  VerticalAlignment="Center" Text="{TemplateBinding Content}" Margin="5,0,0,0"></TextBlock>
+                                                                </Grid>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </ListBox.ItemContainerStyle>
+                                        </ListBox>
+                                    </Grid>
+                                </Grid>
+                            </TextBlock.ToolTip>
+                        </TextBlock>
+                        <TextBox  Grid.Column="1" x:Name="Title"  Text="{Binding Title,Mode=TwoWay,UpdateSourceTrigger=LostFocus}" AcceptsReturn="False" AcceptsTab="False" KeyDown="Title_OnKeyDown"
+                                  Visibility="{Binding EdiVisibility}" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                            <hc:Interaction.Triggers>
+                                <hc:EventTrigger EventName="LostFocus">
+                                    <hc:InvokeCommandAction Command="{Binding TitleChangedCommand}" CommandParameter="{Binding ElementName=Title}"></hc:InvokeCommandAction>
+                                </hc:EventTrigger>
+                            </hc:Interaction.Triggers>
+                        </TextBox>
+                        <Button Grid.Column="2"  BorderThickness="0"  Height="20" MaxWidth="20"  Padding="0" Background="Transparent"
+                                Command="{Binding ShowListCommand}"   IsEnabled="{Binding IsDirectory}">
+                            <Image  Source="{Binding ShowButtonGeometry}"  Height="20"  ></Image>
+                            <!--<Path Data="{Binding ShowButtonGeometry}" StrokeThickness="1" VerticalAlignment="Center"  Stroke="{DynamicResource InfoBrush}"></Path>-->
+                        </Button>
+                    </Grid>
+                </ControlTemplate>
+            </TextBox.Template>
+        </TextBox>
+
+        <Grid Grid.Row="1"   Visibility="{Binding ListVisibility}" Background="Transparent">
+            <ListBox ItemsSource="{Binding MenuItems}" Background="Transparent" BorderThickness="0"  
+                      x:Name="MenuListItem"  
+                     Padding="0"  hc:ScrollViewerAttach.IsDisabled="True">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListBoxItem">
+                                    <Border Background="{TemplateBinding Background}">
+                                        <ContentPresenter />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter  Property="Background" Value="{StaticResource SelectedBackgroundBrush}" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="Padding" Value="0"/>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+            </ListBox>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -1,0 +1,19 @@
+﻿<Window x:Class="TaskTip.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TaskTip"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <local:MainWindow x:Key="MainWindow"/>
+    </Window.Resources>
+    <StackPanel DataContext="MainWindow" Margin="15">
+        <hc:CircleProgressBar Value="100" FontSize="30" />
+        <ScrollViewer>
+            <WebBrowser x:Name="webBrowser" Width="200" Height="700"></WebBrowser>
+        </ScrollViewer>
+    </StackPanel>
+</Window>

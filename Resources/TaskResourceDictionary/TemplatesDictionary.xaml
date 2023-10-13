@@ -1,0 +1,18 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    >
+
+    <ControlTemplate x:Key="TitleTextBox" TargetType="{x:Type TextBox}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.5*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Text="{TemplateBinding Uid}" />
+            <TextBox x:Name="InputNum" Grid.Row="1" Text="{TemplateBinding Text}" 
+                     Height="25" Width="50" HorizontalAlignment="Left" 
+                     BorderBrush="{Binding ElementName=InputNum,Path=Text,Converter={StaticResource CheckInputIsNumConvert}}"/>
+        </Grid>
+    </ControlTemplate>
+</ResourceDictionary>

@@ -1,0 +1,73 @@
+﻿<Page x:Class="TaskTip.Pages.WebApiClientUI.HotEventPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:TaskTip.Pages.WebApiClientUI"
+      xmlns:hc="https://handyorg.github.io/handycontrol"
+      xmlns:viewModel="clr-namespace:TaskTip.ViewModels.WebApiClientViewModel"
+      mc:Ignorable="d" 
+      Title="HotEventPage">
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <viewModel:HotEventPageModel x:Key="HotEventPageModel"/>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <Grid  DataContext="{Binding Source={StaticResource HotEventPageModel}}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Column="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.45*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="0.35*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="18">来源：</TextBlock>
+                <hc:ComboBox x:Name="SearchKey" Grid.Column="1" ShowClearButton="True" ItemsSource="{Binding SourceKeyCollection}" Background="Transparent" BorderThickness="0" 
+                         SelectedIndex="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEditable="True" SelectedItem="{Binding SelectItem}"/>
+                <Button Grid.Column="2" FontSize="15"    Padding="0" Width="90" Background="Transparent" BorderThickness="0"
+                        Command="{Binding SearchCommand}" CommandParameter="{Binding ElementName=SearchKey,Path=Text}">检索</Button>
+            </Grid>
+            <StackPanel Grid.Row="1" Orientation="Horizontal">
+                <TextBlock Margin="10,10,0,0">热点最后更新时间：</TextBlock>
+                <TextBlock Margin="10,10,0,0" Text="{Binding LastUpdateTime}"></TextBlock>
+            </StackPanel>
+        </Grid>
+        <ListBox Grid.Row="1" x:Name="HotList" ItemsSource="{Binding SearchResultCollection}" Background="Transparent" BorderThickness="0">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <Border Background="{TemplateBinding Background}">
+                                    <ContentPresenter />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter  Property="Background" Value="{StaticResource SelectedBackgroundBrush}" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Padding" Value="0"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <hc:Interaction.Triggers>
+                <hc:EventTrigger EventName="PreviewMouseWheel">
+                    <hc:InvokeCommandAction Command="{Binding LoadingImageCommand}" CommandParameter="{Binding ElementName=HotList}"></hc:InvokeCommandAction>
+                </hc:EventTrigger>
+            </hc:Interaction.Triggers>
+        </ListBox>
+        <hc:LoadingCircle Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{Binding LoadingVisibility}"/>
+    </Grid>
+</Page>

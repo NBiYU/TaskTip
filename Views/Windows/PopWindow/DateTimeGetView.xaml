@@ -1,0 +1,54 @@
+﻿<Window x:Class="TaskTip.Views.DateTimeGetView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TaskTip.Views"
+        xmlns:viewModel="clr-namespace:TaskTip.ViewModels"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:windowModel="clr-namespace:TaskTip.ViewModels.WindowModel"
+        mc:Ignorable="d" ShowInTaskbar="False" WindowStyle="None" WindowStartupLocation="CenterScreen"
+        AllowsTransparency="True" Background="Transparent" Icon="{StaticResource Favicon}">
+
+    <Window.Resources>
+        <windowModel:DateTimeGetViewModel x:Key="DateTimeGetViewModel"/>
+    </Window.Resources>
+    <Grid   HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Border BorderBrush="Gray" BorderThickness="3" CornerRadius="12,12,12,12"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Border.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="White"></GradientStop>
+                </LinearGradientBrush>
+            </Border.Background>
+        </Border>
+        <Grid DataContext="{Binding Source={StaticResource DateTimeGetViewModel}}" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock x:Name="Guid" Visibility="Collapsed" Text="{Binding SourceGuid,Mode=TwoWay}"></TextBlock>
+            <Grid Grid.Row="0"  >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Image Grid.Column="0" Source="{StaticResource Favicon}" Margin="10,0,0,0"/>
+                <TextBlock Grid.Column="1" x:Name="TitleName"  Text="时间选择" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18"/>
+                <Button Grid.Column="2" x:Name="NoneTime"  Content="取消计划" Margin="5"></Button>
+                <Button Grid.Column="3" Click="Close_OnClick" Padding="0"  Margin="0,0,10,0" BorderThickness="0">
+                    <Image Source="{StaticResource Close}" IsEnabled="True"></Image>
+                </Button>
+            </Grid>
+            <hc:CalendarWithClock Grid.Row="1" x:Name="CalendarWithClock" Background="Transparent" ShowConfirmButton="True"/>
+        </Grid>
+    </Grid>
+</Window>
