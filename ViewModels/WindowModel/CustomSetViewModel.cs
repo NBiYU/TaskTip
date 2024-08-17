@@ -677,10 +677,25 @@ namespace TaskTip.ViewModels.WindowModel
         private void AllFileMove(string sPath, string dirPath)
         {
             var allFile = Directory.GetFiles(sPath, "*.task");
+            bool? isAllCovert = null;
             foreach (var file in allFile)
             {
                 var sfileName = Path.GetFileName(file);
                 var dfilePath = Path.Combine(dirPath, sfileName);
+                if (File.Exists(dfilePath))
+                {
+                    if (isAllCovert == null)
+                    {
+                        var allCovertResult = MessageBox.Show($"检测到有{allFile.Length} 待移动，后续是否默认覆盖", "覆盖", MessageBoxButton.YesNo);
+                        if (allCovertResult == MessageBoxResult.Yes) isAllCovert = true;
+                        else isAllCovert = false;
+                    }else if (isAllCovert == false)
+                    {
+                        var coverResult = MessageBox.Show($"{Path.GetFileNameWithoutExtension(dfilePath)} 在新位置已存在，是否覆盖", "覆盖", MessageBoxButton.YesNo);
+                        if (coverResult == MessageBoxResult.No) continue;
+                    }
+                    File.Delete(dfilePath);
+                }
                 File.Move(file, dfilePath);
             }
         }

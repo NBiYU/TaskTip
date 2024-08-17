@@ -17,6 +17,8 @@ namespace TaskTip.Common
         Update,
         [Description("删除")]
         Delete,
+        [Description("删除并删除文件")]
+        DeleteNotWithFile,
         [Description("移动")]
         Move,
         [Description("完成")]

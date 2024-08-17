@@ -10,10 +10,11 @@
     <Window.Resources>
         <local:MainWindow x:Key="MainWindow"/>
     </Window.Resources>
-    <StackPanel DataContext="MainWindow" Margin="15">
-        <hc:CircleProgressBar Value="100" FontSize="30" />
+    <Grid DataContext="MainWindow" Margin="15">
+        <!--<hc:CircleProgressBar Value="100" FontSize="30" />
         <ScrollViewer>
             <WebBrowser x:Name="webBrowser" Width="200" Height="700"></WebBrowser>
-        </ScrollViewer>
-    </StackPanel>
+        </ScrollViewer>-->
+        <!--<Frame Source="Views/Windows/PopWindow/RegexHelpView.xaml"></Frame>-->
+    </Grid>
 </Window>

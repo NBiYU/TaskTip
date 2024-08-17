@@ -9,7 +9,7 @@
         xmlns:converts="clr-namespace:TaskTip.ViewModels.Converters"
         mc:Ignorable="d"
         Title="全屏编辑" Height="450" Width="800" Icon="{StaticResource Favicon}" WindowStyle="None" Background="Transparent" AllowsTransparency="True"
-        MouseLeftButtonDown="EditFullScreenView_OnMouseLeftButtonDown">
+        MouseLeftButtonDown="EditFullScreenView_OnMouseLeftButtonDown" >
 
     <Window.Resources>
         <ResourceDictionary>
@@ -22,5 +22,15 @@
         <Border BorderThickness="1" BorderBrush="Gray"  CornerRadius="7,7,10,10" Background="{DynamicResource ThemeBackgroundColor}">
             <Frame Content="{Binding FrameRecordPage}"></Frame>
         </Border>
+        <Border Background="Transparent" x:Name="FixedBorder" Height="25" Width="25" Margin="-10" HorizontalAlignment="Right" VerticalAlignment="Top" BorderThickness="1" BorderBrush="Black" CornerRadius="25" 
+                MouseEnter="Button_MouseEnter" MouseLeave="FixedBorder_MouseLeave">
+            <Button Background="Transparent"  BorderThickness="0" Padding="0" MaxHeight="25" MaxWidth="25" HorizontalAlignment="Center" VerticalAlignment="Center"
+                 Click="Button_Click" Margin="0,0,0,0">
+                <Image x:Name="FixedImage" Source="{StaticResource Fixed}" Stretch="Fill"/>
+            </Button>
+
+        </Border>
+
+
     </Grid>
 </Window>

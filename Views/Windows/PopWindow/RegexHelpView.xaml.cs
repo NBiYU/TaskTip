@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,20 +10,18 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace TaskTip.Pages
+namespace TaskTip.Views.Windows.PopWindow
 {
     /// <summary>
-    /// TaskListPage.xaml µÄ½»»¥Âß¼­
+    /// RegexHelpView.xaml çš„äº¤äº’é€»è¾‘
     /// </summary>
-    public partial class TaskListPage : Page
+    public partial class RegexHelpView : Window
     {
-        public TaskListPage()
+        public RegexHelpView()
         {
             InitializeComponent();
         }
-
     }
 }

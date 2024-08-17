@@ -12,5 +12,7 @@
     <convert:SyncStatusConvert x:Key="SyncStatusConvert"/>
     <convert:NotFileConvert x:Key="NotFileConvert"/>
     <convert:SyncCheckConvert x:Key="SyncCheckConvert"/>
+    <convert:TypeColorConvert x:Key="TypeColorConvert"/>
+    <convert:JsonValueConvert x:Key="JsonValueConvert"/>
     
 </ResourceDictionary>

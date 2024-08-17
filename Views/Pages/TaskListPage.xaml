@@ -9,35 +9,50 @@
       xmlns:pageModel="clr-namespace:TaskTip.ViewModels.PageModel"
       mc:Ignorable="d" >
 
-    <Page.Resources>
-        <ResourceDictionary>
-            <pageModel:TaskListPageModel x:Key="TaskListPageModel"></pageModel:TaskListPageModel>
-        </ResourceDictionary>
-    </Page.Resources>
-    <Grid  DataContext="{Binding Source={StaticResource TaskListPageModel}}" Background="{StaticResource ThemeBackground}">
+    <Page.DataContext>
+        <pageModel:TaskListPageModel/>
+    </Page.DataContext>
+    <hc:Interaction.Triggers>
+        <hc:EventTrigger EventName="Loaded">
+            <hc:InvokeCommandAction Command="{Binding TaskLoadedCommand}"></hc:InvokeCommandAction>
+        </hc:EventTrigger>
+        <hc:EventTrigger EventName="Unloaded">
+            <hc:InvokeCommandAction Command="{Binding TaskUnloadedCommand}"></hc:InvokeCommandAction>
+        </hc:EventTrigger>
+    </hc:Interaction.Triggers>
+    
+    <Grid  Background="{StaticResource ThemeBackground}">
         <hc:SimplePanel Grid.Row="0" x:Name="TaskListPanel"  HorizontalAlignment="Stretch" >
             <Border BorderThickness="0" BorderBrush="Transparent" CornerRadius="0,0,6,6">
-                <ListBox  ItemsSource="{Binding TaskList}" Padding="0" Background="Transparent"
-                                              HorizontalAlignment="Stretch" BorderThickness="0" >
-                    <ListBox.ItemContainerStyle>
-                        <Style TargetType="ListBoxItem">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="ListBoxItem">
-                                        <Border Background="{TemplateBinding Background}">
-                                            <ContentPresenter />
-                                        </Border>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsSelected" Value="True">
-                                                <Setter  Property="Background" Value="{StaticResource SelectedBackgroundBrush}" />
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                            </Style>
-                        </ListBox.ItemContainerStyle>
-                </ListBox>
+                <ScrollViewer x:Name="ListScroll">
+                    <ListBox  ItemsSource="{Binding TaskList}" Padding="0" Background="Transparent"
+                              HorizontalAlignment="Stretch" BorderThickness="0" 
+                                hc:ScrollViewerAttach.IsDisabled="True">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListBoxItem">
+                                            <Border Background="{TemplateBinding Background}">
+                                                <ContentPresenter />
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsSelected" Value="True">
+                                                    <Setter  Property="Background" Value="{StaticResource SelectedBackgroundBrush}" />
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                    </ListBox>
+                    <hc:Interaction.Triggers>
+                        <hc:EventTrigger EventName="ScrollChanged">
+                            <hc:InvokeCommandAction Command="{Binding ScrollChangedCommand}" CommandParameter="{Binding ElementName=ListScroll}"></hc:InvokeCommandAction>
+                        </hc:EventTrigger>
+                    </hc:Interaction.Triggers>
+                </ScrollViewer>
             </Border>
             <Border Background="Transparent" Width="50" Height="50" Padding="0" HorizontalAlignment="Right" VerticalAlignment="Bottom"  Margin="0,0,20,140" CornerRadius="25" BorderThickness="1" BorderBrush="#FFE0E0E0">
 
@@ -57,5 +72,7 @@
                                             HorizontalAlignment="Right" VerticalAlignment="Bottom" 
                                             Margin="0,0,20,20"/>
         </hc:SimplePanel>
+        <hc:LoadingCircle Height="100" Width="100" Visibility="{Binding LoadingVisibility}"></hc:LoadingCircle>
     </Grid>
+
 </Page>

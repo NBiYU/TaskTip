@@ -114,6 +114,13 @@ namespace TaskTip.ViewModels.FictionPageVM
             }
         }
 
+        [RelayCommand]
+        public async Task FictionCategory()
+        {
+            _request = new LRY_APIRequest();
+            await LoadCategories(Headers[0]);
+        }
+
         #endregion
 
         #region ¹¦ÄÜº¯Êý
@@ -195,7 +202,6 @@ namespace TaskTip.ViewModels.FictionPageVM
 
         private void InitProperty()
         {
-            _request = new LRY_APIRequest();
             _startindex = 1;
             _gap = 30;
             DescVisibility = Visibility.Collapsed;
@@ -205,7 +211,7 @@ namespace TaskTip.ViewModels.FictionPageVM
         public FictionCategoryVM() {
             InitProperty();
             Headers = new ObservableCollection<string>(EnumExtend.GetEnumAllDesc<LRY_APIFictionCagetory>());
-            LoadCategories(Headers[0]);
+
         }
     }
 }

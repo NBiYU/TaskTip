@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TaskTip.Views"
         xmlns:hc="https://handyorg.github.io/handycontrol"
-        mc:Ignorable="d" Width="200" >
+        mc:Ignorable="d" Width="200">
 
     <Grid Background="White" >
 

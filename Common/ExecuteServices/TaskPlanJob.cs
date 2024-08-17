@@ -69,7 +69,7 @@ namespace TaskTip.Common.ExecuteServices
 
                 var taskBalloonTip = new TaskbarIcon();
                 taskBalloonTip.ShowBalloonTip(title, msg, icon);
-
+                    
                 WeakReferenceMessenger.Default.Send(
                     new TaskStatusModel()
                     {

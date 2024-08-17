@@ -1,5 +1,23 @@
-using System;using System.Collections.Generic;using System.Linq;using System.Text;using System.Threading.Tasks;using System.Windows;using System.Windows.Controls;using CommunityToolkit.Mvvm.ComponentModel;using CommunityToolkit.Mvvm.Input;using TaskTip.Services;
-using TaskTip.Views.FictionPage;using MessageBox = HandyControl.Controls.MessageBox;namespace TaskTip.ViewModels.PageModel{    internal partial class FictionPageVM:ObservableObject    {        private double _pageWidth;        public double PageWidth
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using TaskTip.Services;
+using TaskTip.Views.FictionPage;
+using MessageBox = HandyControl.Controls.MessageBox;
+
+namespace TaskTip.ViewModels.PageModel
+{
+    internal partial class FictionPageVM:ObservableObject
+    {
+
+        private double _pageWidth;
+        public double PageWidth
         {
             get => _pageWidth;
             set
@@ -50,4 +68,17 @@ using TaskTip.Views.FictionPage;using MessageBox = HandyControl.Controls.Messag
         //}
 
 
-        public FictionPageVM()        {            PageWidth = GlobalVariable.TaskMenoView.Width;            //pages = new List<Page>()            //{            //    new MyFictionsPage(),            //    new FictionCategoryPage(),            //    new FictionSearchPage(),            //    new FictionAccountPage()            //};            //SelectPageChanged("MyFictions");        }    }}
+        public FictionPageVM()
+        {
+            PageWidth = GlobalVariable.TaskMenoView.Width;
+            //pages = new List<Page>()
+            //{
+            //    new MyFictionsPage(),
+            //    new FictionCategoryPage(),
+            //    new FictionSearchPage(),
+            //    new FictionAccountPage()
+            //};
+            //SelectPageChanged("MyFictions");
+        }
+    }
+}

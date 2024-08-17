@@ -27,7 +27,6 @@ namespace TaskTip
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            
             _taskbarIcon = (TaskbarIcon)FindResource("Icon");
             NLog.LogManager.Setup().LoadConfigurationFromFile("nlog.config");
 

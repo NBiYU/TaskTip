@@ -1,3 +1,4 @@
+using NLog.LayoutRenderers.Wrappers;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -5,6 +6,7 @@ using System.Windows;
 using TaskTip.Common;
 using TaskTip.Services;
 using TaskTip.ViewModels.PageModel;
+using TaskTip.Views.Windows.PopWindow;
 
 namespace TaskTip
 {
@@ -38,6 +40,8 @@ namespace TaskTip
                     GlobalVariable.FloatingViewClose();
                 }
             }
+            //var window = new RegexHelpView();
+            //window.Show();
             this.Close();
         }
 
@@ -63,6 +67,8 @@ namespace TaskTip
 
             File.WriteAllText(GlobalVariable.OperationRecordPath, string.Empty);
             File.WriteAllText(GlobalVariable.CustomThemePath, string.Empty);
+
+            
 
             return true;
         }

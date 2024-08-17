@@ -1,0 +1,53 @@
+﻿<Page x:Class="TaskTip.Views.ToolPage.JsonPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:viewModel="clr-namespace:TaskTip.ViewModels.ToolPageVM"
+      xmlns:uc="clr-namespace:TaskTip.Views.UserControls"
+      xmlns:local="clr-namespace:TaskTip.Views.ToolPage"
+      mc:Ignorable="d" 
+      Title="JsonPage">
+
+    <Page.DataContext>
+        <viewModel:JsonVM/>
+    </Page.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="0.9*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Margin="5" Content="美化JSON" Command="{Binding JsonFormatCommand}"></Button>
+            <Button Grid.Column="1" Margin="5" Content="{Binding TransformTip}" Command="{Binding JsonOrEntityCommand}"></Button>
+            <Button Grid.Column="2" Margin="5" Content="全屏" Command="{Binding ScreenFullCommand}"/>
+        </Grid>
+
+        <ScrollViewer Grid.Row="1" Margin="5" HorizontalScrollBarVisibility="Visible">
+            <TreeView ItemsSource="{Binding EntityModel.SubsetList}">
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="TreeViewItem">
+                        <Setter Property="IsExpanded" Value="{Binding IsArrayType,Mode=TwoWay}"/>
+                    </Style>
+                </TreeView.ItemContainerStyle>
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate ItemsSource="{Binding SubsetList}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding VariableName}" FontFamily="Bahnschrift SemiBold" Foreground="#FFA856D0"></TextBlock>
+                            <TextBlock Text=" : "></TextBlock>
+                            <TextBlock Text="{Binding VariableValue}" Foreground="{Binding VariableType,Converter={StaticResource TypeColorConvert}}"></TextBlock>
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+                </TreeView.ItemTemplate>
+            </TreeView>
+        </ScrollViewer>
+        <ScrollViewer Grid.Row="1" Margin="5" Visibility="{Binding StringVisibility}" HorizontalScrollBarVisibility="Visible">
+            <TextBox Text="{Binding JsonString}" VerticalContentAlignment="Top" AcceptsReturn="True" AcceptsTab="True" TextChanged="TextBox_TextChanged"/>
+        </ScrollViewer>
+    </Grid>
+</Page>

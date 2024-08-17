@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,17 +13,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace TaskTip.Pages
+namespace TaskTip.Views.ToolPage
 {
     /// <summary>
-    /// TaskListPage.xaml µÄ½»»¥Âß¼­
+    /// ToolMainPage.xaml çš„äº¤äº’é€»è¾‘
     /// </summary>
-    public partial class TaskListPage : Page
+    public partial class ToolMainPage : Page
     {
-        public TaskListPage()
+        public ToolMainPage()
         {
             InitializeComponent();
         }
-
     }
 }

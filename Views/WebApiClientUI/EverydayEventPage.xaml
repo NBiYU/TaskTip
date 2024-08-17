@@ -8,8 +8,10 @@
       xmlns:hc="https://handyorg.github.io/handycontrol"
       xmlns:convert="clr-namespace:TaskTip.ViewModels.Converters"
       mc:Ignorable="d" 
-      Title="EverydayEventPage">
-
+      Title="EverydayEventPage" >
+    <Page.DataContext>
+        <viewModel:EverydayEventPageModel/>
+    </Page.DataContext>
 <Page.Resources>
     <ResourceDictionary>
         <viewModel:EverydayEventPageModel x:Key="EverydayEventPageModel"/>
@@ -17,7 +19,7 @@
         <SolidColorBrush x:Key="SelectedBackgroundBrush" Color="White" />
     </ResourceDictionary>
 </Page.Resources>
-    <Grid DataContext="{Binding Source={StaticResource EverydayEventPageModel}}"  >
+    <Grid  >
 
         <Grid HorizontalAlignment="Stretch"  >
 <Grid.RowDefinitions>

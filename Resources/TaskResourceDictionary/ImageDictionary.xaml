@@ -31,4 +31,7 @@
     <BitmapImage x:Key="Merger" UriSource="/Resources/Sources/Image/Merger.png"></BitmapImage>
     <BitmapImage x:Key="NotFile" UriSource="/Resources/Sources/Image/FileIsNotExist.png"></BitmapImage>
     <BitmapImage x:Key="Empty" UriSource="/Resources/Sources/Image/Empty.png"></BitmapImage>
+    <BitmapImage x:Key="Fixed" UriSource="/Resources/Sources/Image/Fixed.png"></BitmapImage>
+    <BitmapImage x:Key="Unpin" UriSource="/Resources/Sources/Image/Unpin.png"></BitmapImage>
+    
 </ResourceDictionary>

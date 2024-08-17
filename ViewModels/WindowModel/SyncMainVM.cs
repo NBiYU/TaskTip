@@ -374,8 +374,8 @@ namespace TaskTip.ViewModels.WindowModel
                 if (!Directory.Exists(remotePath))
                     Directory.CreateDirectory(remotePath);
 
-                var client = new SyncDataServiceClient();
-                client.Open();
+                using (var client = new SyncDataServiceClient())
+                {
                     switch (category.Key)
                     {
                         case "Task":
@@ -428,12 +428,14 @@ namespace TaskTip.ViewModels.WindowModel
                         default:
                             break;
                     }
+                }
+
                 
 
             }
             catch (Exception e)
             {
-                res.Message = e.Message;
+                  res.Message = e.ToString();
             }
             return ($"{category.Value} 数据获取失败,返回信息：{res.Message}", new List<FileListItem>());
         }

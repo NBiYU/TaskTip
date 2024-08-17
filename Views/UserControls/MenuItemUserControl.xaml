@@ -176,7 +176,7 @@
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="ListBoxItem">
-                                    <Border Background="{TemplateBinding Background}">
+                                    <Border Background="{TemplateBinding Background}" BorderThickness="1,0,0,0" BorderBrush="Black" Margin="5,0">
                                         <ContentPresenter />
                                     </Border>
                                     <ControlTemplate.Triggers>

@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using NLog;
 using TaskTip.Common;
 using TaskTip.Pages;
+using TaskTip.ViewModels.WindowModel;
 using TaskTip.Views;
 using TaskTip.Views.Windows;
 using ConfigurationManager = System.Configuration.ConfigurationManager;
@@ -303,7 +304,6 @@ namespace TaskTip.Services
             }
         }
         #endregion
-
         #region TaskMeno
 
         public static void TaskMenoViewShow()

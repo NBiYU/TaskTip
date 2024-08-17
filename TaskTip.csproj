@@ -27,6 +27,7 @@
     <None Remove="Resources\Sources\Image\favicon.ico" />
     <None Remove="Resources\Sources\Image\fileinterfacesymboloftextpapersheet.png" />
     <None Remove="Resources\Sources\Image\FileIsNotExist.png" />
+    <None Remove="Resources\Sources\Image\Fixed.png" />
     <None Remove="Resources\Sources\Image\fullscreen.png" />
     <None Remove="Resources\Sources\Image\InitImage.png" />
     <None Remove="Resources\Sources\Image\line-60_icon-icons.com.png" />
@@ -40,6 +41,7 @@
     <None Remove="Resources\Sources\Image\Send.png" />
     <None Remove="Resources\Sources\Image\Setting.png" />
     <None Remove="Resources\Sources\Image\Success.png" />
+    <None Remove="Resources\Sources\Image\Unpin.png" />
     <None Remove="Resources\Sources\Image\Visibility.png" />
     <None Remove="Resources\Sources\Image\WaitDownload.png" />
   </ItemGroup>
@@ -111,6 +113,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Sources\Image\FileIsNotExist.png" />
+    <Resource Include="Resources\Sources\Image\Fixed.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\Sources\Image\fullscreen.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -146,6 +151,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Sources\Image\Success.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Sources\Image\Unpin.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Sources\Image\Visibility.png">

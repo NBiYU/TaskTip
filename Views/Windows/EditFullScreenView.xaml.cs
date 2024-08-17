@@ -35,5 +35,21 @@ namespace TaskTip.Views.Windows
         {
             base.DragMove();
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            this.Topmost = !this.Topmost;
+            this.FixedImage.Source = this.Topmost ? (BitmapImage)Application.Current.Resources["Unpin"] : (BitmapImage)Application.Current.Resources["Fixed"];
+        }
+
+        private void Button_MouseEnter(object sender, MouseEventArgs e)
+        {
+            this.FixedBorder.Margin = new Thickness(0);
+        }
+
+        private void FixedBorder_MouseLeave(object sender, MouseEventArgs e)
+        {
+            this.FixedBorder.Margin = new Thickness(-10);
+        }
     }
 }

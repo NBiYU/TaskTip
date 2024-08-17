@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using HandyControl.Tools;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Quartz;
@@ -12,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using TaskTip.Base;
 using TaskTip.Common;
@@ -25,6 +27,7 @@ namespace TaskTip.ViewModels.PageModel
 {
     internal partial class TaskListPageModel : BaseVM
     {
+        private double _oldScrollableHeight;
 
         private double taskMenoWidth;
         public double TaskMenoWidth
@@ -33,6 +36,8 @@ namespace TaskTip.ViewModels.PageModel
             set => SetProperty(ref taskMenoWidth, value);
         }
 
+        private Visibility _loadingVisibility;
+        public Visibility LoadingVisibility { get=>_loadingVisibility; set=>SetProperty(ref _loadingVisibility,value); }
 
         /// <summary>
         /// 待完成的任务集合
@@ -185,6 +190,41 @@ namespace TaskTip.ViewModels.PageModel
 
         }
 
+
+        [RelayCommand]
+        public void TaskLoaded()
+        {
+            LoadingVisibility = Visibility.Visible;
+            LoadReadTaskFile(GlobalVariable.TaskFilePath);
+            LoadingVisibility = Visibility.Collapsed;
+            WeakReferenceMessenger.Default.Send(new CorrespondenceModel() { Message = TaskList }, Const.CONST_TASK_LIST_CHANGED);
+        }
+
+        [RelayCommand]
+        public void TaskUnloaded()
+        {
+            TaskList.Clear();
+        }
+
+        [RelayCommand]
+        public void ScrollChanged(object sender)
+        {
+            if (sender is ScrollViewer scrollViewer)
+            {
+                if (scrollViewer.ScrollableHeight == 0)
+                {
+                    scrollViewer.ScrollToTop();
+                    return;
+                }
+                else if (scrollViewer.ScrollableHeight == scrollViewer.VerticalOffset && _oldScrollableHeight!= scrollViewer.ScrollableHeight)
+                {
+                    _oldScrollableHeight = scrollViewer.ScrollableHeight;
+                    LoadingVisibility = Visibility.Visible;
+                    LoadReadTaskFile(GlobalVariable.TaskFilePath);
+                    LoadingVisibility = Visibility.Collapsed;
+                }
+            }
+        }
         #endregion
 
         #region 外部控件处理事件
@@ -324,7 +364,7 @@ namespace TaskTip.ViewModels.PageModel
 
         private void SortList()
         {
-            TaskList = new(TaskList.OrderBy(x => (x.TaskGrid.DataContext as TaskListItemUserControlModel)!.IsCompleted));
+            TaskList = new(TaskList.OrderByDescending(x => (x.TaskGrid.DataContext as TaskListItemUserControlModel)!.CompletedDateTime).OrderBy(x => (x.TaskGrid.DataContext as TaskListItemUserControlModel)!.IsCompleted));
 
         }
 
@@ -337,30 +377,36 @@ namespace TaskTip.ViewModels.PageModel
         {
             if (string.IsNullOrEmpty(dirPath))
                 return;
+            var config = new ConfigurationHelper();
 
-            var taskListControl = new List<TaskListItemUserControl>();
 
             var filePaths = Directory.GetFiles(dirPath, "*.task");
 
-            foreach (var filePath in filePaths)
+            var take = int.Parse(config["Global:LoadTaskFilePageSize"] ?? "0");
+            var modelList = new List<TaskFileModel>();
+
+            foreach (var item in filePaths)
             {
-                var startIndex = filePath.LastIndexOf('\\') + 1;
-                var endIndex = filePath.LastIndexOf('.');
-                var guid = filePath.Substring(startIndex, endIndex - startIndex);
+                modelList.Add(JsonConvert.DeserializeObject<TaskFileModel>(File.ReadAllText(item)));
+            }
+            var readFile = modelList.OrderByDescending(x => x.CompletedDateTime).OrderBy(x => x.IsCompleted).Skip(TaskList.Count).Take(TaskList.Count + take > filePaths.Length ? filePaths.Length - TaskList.Count : take).ToList();
+            var taskListControl = new List<TaskListItemUserControl>(TaskList);
+            taskListControl.AddRange(ReadTaskFile(readFile.Select(x => x.GUID).ToList()));
 
-                if (startIndex == -1 || endIndex == -1)
-                    continue;
+            TaskList = new ObservableCollection<TaskListItemUserControl>(taskListControl);
+            
+        }
 
+        private List<TaskListItemUserControl> ReadTaskFile(List<string> files)
+        {
+            var taskListControl = new List<TaskListItemUserControl>();
+            foreach (var filePath in files)
+            {
+                var guid = Path.GetFileNameWithoutExtension(filePath);
                 var taskControl = AddTaskListItemControl(guid);
                 taskListControl.Add(taskControl);
             }
-
-            if (taskListControl.Count == 0)
-            {
-                taskListControl.Add(AddTaskListItemControl(Guid.NewGuid().ToString()));
-            }
-
-            TaskList = new ObservableCollection<TaskListItemUserControl>(taskListControl);
+            return taskListControl;
         }
 
         #endregion
@@ -392,15 +438,10 @@ namespace TaskTip.ViewModels.PageModel
             schedulerFactory = new StdSchedulerFactory();
             scheduler = schedulerFactory.GetScheduler().Result;
             scheduler.Start();
-
+            LoadingVisibility = Visibility.Collapsed;
             taskMenoWidth = SystemParameters.WorkArea.Height / 3;
 
             InitRegister();
-
-            LoadReadTaskFile(GlobalVariable.TaskFilePath);
-            SortList();
-
-            WeakReferenceMessenger.Default.Send(new CorrespondenceModel() { Message = TaskList }, Const.CONST_TASK_LIST_CHANGED);
         }
 
         ~TaskListPageModel()

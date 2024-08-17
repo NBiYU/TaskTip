@@ -8,11 +8,17 @@
       xmlns:hc="https://handyorg.github.io/handycontrol" xmlns:system="clr-namespace:System;assembly=mscorlib"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="FictionCategoryPage">
+      Title="FictionCategoryPage" >
 
     <Page.DataContext >
         <viewModel:FictionCategoryVM />
     </Page.DataContext>
+
+    <hc:Interaction.Triggers>
+        <hc:EventTrigger EventName="Loaded">
+            <hc:InvokeCommandAction Command="{Binding FictionCategoryCommand}"/>
+        </hc:EventTrigger>
+    </hc:Interaction.Triggers>
     
     <Grid>
         

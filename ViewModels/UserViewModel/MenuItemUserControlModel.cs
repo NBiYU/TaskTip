@@ -428,7 +428,7 @@ namespace TaskTip.ViewModels
                     MessageBox.Show("移动内容已在当前选择文件夹中");
                     return;
                 }
-                WeakReferenceMessenger.Default.Send(new CorrespondenceModel() { GUID = tree.GUID, Operation = OperationRequestType.Delete }, Const.CONST_NOTIFY_RECORD_ITEM);
+                WeakReferenceMessenger.Default.Send(new CorrespondenceModel() { GUID = tree.GUID, Operation = OperationRequestType.DeleteNotWithFile }, Const.CONST_NOTIFY_RECORD_ITEM);
                 WeakReferenceMessenger.Default.Send(new CorrespondenceModel() { GUID = checkedGuid, Operation = OperationRequestType.Add, Message = tree }, Const.CONST_NOTIFY_RECORD_ITEM);
                 //WeakReferenceMessenger.Default.Send(new CorrespondenceModel() { GUID = tree.GUID + "Move" + checkedGuid, Operation = OperationRequestType.Move, Message = tree }, Const.CONST_NOTIFY_RECORD_ITEM);
             }
@@ -534,7 +534,7 @@ namespace TaskTip.ViewModels
                         WeakReferenceMessenger.Default.Send(new CorrespondenceModel() { GUID = endGuid, Operation = OperationRequestType.Add, Message = corr.Message }, Const.CONST_NOTIFY_RECORD_ITEM);
                         return;
                     case OperationRequestType.Delete:
-
+                    case OperationRequestType.DeleteNotWithFile:
                         if (_isNodeMove) break;
 
                         var deleteItem = MenuItems.FirstOrDefault(x => x.Guid.Text == corr.GUID);
@@ -543,14 +543,17 @@ namespace TaskTip.ViewModels
                         MenuItems.Remove(deleteItem);
                         TreeInfo.Menu.Directories.RemoveAll(x => x.GUID == corr.GUID);
                         TreeInfo.Menu.Files.RemoveAll(x => x.GUID == corr.GUID);
+                        if(corr.Operation == OperationRequestType.DeleteNotWithFile)
+                        {
+                            var path = Path.Combine(GlobalVariable.RecordFilePath,
+                                $"{deleteItem.Guid.Text}{GlobalVariable.EndFileFormat}");
+                            var xamlPath = Path.Combine(GlobalVariable.RecordFilePath, "Xaml",
+                                $"{deleteItem.Guid.Text}{GlobalVariable.EndFileFormat}");
 
-                        var path = Path.Combine(GlobalVariable.RecordFilePath,
-                            $"{deleteItem.Guid.Text}{GlobalVariable.EndFileFormat}");
-                        var xamlPath = Path.Combine(GlobalVariable.RecordFilePath, "Xaml",
-                            $"{deleteItem.Guid.Text}{GlobalVariable.EndFileFormat}");
+                            if (File.Exists(path)) File.Delete(path);
+                            if (File.Exists(xamlPath)) File.Delete(xamlPath);
+                        }
 
-                        if (File.Exists(path)) File.Delete(path);
-                        if (File.Exists(xamlPath)) File.Delete(xamlPath);
                         OperationRecord.OperationRecordWrite(new TcpRequestData() { GUID = corr.GUID, OperationType = corr.Operation, SyncCategory = SyncFileCategory.Record, FileData = (deleteItem.DataContext as MenuItemUserControlModel)?.TreeInfo });
                         break;
                     case OperationRequestType.Update:
