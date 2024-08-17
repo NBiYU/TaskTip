@@ -1,7 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FictionAPI.LRY_API;
-using FictionAPI.OptionEnum;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,6 +10,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using TaskTip.Extends.FictionAPI.LRY_API;
+using TaskTip.Extends.FictionAPI.OptionEnum;
 using TaskTip.Views.FictionPage;
 using TaskTipProject.Models;
 

@@ -5,7 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
-using ConnectClient;
+using TaskTip.Extends.ConnectClient;
+using TaskTip.Extends.ConnectClient;
 
 namespace TaskTip.ViewModels.WebApiClientViewModel
 {

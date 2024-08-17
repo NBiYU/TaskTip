@@ -185,11 +185,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ConnectClient\ConnectClient.csproj" />
-    <ProjectReference Include="..\FictionAPI\FictionAPI.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="App.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

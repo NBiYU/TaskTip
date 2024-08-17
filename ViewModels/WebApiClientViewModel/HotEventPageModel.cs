@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using ConnectClient;
-using ConnectClient.Model;
+using TaskTip.Extends.ConnectClient;
+using TaskTip.Extends.ConnectClient.Model;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
