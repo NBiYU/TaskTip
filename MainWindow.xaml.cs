@@ -1,16 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
-using System.Windows.Forms;
-using System.Windows.Media.Imaging;
-using Newtonsoft.Json;
-using TaskTip.Models;
+using TaskTip.Common;
 using TaskTip.Services;
-using TaskTip.ViewModels;
-using Application = System.Windows.Application;
+using TaskTip.ViewModels.PageModel;
 
 namespace TaskTip
 {
@@ -25,8 +19,6 @@ namespace TaskTip
             InitializeComponent();
             var isFirstLoad = InitConfig();
 
-
-            GlobalVariable.Init();
             if (isFirstLoad)
             {
                 GlobalVariable.FloatingViewClose();
@@ -56,13 +48,14 @@ namespace TaskTip
             var configPath = runtimePath + "config.txt";
             GlobalVariable.OperationRecordPath = runtimePath + "OperationRecordList.json";
             GlobalVariable.CustomThemePath = runtimePath + "CustomTheme.json";
+            
 
             if (File.Exists(configPath)) return false;
             GlobalVariable.SaveConfig("LocalKey", Guid.NewGuid());
             AddRule();
 
             File.WriteAllText(configPath, "Test");
-            Directory.CreateDirectory(Path.Combine(GlobalVariable.RecordFilePath , "Xaml"));
+           
             Directory.CreateDirectory(GlobalVariable.RecordFilePath);
             Directory.CreateDirectory(GlobalVariable.TaskFilePath);
             Directory.CreateDirectory(GlobalVariable.MenoFilePath);

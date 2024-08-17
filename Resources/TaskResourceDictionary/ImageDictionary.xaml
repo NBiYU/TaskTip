@@ -24,4 +24,11 @@
     <BitmapImage x:Key="WaitDownload" UriSource="/Resources/Sources/Image/WaitDownload.png"></BitmapImage>
     <BitmapImage x:Key="Error" UriSource="/Resources/Sources/Image/Error.png"></BitmapImage>
     <BitmapImage x:Key="Success" UriSource="/Resources/Sources/Image/Success.png"></BitmapImage>
+    <BitmapImage x:Key="Visibility" UriSource="/Resources/Sources/Image/Visibility.png"></BitmapImage>
+    <BitmapImage x:Key="Collapsed" UriSource="/Resources/Sources/Image/Collapsed.png"></BitmapImage>
+    <BitmapImage x:Key="Add" UriSource="/Resources/Sources/Image/Add.png"></BitmapImage>
+    <BitmapImage x:Key="Conflict" UriSource="/Resources/Sources/Image/Conflict.png"></BitmapImage>
+    <BitmapImage x:Key="Merger" UriSource="/Resources/Sources/Image/Merger.png"></BitmapImage>
+    <BitmapImage x:Key="NotFile" UriSource="/Resources/Sources/Image/FileIsNotExist.png"></BitmapImage>
+    <BitmapImage x:Key="Empty" UriSource="/Resources/Sources/Image/Empty.png"></BitmapImage>
 </ResourceDictionary>

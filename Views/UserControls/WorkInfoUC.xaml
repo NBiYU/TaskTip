@@ -1,0 +1,72 @@
+﻿<UserControl x:Class="TaskTip.Views.UserControls.WorkInfoUC"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TaskTip.Views.UserControls"
+             xmlns:viewModel="clr-namespace:TaskTip.ViewModels.UserViewModel"
+             mc:Ignorable="d" >
+    <UserControl.DataContext>
+        <viewModel:WorkInfoUCM/>
+    </UserControl.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0" BorderThickness="1" BorderBrush="Black" Margin="5">
+            <Grid Margin="5" MouseLeftButtonDown="Grid_MouseLeftButtonDown">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="{Binding RecordDate}"  VerticalAlignment="Center" FontSize="15" HorizontalAlignment="Left" Margin="10,0,0,0"/>
+                <StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
+                    <Button  BorderThickness="0" Background="Transparent" Command="{Binding SaveCommand}" Padding="0" >
+                        <Image  Source="{StaticResource Save}"/>
+                    </Button>
+                    <Button BorderThickness="0" Background="Transparent" Command="{Binding ShowCommand}" Padding="0" Margin="15,0,15,0">
+                        <Image Source="{Binding ShowUri}"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+ 
+        <StackPanel Grid.Row="1" Margin="20,0,10,20"  Visibility="{Binding ShowVisibility}" >
+            <StackPanel Grid.Row="0" Orientation="Horizontal" >
+                <TextBlock Text="记录日期："  VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding RecordDate}"  VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,5,0,0" HorizontalAlignment="Stretch">
+                <TextBlock Text="工作时长："  HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding WorkTime}"  VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Grid.Row="2" Orientation="Vertical" Margin="0,5,0,0" >
+                <Grid Grid.Row="2"  Margin="0,5,0,0" >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="开始时间："  VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="1"  Text="{Binding StartTime}"  VerticalAlignment="Center"/>
+                    <Button Grid.Column="2" Command="{Binding ShowSatrtDateSelectCommand}" Width="25" Height="25" Padding="0" BorderThickness="0" Background="Transparent">
+                        <Image Source="{StaticResource Clock}"></Image>
+                    </Button>
+                </Grid>
+                <Grid Grid.Row="2"  Margin="0,5,0,0" >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="结束时间："  VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="1" Text="{Binding EndTime}" VerticalAlignment="Center"/>
+                    <Button Grid.Column="2" Command="{Binding ShowEndDateSelectCommand}" Width="25" Height="25" Padding="0" BorderThickness="0" Background="Transparent">
+                        <Image Source="{StaticResource Clock}"></Image>
+                    </Button>
+                </Grid>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

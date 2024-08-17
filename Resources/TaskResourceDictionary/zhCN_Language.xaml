@@ -6,5 +6,4 @@
     <system:String x:Key="FictionCategory">分类</system:String>
     <system:String x:Key="FictionSearch">搜索</system:String>
     <system:String x:Key="FictionAccount">个人</system:String>
-
 </ResourceDictionary>

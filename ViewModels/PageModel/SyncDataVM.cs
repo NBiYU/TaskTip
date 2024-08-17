@@ -2,23 +2,25 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Newtonsoft.Json;
+using SyncDataService;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Drawing.Printing;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Reflection.Metadata;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Markup;
 using System.Windows.Media.Imaging;
 using TaskTip.Common;
-using TaskTip.Common.Extends;
 using TaskTip.Common.ExecuteServices;
+using TaskTip.Common.Extends;
 using TaskTip.Models;
 using TaskTip.Services;
 using TaskTip.ViewModels.UserViewModel;
@@ -34,6 +36,7 @@ namespace TaskTip.ViewModels.PageModel
 
         private bool _isCancel = true;
         private bool[] _actionCancel = new bool[10];
+        private static bool _isInit = false;
 
         private string _targetIP;
 
@@ -214,9 +217,39 @@ namespace TaskTip.ViewModels.PageModel
             }
         }
 
+        private bool _canSyncEnable;
+        public bool CanSyncEnable
+        {
+            get => _canSyncEnable;
+            set {
+                SetProperty(ref _canSyncEnable, value);
+                SyncWCFEnableChanged(value);
+            }
+        }
+
+        #endregion
+
+        #region 查找服务
+
+        private string _targetAddress;
+        public string TargetAddress
+        {
+            get => _targetAddress;
+            set=>SetProperty(ref _targetAddress, value);
+        }
+
+        private ObservableCollection<string> _targetAddresses;
+        public ObservableCollection<string> TargetAddresses
+        {
+            get => _targetAddresses;
+            set=> SetProperty(ref _targetAddresses, value);
+        }
+
         #endregion
 
         #region 指令
+
+        #region TCP方式
         [RelayCommand]
         public Task SearchNetwork(object sender)
         {
@@ -331,7 +364,7 @@ namespace TaskTip.ViewModels.PageModel
                     .ToList();
                 Synchronizing = true;
                 var syncVMs = new List<SyncDetailUCM>();
-                selected.ForEach(x => syncVMs.Add(x.DataContext as SyncDetailUCM));
+                selected.ForEach(x => syncVMs.Add((SyncDetailUCM)x.DataContext)); ;
                 syncVMs.RemoveAll(x => x == null);
 
                 if (syncVMs.Count == 0)
@@ -344,7 +377,7 @@ namespace TaskTip.ViewModels.PageModel
                 syncVMs.OrderBy(x => (int)x.TcpData.OperationType);
                 foreach (var vm in syncVMs)
                 {
-                    await vm?.ExecuteSync(TargetIP);
+                    await vm.ExecuteSync(TargetIP);
                 }
 
                 IsCompleteSync = true;
@@ -388,6 +421,76 @@ namespace TaskTip.ViewModels.PageModel
 
         }
 
+        #endregion
+
+        #region WCF服务方式
+
+        [RelayCommand]
+        public Task SearchServices()
+        {
+            var addresses = new List<string>();
+            var networks = NetworkInterface.GetAllNetworkInterfaces().ToList();
+            networks.RemoveAll(x => x.OperationalStatus != OperationalStatus.Up);
+
+            foreach (var network in networks)
+            {
+                var ips = network.GetIPProperties().UnicastAddresses;
+                foreach (var ip in ips)
+                {
+                    if (IPAddress.Parse(ip.Address.ToString()).AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        addresses.Add(string.Join(".", ip.Address.ToString().Split(".")[..3]));
+                    }
+                }
+            }
+            if (!_isCancel)
+            {
+                IsCompleteSearch = true;
+            }
+
+            
+            NetworkVisibility = Visibility.Visible;
+            NetworkText = "搜索中";
+            SearchStatus = Searching;
+            NetworkCollection.Clear();
+            _isCancel = false;
+
+            Task.Run(() =>
+            {
+                Parallel.ForEach(addresses, address =>
+                {
+                    Parallel.For(1, 256,
+                        j =>
+                        {
+                            if (_isCancel) return;
+
+                            var ping = new Ping();
+                            var ip = $"{address}.{j}";
+                            PingReply reply = ping.Send(ip);
+
+                            if (reply.Status == IPStatus.Success)
+                            {
+                                Application.Current.Dispatcher.Invoke(() =>
+                                {
+                                    NetworkCollection.Add(ip);
+                                });
+                            }
+                        });
+                });
+                IsCompleteSearch = true;
+            });
+            
+            return Task.CompletedTask;
+        }
+
+        [RelayCommand]
+        public async Task SyncRequest()
+        {
+            
+        }
+
+        #endregion
+
         [RelayCommand]
         public void CopyKey(object sender)
         {
@@ -401,6 +504,99 @@ namespace TaskTip.ViewModels.PageModel
 
         #region  功能函数
 
+        #region WCF服务方式
+        private void SyncWCFEnableChanged(bool value)
+        {
+            if (_isInit) return;
+            GlobalVariable.SaveConfig(nameof(CanSyncEnable), CanSyncEnable);
+
+            Task.Run(async () =>
+            {
+                var cmdProcess = new CMDHelper();
+                var exePath = FindFilePath(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "IISApp.exe");
+                var wcfPath = Path.GetDirectoryName(FindFilePath(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "serviceConfig.json"));
+
+                var paramDic = new Dictionary<string, string>();
+                #region 参数整合
+
+                paramDic.Add("HostIP", "127.0.0.1");
+                paramDic.Add("Port", "8085");
+                paramDic.Add("WebName", "SyncDataService");
+                paramDic.Add("AppName", "SyncDataApplicationPool");
+                paramDic.Add("WebPath", wcfPath);
+                paramDic.Add("DefaultPage", "TaskTip数据同步服务");
+                paramDic.Add("IsAutoStart", "true");
+                paramDic.Add("NetRuntimeVersion", "v4.0");
+
+                #endregion
+
+                var paramList = new List<string>();
+                paramList.Add(value ? "ADD" : "DEL");
+                foreach (var param in paramDic)
+                {
+                    paramList.Add(param.Key);
+                    paramList.Add(param.Value);
+                }
+
+                await cmdProcess.ExcuteApp(exePath, paramList.ToArray());
+
+                await Task.Delay(1000);
+                if (value)
+                {
+                    //SyncDataServiceClient.Address = "http://localhost:8085/SyncDataService.svc";
+                    using (var client = new SyncDataServiceClient())
+                    {
+                        var res = new ResModel();
+                        try
+                        {
+                            client.Open();
+                            res = await client.PostConfigPathAsync(FindFilePath(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "serviceConfig.json"));
+                        }
+                        catch (Exception e)
+                        {
+                            res.Result = false;
+                            res.Message = $"服务部署失败，{e.Message}";
+                        }
+                        finally
+                        {
+                            client.Close();
+                        }
+
+                        MessageBox.Show(res.Result ? $"服务已成功部署并启用" : res.Message);
+                    }
+                }
+            });
+        }
+
+        public static string FindFilePath(string startPath, string targetFileName)
+        {
+            var targetFilePath = string.Empty;
+            if (Directory.Exists(startPath))
+            {
+                var files = Directory.GetFiles(startPath);
+                var targetFile = files.FirstOrDefault(x => Path.GetFileName(x).Equals(targetFileName, StringComparison.Ordinal) || Path.GetFileNameWithoutExtension(x).Equals(targetFileName, StringComparison.Ordinal));
+                if (string.IsNullOrEmpty(targetFile))
+                {
+                    foreach (var path in Directory.GetDirectories(startPath))
+                    {
+                        var tempPath = FindFilePath(path, targetFileName);
+                        if (!string.IsNullOrEmpty(tempPath))
+                        {
+                            targetFilePath = tempPath;
+                            break;
+                        }
+                    }
+                }else
+                {
+                    targetFilePath = targetFile;
+                }
+            }
+            return targetFilePath;
+        }
+
+        #endregion
+
+        #region TCP方式
         private bool CheckIP(string ip)
         {
             if (!Regex.IsMatch(ip, @"^([0-9]{1,3}\.){3}[0-9]{1,3}$")) return false;
@@ -497,7 +693,6 @@ namespace TaskTip.ViewModels.PageModel
             }
         }
 
-
         private SyncDetailUC AddSyncDetailUc(TcpRequestData data)
         {
             var control = new SyncDetailUC
@@ -506,6 +701,9 @@ namespace TaskTip.ViewModels.PageModel
             };
             return control;
         }
+
+        #endregion
+
         #endregion
 
         #region  初始化
@@ -518,6 +716,7 @@ namespace TaskTip.ViewModels.PageModel
 
         private void InitProperty()
         {
+            _isInit = true;
             NetworkVisibility = Visibility.Collapsed;
             _isCompleteSearch = false;
             _isCompleteReceive = false;
@@ -529,7 +728,9 @@ namespace TaskTip.ViewModels.PageModel
             SyncFileCollection = new();
             NetworkCollection = new();
             SearchStatus = WaitSearch;
+            CanSyncEnable = GlobalVariable.CanSyncEnable;
             Key = GlobalVariable.LocalKey;
+            _isInit = false;
         }
 
         public SyncDataVM()

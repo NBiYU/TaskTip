@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using TaskTip.Common;
 using TaskTip.Services;
 using MessageBox = System.Windows.MessageBox;
 

@@ -64,9 +64,13 @@ namespace TaskTip.ViewModels.WebApiClientViewModel
         [RelayCommand]
         public async Task Search(string key)
         {
-            LoadingVisibility = Visibility.Visible;
 
-            await SendAsync();
+            if (StationDictionary.ContainsKey(key))
+            {
+                await SendAsync();
+                LoadingVisibility = Visibility.Visible;
+            }
+            else MessageBox.Show($"未知站点：{key}");
         }
 
         [RelayCommand]
@@ -165,15 +169,8 @@ namespace TaskTip.ViewModels.WebApiClientViewModel
             {
                 _client = new HttpRequest();
                 var station = StationDictionary.FirstOrDefault(x => x.Key == SelectItem).Value;
-                if (string.IsNullOrEmpty(station))
-                {
-                    await CompleteInvoke<dynamic>(new
-                    {
-                        UpdateTime = DateTime.MinValue.ToString(),
-                        Controls = new List<HotEventModel>()
-                    });
-                    return;
-                }
+                var errMsg = string.Empty;
+
                 var queryParameter = new Dictionary<string, string>()
                 {
                     { "type",  station}
@@ -190,55 +187,64 @@ namespace TaskTip.ViewModels.WebApiClientViewModel
                 };
 
                 var result = await _client.SendAsync(req);
-                if (result.StatusCode != 200)
+                if (result.StatusCode == 200)
                 {
-                    MessageBox.Show($"【{WebName}】发送异常：{result.Message}");
-                    return;
-                }
-
-                try
-                {
-
-                    var content = JObject.Parse(result.Content);
-                    if (content.First.First.Value<bool>())
+                    try
                     {
-                        var updateTime = content["update_time"].Value<string>();
-                        if (content["data"].Value<object>() != null)
+
+                        var content = JObject.Parse(result.Content);
+                        if (content.First.First.Value<bool>())
                         {
-                            HotEvents.Clear();
-                            foreach (var data in content["data"])
+                            var updateTime = content["update_time"].Value<string>();
+                            if (content["data"].Value<object>() != null)
                             {
-                                var picPath = data["pic"]?.Value<string>() ?? "";
-
-                                HotEvents.Add(new HotEventModel()
+                                HotEvents.Clear();
+                                foreach (var data in content["data"])
                                 {
-                                    Title = data["title"]?.Value<string>() ?? "",
-                                    TextContent = data["desc"]?.Value<string>() ?? "",
-                                    PicUrl = picPath,
-                                    UrlString = data["url"]?.Value<string>() ?? "",
-                                });
-                            }
+                                    var picPath = data["pic"]?.Value<string>() ?? "";
 
-                            if (HotEvents.Count != 0)
-                            {
-                                await CompleteInvoke<dynamic>(new
+                                    HotEvents.Add(new HotEventModel()
+                                    {
+                                        Title = data["title"]?.Value<string>() ?? "",
+                                        TextContent = data["desc"]?.Value<string>() ?? "",
+                                        PicUrl = picPath,
+                                        UrlString = data["url"]?.Value<string>() ?? "",
+                                    });
+                                }
+
+                                if (HotEvents.Count != 0)
                                 {
-                                    UpdateTime = updateTime,
-                                    Controls = HotEvents
-                                });
+                                    await CompleteInvoke<dynamic>(new
+                                    {
+                                        UpdateTime = updateTime,
+                                        Controls = HotEvents
+                                    });
 
+                                }
                             }
                         }
+                        else
+                        {
+                            errMsg = $"【{WebName}】获取失败：{content["message"].ToString()}";
+                        }
                     }
-                    else
+                    catch (Exception e)
                     {
-                        MessageBox.Show($"【{WebName}】获取失败：{content["message"].ToString()}");
+                        errMsg = $"【{WebName}】解析异常：{e.Message},JSON：{result.Content}";
                     }
                 }
-                catch (Exception e)
+                else
                 {
-                    MessageBox.Show($"【{WebName}】解析异常：{e},JSON文件：{result.Content}");
+                    errMsg = $"【{WebName}】发送异常：{result.Message}";
                 }
+
+                
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    LoadingVisibility = Visibility.Collapsed;
+                    if (!string.IsNullOrEmpty(errMsg)) MessageBox.Show(errMsg);
+                });
             });
             return Task.CompletedTask;
         }

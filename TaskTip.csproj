@@ -10,21 +10,27 @@
   <ItemGroup>
     <None Remove="appsettings.json" />
     <None Remove="nlog.config" />
+    <None Remove="Resources\Sources\Image\Add.png" />
     <None Remove="Resources\Sources\Image\add_file_icon_238182.png" />
     <None Remove="Resources\Sources\Image\archive-archives-document-folder-open.png" />
     <None Remove="Resources\Sources\Image\arrows_fullscreen.png" />
     <None Remove="Resources\Sources\Image\bin_delete_file_garbage_recycle_remove_trash.png" />
     <None Remove="Resources\Sources\Image\Clock.png" />
     <None Remove="Resources\Sources\Image\Close.png" />
+    <None Remove="Resources\Sources\Image\Collapsed.png" />
+    <None Remove="Resources\Sources\Image\Conflict.png" />
     <None Remove="Resources\Sources\Image\Copy_Paste_Move_Square.png" />
     <None Remove="Resources\Sources\Image\Downloading.gif" />
+    <None Remove="Resources\Sources\Image\Empty.png" />
     <None Remove="Resources\Sources\Image\Error.png" />
     <None Remove="Resources\Sources\Image\ErrorImage.png" />
     <None Remove="Resources\Sources\Image\favicon.ico" />
     <None Remove="Resources\Sources\Image\fileinterfacesymboloftextpapersheet.png" />
+    <None Remove="Resources\Sources\Image\FileIsNotExist.png" />
     <None Remove="Resources\Sources\Image\fullscreen.png" />
     <None Remove="Resources\Sources\Image\InitImage.png" />
     <None Remove="Resources\Sources\Image\line-60_icon-icons.com.png" />
+    <None Remove="Resources\Sources\Image\Merger.png" />
     <None Remove="Resources\Sources\Image\Minimize.png" />
     <None Remove="Resources\Sources\Image\Refresh.png" />
     <None Remove="Resources\Sources\Image\rename_regular_icon.png" />
@@ -34,7 +40,20 @@
     <None Remove="Resources\Sources\Image\Send.png" />
     <None Remove="Resources\Sources\Image\Setting.png" />
     <None Remove="Resources\Sources\Image\Success.png" />
+    <None Remove="Resources\Sources\Image\Visibility.png" />
     <None Remove="Resources\Sources\Image\WaitDownload.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <COMReference Include="NetFwTypeLib">
+      <WrapperTool>tlbimp</WrapperTool>
+      <VersionMinor>0</VersionMinor>
+      <VersionMajor>1</VersionMajor>
+      <Guid>58fbcf7c-e7a9-467c-80b3-fc65e8fcca08</Guid>
+      <Lcid>0</Lcid>
+      <Isolated>false</Isolated>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
 
   <ItemGroup>
@@ -44,9 +63,13 @@
     <Content Include="nlog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\Sources\Image\Empty.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\Sources\Image\Add.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\Sources\Image\add_file_icon_238182.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -65,6 +88,10 @@
     <Resource Include="Resources\Sources\Image\Close.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\Sources\Image\Collapsed.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Sources\Image\Conflict.png" />
     <Resource Include="Resources\Sources\Image\Copy_Paste_Move_Square.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -83,6 +110,7 @@
     <Resource Include="Resources\Sources\Image\fileinterfacesymboloftextpapersheet.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\Sources\Image\FileIsNotExist.png" />
     <Resource Include="Resources\Sources\Image\fullscreen.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -92,6 +120,7 @@
     <Resource Include="Resources\Sources\Image\line-60_icon-icons.com.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\Sources\Image\Merger.png" />
     <Resource Include="Resources\Sources\Image\Minimize.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -119,6 +148,9 @@
     <Resource Include="Resources\Sources\Image\Success.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\Sources\Image\Visibility.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\Sources\Image\WaitDownload.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -127,6 +159,7 @@
   <ItemGroup>
     <PackageReference Include="Autofac" Version="7.1.0" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
+    <PackageReference Include="DiffPlex" Version="1.7.1" />
     <PackageReference Include="HandyControl" Version="3.4.0" />
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
     <PackageReference Include="Hardcodet.Wpf.TaskbarNotification" Version="1.0.5" />
@@ -135,6 +168,12 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NLog" Version="5.2.4" />
     <PackageReference Include="Quartz" Version="3.7.0" />
+    <PackageReference Include="System.ServiceModel.Duplex" Version="4.10.*" />
+    <PackageReference Include="System.ServiceModel.Federation" Version="4.10.*" />
+    <PackageReference Include="System.ServiceModel.Http" Version="4.10.*" />
+    <PackageReference Include="System.ServiceModel.NetNamedPipe" Version="6.0.*" />
+    <PackageReference Include="System.ServiceModel.NetTcp" Version="4.10.*" />
+    <PackageReference Include="System.ServiceModel.Security" Version="4.10.*" />
   </ItemGroup>
 
   <ItemGroup>

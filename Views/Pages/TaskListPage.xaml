@@ -39,23 +39,19 @@
                         </ListBox.ItemContainerStyle>
                 </ListBox>
             </Border>
-            <Button x:Name="NewTask" Width="50" Height="50" Padding="0" Background="{StaticResource ThemeBackground}" 
-                                    HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,20,140"
-                                    Command="{Binding AddTaskListCommand}">
-                <Button.Clip>
-                    <EllipseGeometry Center="25,25" RadiusX="24" RadiusY="24"></EllipseGeometry>
-                </Button.Clip>
-                +
-            </Button>
-            <Button x:Name="SendDaily" Width="50" Height="50" Padding="0" Background="{StaticResource ThemeBackground}" 
-                                    HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,20,80"
-                                    Command="{Binding SendDailyMessageCommand}">
-                <Button.Clip>
-                    <EllipseGeometry Center="25,25" RadiusX="24" RadiusY="24"></EllipseGeometry>
-                </Button.Clip>
-                <Image Source="{StaticResource Send}" Stretch="Uniform" Width="25" Height="25" />
-            </Button>
+            <Border Background="Transparent" Width="50" Height="50" Padding="0" HorizontalAlignment="Right" VerticalAlignment="Bottom"  Margin="0,0,20,140" CornerRadius="25" BorderThickness="1" BorderBrush="#FFE0E0E0">
 
+                <Button x:Name="NewTask"  Padding="0" Background="{StaticResource ThemeBackground}"  BorderThickness="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                    Command="{Binding AddTaskListCommand}">
+                    <Image Source="{StaticResource Add}" Stretch="Uniform" />
+                </Button>
+            </Border>
+            <Border Background="Transparent" Width="50" Height="50" Padding="0" HorizontalAlignment="Right" VerticalAlignment="Bottom"  Margin="0,0,20,80" CornerRadius="25" BorderThickness="1" BorderBrush="#FFE0E0E0">
+
+                <Button x:Name="SendDaily"  Padding="0" Command="{Binding SendDailyMessageCommand}" Background="{StaticResource ThemeBackground}" BorderThickness="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Image Source="{StaticResource Send}" Stretch="Uniform" Width="25" Height="25" />
+                </Button>
+            </Border>
             <hc:GotoTop Animated="True" AutoHiding="True" AnimationTime="500" Background="{StaticResource ThemeBackground}" 
                                             Target="{Binding ElementName=TaskListPanel}"
                                             HorizontalAlignment="Right" VerticalAlignment="Bottom" 

@@ -5,7 +5,7 @@
              xmlns:local="clr-namespace:TaskTip"
              xmlns:viewModels="clr-namespace:TaskTip.ViewModels"
              xmlns:userViewModel="clr-namespace:TaskTip.ViewModels.UserViewModel"
-             StartupUri="MainWindow.xaml">
+             StartupUri="Views/Windows/SyncMainView.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

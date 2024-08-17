@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,26 +12,27 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TaskTip.ViewModels.UserViewModel;
 
-namespace TaskTip.Pages.WebApiClientUI
+namespace TaskTip.Views.UserControls
 {
     /// <summary>
-    /// TransFormLanguagePage.xaml µÄ½»»¥Âß¼­
+    /// WorkInfoUC.xaml çš„äº¤äº’é€»è¾‘
     /// </summary>
-    public partial class TransFormLanguagePage : Page
+    public partial class WorkInfoUC : UserControl
     {
-        public TransFormLanguagePage()
+        public WorkInfoUC()
         {
             InitializeComponent();
         }
 
-        private void Input_OnKeyDown(object sender, KeyEventArgs e)
+        private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.Key == Key.Enter)
+            if (e.ClickCount == 2)
             {
-                if (sender is TextBox control)
+                if (DataContext is WorkInfoUCM vm)
                 {
-                    control.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+                    vm.Show();
                 }
             }
         }

@@ -9,14 +9,11 @@
              mc:Ignorable="d" 
              x:Name="MenuItem"
              >
+    <UserControl.DataContext>
+        <viewModel:MenuItemUserControlModel/>
+    </UserControl.DataContext>
 
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <viewModel:MenuItemUserControlModel x:Key="MenuItemUserControlModel"></viewModel:MenuItemUserControlModel>
-        </ResourceDictionary>
-    </UserControl.Resources>
-
-    <Grid Margin="4,0,0,0" DataContext="{Binding Source={StaticResource MenuItemUserControlModel}}" 
+    <Grid Margin="4,0,0,0" 
           x:Name="RecordGrid" HorizontalAlignment="Stretch" MaxWidth="200" Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -32,8 +29,8 @@
                     <Grid Background="{StaticResource ThemeBackground}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <CheckBox x:Name="MoveCheckItem"  Grid.Column="0" IsChecked="{Binding MoveCheck}" Visibility="{Binding NodeMoveVisibility}">
                             <hc:Interaction.Triggers>
@@ -42,9 +39,15 @@
                                 </hc:EventTrigger>
                             </hc:Interaction.Triggers>
                         </CheckBox>
-                        <TextBlock Grid.Column="1" x:Name="LabelBlock" Text="{Binding Title}"  HorizontalAlignment="Left" VerticalAlignment="Center" Width="180" >
+                        <Button Grid.Column="1"  BorderThickness="0"  Height="20" MaxWidth="20" Margin="5" Padding="0" Background="Transparent"
+                                Command="{Binding ShowListCommand}"   IsEnabled="{Binding IsDirectory}">
+                            <Image  Source="{Binding ShowButtonGeometry}"  Height="20"  ></Image>
+                            <!--<Path Data="{Binding ShowButtonGeometry}" StrokeThickness="1" VerticalAlignment="Center"  Stroke="{DynamicResource InfoBrush}"></Path>-->
+                        </Button>
+                        <TextBlock Grid.Column="2" x:Name="LabelBlock" Text="{Binding Title,Mode=TwoWay}"  HorizontalAlignment="Left" VerticalAlignment="Center" Width="150" TextTrimming="CharacterEllipsis"
+                                   MouseLeftButtonDown="LabelBlock_MouseLeftButtonDown">
                             <TextBlock.ContextMenu>
-                                <ContextMenu>
+                                <ContextMenu >
                                     <MenuItem Header="添加文件夹" IsEnabled="{Binding IsDirectory}" Command="{Binding AddDirectoryCommand}">
                                         <MenuItem.Icon>
                                             <Image Source="{StaticResource Folder}"></Image>
@@ -74,13 +77,8 @@
                                     </MenuItem>
                                 </ContextMenu>
                             </TextBlock.ContextMenu>
-                            <hc:Interaction.Triggers>
-                                <hc:EventTrigger EventName="MouseLeftButtonDown">
-                                    <hc:InvokeCommandAction Command="{Binding DoubleClickCommand}" ></hc:InvokeCommandAction>
-                                </hc:EventTrigger>
-                            </hc:Interaction.Triggers>
                             <TextBlock.ToolTip>
-                                <Grid   >
+                                <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
@@ -156,7 +154,7 @@
                                 </Grid>
                             </TextBlock.ToolTip>
                         </TextBlock>
-                        <TextBox  Grid.Column="1" x:Name="Title"  Text="{Binding Title,Mode=TwoWay,UpdateSourceTrigger=LostFocus}" AcceptsReturn="False" AcceptsTab="False" KeyDown="Title_OnKeyDown"
+                        <TextBox  Grid.Column="2" x:Name="Title"  Text="{Binding Title,Mode=TwoWay,UpdateSourceTrigger=LostFocus}" AcceptsReturn="False" AcceptsTab="False" KeyDown="Title_OnKeyDown"
                                   Visibility="{Binding EdiVisibility}" HorizontalAlignment="Stretch" VerticalAlignment="Center">
                             <hc:Interaction.Triggers>
                                 <hc:EventTrigger EventName="LostFocus">
@@ -164,11 +162,6 @@
                                 </hc:EventTrigger>
                             </hc:Interaction.Triggers>
                         </TextBox>
-                        <Button Grid.Column="2"  BorderThickness="0"  Height="20" MaxWidth="20"  Padding="0" Background="Transparent"
-                                Command="{Binding ShowListCommand}"   IsEnabled="{Binding IsDirectory}">
-                            <Image  Source="{Binding ShowButtonGeometry}"  Height="20"  ></Image>
-                            <!--<Path Data="{Binding ShowButtonGeometry}" StrokeThickness="1" VerticalAlignment="Center"  Stroke="{DynamicResource InfoBrush}"></Path>-->
-                        </Button>
                     </Grid>
                 </ControlTemplate>
             </TextBox.Template>

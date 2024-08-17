@@ -1,0 +1,48 @@
+﻿<Page x:Class="TaskTip.Views.Pages.ComplateWorkTimePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:TaskTip.Views.Pages" xmlns:hc="https://handyorg.github.io/handycontrol"
+      xmlns:viewModels="clr-namespace:TaskTip.ViewModels.PageModel"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="ComplateWorkTimePage">
+    <Page.DataContext>
+        <viewModels:WorkTimeListPageVM/>
+    </Page.DataContext>
+    <Grid>
+        <ListBox x:Name="WorkTimeListPanel" ItemsSource="{Binding WorkTimeList}" Padding="0" Background="Transparent"
+                HorizontalAlignment="Stretch" BorderThickness="0" >
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <Border Background="{TemplateBinding Background}">
+                                    <ContentPresenter />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter  Property="Background" Value="{StaticResource SelectedBackgroundBrush}" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListBox.ItemContainerStyle>
+        </ListBox>
+        <Border Background="Transparent" Width="50" Height="50" Padding="0" HorizontalAlignment="Right" VerticalAlignment="Bottom"  Margin="0,0,20,75" CornerRadius="25" BorderThickness="1" BorderBrush="#FFE0E0E0">
+            <Button Background="{StaticResource ThemeBackground}" Command="{Binding AddWorkInfoListItemCommand}" BorderThickness="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <Image Source="{StaticResource Add}" Stretch="Uniform" />
+            </Button>
+        </Border>
+
+
+        <hc:GotoTop Animated="True" AutoHiding="True" AnimationTime="500" Background="{StaticResource ThemeBackground}" 
+                                            Target="{Binding ElementName=WorkTimeListPanel}"
+                                            HorizontalAlignment="Right" VerticalAlignment="Bottom" 
+                                            Margin="0,0,20,20"/>
+    </Grid>
+</Page>

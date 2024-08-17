@@ -15,6 +15,8 @@
 
     <Grid>
         <TabControl x:Name="SyncTab" Background="Transparent" BorderThickness="0">
+            
+            <!--#region TCP 方式-->
             <TabItem Header="当前可同步网络" Background="Transparent">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -107,6 +109,10 @@
 
                 </Grid>
             </TabItem>
+            
+
+            <!--#endregion-->
+            
             <TabItem Header="同步设置" Background="Transparent">
                 <Border CornerRadius="0,10,10,0" BorderBrush="#E9E9E9" BorderThickness="1">
                 <Grid Margin="32">
@@ -115,17 +121,69 @@
                         <RowDefinition/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left" Text="我的密匙" />
+                            <TextBox  Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="100,0,0,0" Width="300"  Text="{Binding Key}" ToolTip="注意，需要本地和远程的密匙相同"/>
+                        </Grid>
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left" Text="允许同步" />
+                            <ToggleButton Grid.Column="1" Style="{StaticResource ToggleButtonSwitch}" HorizontalAlignment="Right" Margin="10"
+                                      IsChecked="{Binding CanSyncEnable}"/>
+                        </Grid>
+                    </Grid>
+                </Border>
+            </TabItem>
+
+            <TabItem Header="查找服务">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
                     <Grid Grid.Row="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <ListBox Grid.Row="0" x:Name="ServiceList" ItemsSource="{Binding NetworkCollection}" >
+                            <langs:Interaction.Triggers>
+                                <langs:EventTrigger EventName="SelectionChanged">
+                                    <langs:InvokeCommandAction Command="{Binding NetworkSelectedCommand}" CommandParameter="{Binding ElementName=ServiceList,Path=SelectedItem}">
+                                    </langs:InvokeCommandAction>
+                                </langs:EventTrigger>
+                            </langs:Interaction.Triggers>
+                        </ListBox>
+                        <ProgressBar Grid.Row="1" Style="{StaticResource ProgressBarDanger}" IsIndeterminate="True" Visibility="{Binding NetworkVisibility}"/>
+                    </Grid>
+                    <Grid Grid.Row="1" >
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left" Text="我的密匙" />
-                        <TextBox  Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="100,0,0,0" Width="300"  Text="{Binding Key}" ToolTip="注意，需要本地和远程的密匙相同"/>
+                        <TextBox Grid.Column="0" Text="{Binding TargetAddress}" HorizontalAlignment="Left" Width="250" Margin="5">
+                        </TextBox>
+                        <TextBlock Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding NetworkText}" Margin="0,0,15,0"></TextBlock>
+                        <Button Grid.Column="3" HorizontalAlignment="Right" Margin="5" Padding="0" Command="{Binding SearchServicesCommand}" >
+                            <Image  x:Name="ImageMain" Stretch="Uniform"  Source="{Binding SearchStatus}" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                        </Button>
+                        <Button Grid.Column="4" Content="请求同步" HorizontalAlignment="Right" Margin="5"
+                                 Command="{Binding GetSyncFileListCommand}" CommandParameter="{Binding ElementName=ServiceList,Path=SelectedItem}" ></Button>
                     </Grid>
+
                 </Grid>
-                </Border>
             </TabItem>
+            
         </TabControl>
     </Grid>
 </Page>

@@ -129,51 +129,63 @@ namespace TaskTip.ViewModels.FictionPageVM
 
             Task.Run(async() =>
             {
+
                 _isLoading = true; //在这里再次标识是防止其他地方没有成功表示
                 await Task.Delay(100);
                 var collection = new List<FictionProgressModel>();
-                var content = await _request.SearchCategoryFiction(categoryEnum, startindex, gap);
-
-                if (content.code == 0)
+                try
                 {
-                    foreach (var item in content.data)
+                    var content = await _request.SearchCategoryFiction(categoryEnum, startindex, gap);
+
+                    if (content.code == 0)
                     {
-                        collection.Add(new FictionProgressModel()
+                        foreach (var item in content.data)
                         {
-                            Id = item.fictionId,
-                            Title = item.title,
-                            Author = item.author,
-                            Description = item.descs,
-                            LastUpdateTime = item.updateTime,
-                            CoverImageSource = item.cover,
-                            LastChapterReadIndex = 0,
-                            LastContentReadIndex = 0
-                        });
+                            collection.Add(new FictionProgressModel()
+                            {
+                                Id = item.fictionId,
+                                Title = item.title,
+                                Author = item.author,
+                                Description = item.descs,
+                                LastUpdateTime = item.updateTime,
+                                CoverImageSource = item.cover,
+                                LastChapterReadIndex = 0,
+                                LastContentReadIndex = 0
+                            });
+                        }
                     }
-                }
-
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    if (content.code != 0)
+                    Application.Current.Dispatcher.Invoke(() =>
                     {
-                        ListDesc = content.msg;
-                        DescVisibility = Visibility.Visible;
+                        if (content.code != 0)
+                        {
+                            ListDesc = content.msg;
+                            DescVisibility = Visibility.Visible;
+                            LoadingVisibility = Visibility.Collapsed;
+                            _isLoading = false;
+                            return;
+                        }
+
+                        //var collectionUC = new List<FictionItemUC>();
+                        foreach (var item in collection)
+                        {
+                            CategoriaContents.Add(new FictionItemUC(item, IsOperation: false));
+                        }
+                        //CategoriaContents = new ObservableCollection<FictionItemUC>(collectionUC);
+                        _isLoading = false;
+                        DescVisibility = Visibility.Collapsed;
+                        LoadingVisibility = Visibility.Collapsed;
+                    });
+                }
+                catch (Exception e)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
                         LoadingVisibility = Visibility.Collapsed;
                         _isLoading = false;
-                        return;
-                    }
+                        MessageBox.Show(e.Message);
+                    });
 
-                    //var collectionUC = new List<FictionItemUC>();
-                    foreach (var item in collection)
-                    {
-                        CategoriaContents.Add(new FictionItemUC(item,IsOperation:false));
-                    }
-                    //CategoriaContents = new ObservableCollection<FictionItemUC>(collectionUC);
-                    _isLoading = false;
-                    DescVisibility = Visibility.Collapsed;
-                    LoadingVisibility = Visibility.Collapsed;
-                });
-
+                }
             });
 
             return Task.CompletedTask;

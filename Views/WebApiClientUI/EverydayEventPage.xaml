@@ -22,6 +22,7 @@
         <Grid HorizontalAlignment="Stretch"  >
 <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
@@ -45,9 +46,9 @@
             </Grid>
             
         </Grid>
-        <Line  HorizontalAlignment="Stretch" VerticalAlignment="Bottom" X1="0" X2="500" Y1="2" Stroke="Aqua"></Line>
+            <Line Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" X1="0" X2="500" Y1="2" Stroke="Aqua" Margin="5"/>
             <!--<TextBlock Text="{Binding TextContent,Converter={StaticResource TextFormatConvert}}" TextWrapping="Wrap"></TextBlock>-->
-            <ListBox Grid.Row="1" ItemsSource="{Binding EverydayEvents}" Padding="5" Background="Transparent" BorderThickness="0">
+            <ListBox Grid.Row="2" ItemsSource="{Binding EverydayEvents}" Padding="5" Background="Transparent" BorderThickness="0">
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
                         <Setter Property="Template">

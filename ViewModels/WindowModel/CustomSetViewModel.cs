@@ -13,7 +13,9 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using TaskTip.Common;
 using TaskTip.Services;
+using TaskTip.Views;
 using TaskTip.Views.UserControls;
 using TaskTip.Views.Windows.PopWindow;
 using Application = System.Windows.Application;
@@ -250,7 +252,21 @@ namespace TaskTip.ViewModels.WindowModel
 
         #endregion
 
+        #region 工时计算
 
+        private string _workStartTime;
+        public string WorkStartTime { get => _workStartTime; set { SetProperty(ref _workStartTime, value); ChangedValueSave(nameof(WorkStartTime), WorkStartTime); } }
+
+        private string _workFinishTime;
+        public string WorkFinishTime { get => _workFinishTime; set { SetProperty(ref _workFinishTime, value); ChangedValueSave(nameof(WorkFinishTime), WorkFinishTime); } }
+
+        private double _siestaTime;
+        public double SiestaTime { get => _siestaTime; set { SetProperty(ref _siestaTime, value); ChangedValueSave(nameof(SiestaTime), SiestaTime); } }
+
+        private double _againWorkGapTime;
+        public double AgainWorkGapTime { get => _againWorkGapTime; set { SetProperty(ref _againWorkGapTime, value); ChangedValueSave(nameof(AgainWorkGapTime), AgainWorkGapTime); } }
+
+        #endregion
 
         #endregion
 
@@ -496,6 +512,21 @@ namespace TaskTip.ViewModels.WindowModel
 
         #endregion
 
+        #region 工时计算
+
+        [RelayCommand]
+        public void WorkStartTimeSet()
+        {
+            SelectDateTime("上班时间");
+        }
+        [RelayCommand]
+        public void WorkFinishTimeSet()
+        {
+            SelectDateTime("下班时间");
+        }
+
+        #endregion
+
         #region 阅读小说热键
 
         private ObservableCollection<KeyInputUC> _keyInputUcs=new();
@@ -567,6 +598,7 @@ namespace TaskTip.ViewModels.WindowModel
             var fictionCachePath = Path.Combine(TaskTipPath ,"Fictions");
             var fictionSetPath = Path.Combine(fictionCachePath , "FictionProgress.json");
             var jsonPath = Path.Combine(TaskTipPath ,"MenuTreeConfig.json");
+            var workTimeRecordPath = Path.Combine(TaskTipPath, "WorkTime.json");
 
             if (!Directory.Exists(taskPath)) Directory.CreateDirectory(taskPath);
             if (!Directory.Exists(menoPath)) Directory.CreateDirectory(menoPath);
@@ -594,8 +626,17 @@ namespace TaskTip.ViewModels.WindowModel
                 if (MessageBox.Show("FictionProgress.json文件已存在，是否覆盖", "文件移动", MessageBoxButton.YesNo,
                         MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
-                    File.Delete(jsonPath);
-                    File.Move(GlobalVariable.MenuTreeConfigPath, jsonPath);
+                    File.Delete(fictionSetPath);
+                    File.Move(GlobalVariable.FictionProgressPath, fictionSetPath);
+                }
+            }
+            if (File.Exists(workTimeRecordPath))
+            {
+                if (MessageBox.Show("WorkTime.json文件已存在，是否覆盖", "文件移动", MessageBoxButton.YesNo,
+                        MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    File.Delete(workTimeRecordPath);
+                    File.Move(GlobalVariable.WorkTimeRecordPath, workTimeRecordPath);
                 }
             }
         }
@@ -692,6 +733,35 @@ namespace TaskTip.ViewModels.WindowModel
             }
         }
 
+        private void SelectDateTime(string title)
+        {
+            var datetime = string.Empty;
+            if (DateTimeGetView.IsClosed)
+            {
+                var taskTime = new DateTimeGetView();
+                taskTime.TitleName.Text = title;
+                taskTime.HideCancekPlan();
+                taskTime.CalendarWithClock.Confirmed += () => {
+                    datetime = taskTime.CalendarWithClock.SelectedDateTime.ToString();
+                    switch (title)
+                    {
+                        case "上班时间":
+                            WorkStartTime = DateTime.Parse(datetime).ToString("HH:mm"); break;
+                        case "下班时间":
+                            WorkFinishTime = DateTime.Parse(datetime).ToString("HH:mm"); break;
+                        default:
+                            MessageBox.Show($"时间选择：未知分支 {title}");
+                            break;
+                    }
+                    taskTime.Close();
+                };
+                taskTime.NoneTime.Click += (o, e) =>
+                {
+                    datetime = DateTime.MinValue.ToString();
+                };
+                taskTime.Show();
+            }
+        }
 
         #endregion
 
@@ -729,6 +799,11 @@ namespace TaskTip.ViewModels.WindowModel
             FloatingMaxWidth = SystemParameters.WorkArea.Width;
 
             IsEnableAutoDelete = GlobalVariable.IsEnableAutoDelete;
+
+            WorkStartTime = GlobalVariable.WorkStartTime;
+            WorkFinishTime = GlobalVariable.WorkFinishTime;
+            SiestaTime = GlobalVariable.SiestaTime;
+            AgainWorkGapTime = GlobalVariable.AgainWorkGapTime;
 
             KeyInputUcs = new ObservableCollection<KeyInputUC>(AddKeyInputUc(_hotKeyRelevancyName.Keys.Select(x=>x).ToArray()));
             

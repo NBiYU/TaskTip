@@ -84,6 +84,9 @@
                         <TabItem Header="阅读" x:Name="Fiction" Background="Transparent">
                             <Frame Source="../Pages/FictionPage.xaml" Background="Transparent" BorderThickness="0"></Frame>
                         </TabItem>
+                        <TabItem Header="工时计算" x:Name="WorkTime" Background="Transparent">
+                            <Frame Source="../Pages/ComplateWorkTimePage.xaml" Background="Transparent" BorderThickness="0"></Frame>
+                        </TabItem>
                         <hc:Interaction.Triggers>
                             <hc:EventTrigger EventName="SelectionChanged">
                                 <hc:InvokeCommandAction 

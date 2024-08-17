@@ -43,5 +43,15 @@ namespace TaskTip.UserControls
         {
             throw new NotImplementedException();
         }
+
+        private void LabelBlock_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if(e.ClickCount == 2) {
+                if (DataContext is MenuItemUserControlModel vm)
+                {
+                    vm.LoadFileRecord();
+                }
+            }
+        }
     }
 }

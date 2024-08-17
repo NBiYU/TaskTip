@@ -9,4 +9,8 @@
     <convert:TaskProgressConvert x:Key="TaskProgressConvert"/>
     <convert:TextFormatConvert x:Key="TextFormatConvert"/>
     <convert:MultiValueConvert x:Key="MultiValueConvert"/>
+    <convert:SyncStatusConvert x:Key="SyncStatusConvert"/>
+    <convert:NotFileConvert x:Key="NotFileConvert"/>
+    <convert:SyncCheckConvert x:Key="SyncCheckConvert"/>
+    
 </ResourceDictionary>

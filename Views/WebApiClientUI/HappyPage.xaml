@@ -15,9 +15,6 @@
             <TabItem Header="热点"  Background="Transparent">
                 <Frame Source="HotEventPage.xaml" Background="Transparent" BorderThickness="0"></Frame>
             </TabItem>
-            <TabItem Header="翻译"  Background="Transparent">
-                <Frame Source="TransFormLanguagePage.xaml" Background="Transparent" BorderThickness="0"></Frame>
-            </TabItem>
         </TabControl>
     </Grid>
 </Page>

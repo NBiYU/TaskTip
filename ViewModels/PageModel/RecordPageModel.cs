@@ -8,9 +8,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -111,11 +110,7 @@ namespace TaskTip.ViewModels
 
                 TreeInfo.Name = targetTitle;
 
-                var xamlPath = System.IO.Path.Combine(GlobalVariable.RecordFilePath, "Xaml", TreeInfo.GUID) + GlobalVariable.EndFileFormat;
                 var path = System.IO.Path.Combine(GlobalVariable.RecordFilePath, TreeInfo.GUID) + GlobalVariable.EndFileFormat;
-                //var writeContent = new FlowDocument();
-                //CopyToDocument(RichContent, writeContent);
-                //CopyToDocument(writeContent, RichContent);
 
                 var iamges = FindItemInRichTextBox<Image>(RichContent.ContentStart);
                 for (int i = 0; i < iamges.Count; i++)
@@ -127,7 +122,10 @@ namespace TaskTip.ViewModels
                     }, RichContent.ContentStart);
                 }
 
-                WriteXamlContent(xamlPath, RichContent);
+                var content = RichContent.GetString();
+
+                WriteJsonContent(path, new RecordFileModel() { GUID = TreeInfo.GUID, Title = TreeInfo.Name, Text = content });
+
                 LoadRecord(TreeInfo);
 
                 _clearPath.RemoveAll(x => iamges.FirstOrDefault(i => i.Uid == x) == null);
@@ -460,18 +458,12 @@ namespace TaskTip.ViewModels
                 if (File.Exists(path))
                 {
                     var json = ReadJsonContent(path);
-                    if (!string.IsNullOrEmpty(json.Text))
+                    if (string.IsNullOrEmpty(json.Text))
                     {
-                        content = XamlReader.Parse(ConvertPlainTextToXaml(json.Text)) as FlowDocument ?? null;
-                        json.Text = string.Empty;
-                        WriteJsonContent(path, json);
-                        WriteXamlContent(xamlPath, content);
+                        json.Text = ConvertPlainTextToXaml(json.Text);
                     }
-                }
-
-                if (content == null && File.Exists(xamlPath))
-                {
-                    content = ReadXamlContent(xamlPath) as FlowDocument ?? null;
+                    var document = XamlReader.Parse(json.Text);
+                    content = document as FlowDocument ;
                 }
 
                 CurrentTitle = TreeInfo.Name;
@@ -516,7 +508,7 @@ namespace TaskTip.ViewModels
             }
             catch (Exception e)
             {
-                MessageBox.Show($"加载文件异常：{e}");
+                MessageBox.Show($"加载文件内容异常：{e.Message}");
             }
 
         }
@@ -548,27 +540,7 @@ namespace TaskTip.ViewModels
 
         }
 
-        /// <summary>
-        /// 写入XAML内容
-        /// </summary>
-        /// <param name="path"></param>
-        /// <param name="content"></param>
-        /// <returns></returns>
-        private bool WriteXamlContent(string path, object content)
-        {
-            try
-            {
-                using (FileStream fileStream = new FileStream(path, FileMode.Create))
-                {
-                    XamlWriter.Save(content, fileStream);
-                    return true;
-                }
-            }
-            catch
-            {
-                return false;
-            }
-        }
+
 
         private FlowDocument TrimTransparent(FlowDocument content)
         {
@@ -590,26 +562,6 @@ namespace TaskTip.ViewModels
             }
 
             return content;
-        }
-
-        /// <summary>
-        /// 读取XAML内容
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        private object? ReadXamlContent(string path)
-        {
-            try
-            {
-                using (var fileStream = new FileStream(path, FileMode.Open))
-                {
-                    return XamlReader.Load(fileStream);
-                }
-            }
-            catch
-            {
-                return null;
-            }
         }
 
         #endregion

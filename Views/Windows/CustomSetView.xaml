@@ -7,7 +7,7 @@
         xmlns:viewModels="clr-namespace:TaskTip.ViewModels"
         xmlns:converts="clr-namespace:TaskTip.ViewModels.Converters"
         xmlns:uc="clr-namespace:TaskTip.Views.UserControls"
-        xmlns:langs="https://handyorg.github.io/handycontrol"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
         xmlns:windowModel="clr-namespace:TaskTip.ViewModels.WindowModel"
         mc:Ignorable="d"
         WindowStyle="None" WindowStartupLocation="CenterScreen"  Background="Transparent" AllowsTransparency="True"
@@ -48,7 +48,7 @@
                     </Button>
                 </StackPanel>
 
-                <langs:Divider Grid.Row="1" LineStrokeThickness="2" LineStroke="{DynamicResource DarkPrimaryBrush}"/>
+                <hc:Divider Grid.Row="1" LineStrokeThickness="2" LineStroke="{DynamicResource DarkPrimaryBrush}"/>
 
                 <TabControl x:Name="SetPage" Grid.Row="2" TabStripPlacement="Left" Margin="18,0" Background="Transparent" >
                     <TabItem  Header="通用" IsSelected="True" Background="Transparent">
@@ -63,14 +63,14 @@
                                       IsChecked="{Binding AutoStartUp}"/>
                             </Grid>
                             <StackPanel Margin="32,15,32,15" Orientation="Horizontal" >
-                                <TextBox Width="495" langs:InfoElement.TitleWidth="250" langs:InfoElement.TitlePlacement="Left" langs:InfoElement.Title="文件保存路径：" HorizontalAlignment="Left"
-                                         Style="{StaticResource TextBoxExtend}" langs:InfoElement.Necessary="True" Text="{Binding TaskTipPath,Mode=TwoWay}"/>
+                                <TextBox Width="495" hc:InfoElement.TitleWidth="250" hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Title="文件保存路径：" HorizontalAlignment="Left"
+                                         Style="{StaticResource TextBoxExtend}" hc:InfoElement.Necessary="True" Text="{Binding TaskTipPath,Mode=TwoWay}"/>
                                 <Button Content="文件" Margin="10,0,0,0" Command="{Binding GetTaskTipPathCommand}"></Button>
                             </StackPanel>
                         </StackPanel>
 
 
-                        <!--<TextBox Width="380" langs:InfoElement.TitleWidth="140" langs:InfoElement.TitlePlacement="Left" langs:InfoElement.Title="背景" HorizontalAlignment="Left"
+                        <!--<TextBox Width="380" hc:InfoElement.TitleWidth="140" hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Title="背景" HorizontalAlignment="Left"
                              Style="{StaticResource TextBoxExtend}" Margin="0,32,0,0" 
                     />-->
 
@@ -81,8 +81,8 @@
                     <TabItem  Header="挂件" Background="Transparent">
                         <StackPanel Margin="32" >
                             <StackPanel Margin="32,15,32,15" Orientation="Horizontal">
-                                <TextBox Width="495" langs:InfoElement.TitleWidth="250" langs:InfoElement.TitlePlacement="Left" langs:InfoElement.Title="悬浮窗图片" HorizontalAlignment="Left"
-                                 Style="{StaticResource TextBoxExtend}" langs:InfoElement.Necessary="True" Text="{Binding FloatingBgPath,Mode=TwoWay}"/>
+                                <TextBox Width="495" hc:InfoElement.TitleWidth="250" hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Title="悬浮窗图片" HorizontalAlignment="Left"
+                                 Style="{StaticResource TextBoxExtend}" hc:InfoElement.Necessary="True" Text="{Binding FloatingBgPath,Mode=TwoWay}"/>
                                 <Button Content="文件" Margin="5,0,0,0" Command="{Binding GetImageFilePathCommand}"></Button>
                             </StackPanel>
                             <Grid Margin="32,15,32,15">
@@ -91,10 +91,10 @@
                                     <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="0" Text="挂件样式(图片悬浮/标题栏)：" HorizontalAlignment="Left" />
-                                <!--<langs:ButtonGroup Grid.Column="1" Width="180" HorizontalAlignment="Right" x:Name="ButtonGroup">
+                                <!--<hc:ButtonGroup Grid.Column="1" Width="180" HorizontalAlignment="Right" x:Name="ButtonGroup">
                                     <RadioButton Content="悬浮窗" IsChecked="True"/>
                                     <RadioButton Content="标题栏" />
-                            </langs:ButtonGroup>-->
+                            </hc:ButtonGroup>-->
 
                                 <ToggleButton Grid.Column="1" Width="45"  Style="{StaticResource ToggleButtonSwitch}" HorizontalAlignment="Right" 
                                           IsChecked="{Binding IsFloatingImageStyle}"/>
@@ -119,11 +119,11 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0" Text="图片高度：" HorizontalAlignment="Left"></TextBlock>
-                                    <langs:PreviewSlider Grid.Column="1"  Width="500" Value="{Binding FloatingSetHeight}" Maximum="{Binding FloatingMaxHeight}" Margin="10,0,32,0" HorizontalAlignment="Right">
-                                        <langs:PreviewSlider.PreviewContent>
-                                            <Label Style="{StaticResource LabelPrimary}" Content="{Binding Path=(langs:PreviewSlider.PreviewPosition),RelativeSource={RelativeSource Self}}" ContentStringFormat="#0.00"/>
-                                        </langs:PreviewSlider.PreviewContent>
-                                    </langs:PreviewSlider>
+                                    <hc:PreviewSlider Grid.Column="1"  Width="500" Value="{Binding FloatingSetHeight}" Maximum="{Binding FloatingMaxHeight}" Margin="10,0,32,0" HorizontalAlignment="Right">
+                                        <hc:PreviewSlider.PreviewContent>
+                                            <Label Style="{StaticResource LabelPrimary}" Content="{Binding Path=(hc:PreviewSlider.PreviewPosition),RelativeSource={RelativeSource Self}}" ContentStringFormat="#0.00"/>
+                                        </hc:PreviewSlider.PreviewContent>
+                                    </hc:PreviewSlider>
                                 </Grid>
                                 <Grid Grid.Row="1" Margin="0,10,0,0">
                                     <Grid.ColumnDefinitions>
@@ -131,11 +131,11 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0" Text="图片宽度：" HorizontalAlignment="Left"></TextBlock>
-                                    <langs:PreviewSlider Grid.Column="1"  Width="500" Value="{Binding FloatingSetWidth}" Maximum="{Binding FloatingMaxWidth}" Margin="10,0,32,0" HorizontalAlignment="Right">
-                                        <langs:PreviewSlider.PreviewContent>
-                                            <Label Style="{StaticResource LabelPrimary}" Content="{Binding Path=(langs:PreviewSlider.PreviewPosition),RelativeSource={RelativeSource Self}}" ContentStringFormat="#0.00"/>
-                                        </langs:PreviewSlider.PreviewContent>
-                                    </langs:PreviewSlider>
+                                    <hc:PreviewSlider Grid.Column="1"  Width="500" Value="{Binding FloatingSetWidth}" Maximum="{Binding FloatingMaxWidth}" Margin="10,0,32,0" HorizontalAlignment="Right">
+                                        <hc:PreviewSlider.PreviewContent>
+                                            <Label Style="{StaticResource LabelPrimary}" Content="{Binding Path=(hc:PreviewSlider.PreviewPosition),RelativeSource={RelativeSource Self}}" ContentStringFormat="#0.00"/>
+                                        </hc:PreviewSlider.PreviewContent>
+                                    </hc:PreviewSlider>
                                 </Grid>
                             </Grid>
                         </StackPanel>
@@ -184,11 +184,54 @@
                             </Grid>
                         </StackPanel>
                     </TabItem>
-                    <!--<TabItem Header="说明">
-                        <StackPanel Margin="25">
-                            <TextBlock Text="{StaticResource SoftWareExplain}"></TextBlock>
-                        </StackPanel>
-                    </TabItem>-->
+                    <TabItem Header="工时计算">
+                        <ScrollViewer Margin="50">
+                            <StackPanel>
+                            <Grid Margin="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="0.45*"/>
+                                    <ColumnDefinition Width="0.45*"/>
+                                    <ColumnDefinition Width="0.1*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="上班时间(Date)："  VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Text="{Binding WorkStartTime}" VerticalAlignment="Center"/>
+                                    <Button Grid.Column="2" Padding="0" BorderThickness="0" Command="{Binding WorkStartTimeSetCommand}">
+                                    <Image Source="{StaticResource Clock}"></Image>
+                                </Button>
+                            </Grid>
+                            <Grid Margin="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="0.45*"/>
+                                    <ColumnDefinition Width="0.45*"/>
+                                    <ColumnDefinition Width="0.1*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="下班时间(Date)："  VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Text="{Binding WorkFinishTime}" VerticalAlignment="Center"/>
+                                <Button Grid.Column="2" Padding="0" BorderThickness="0" Command="{Binding WorkFinishTimeSetCommand}">
+                                    <Image Source="{StaticResource Clock}"></Image>
+                                </Button>
+                            </Grid>
+                            <Grid Margin="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="0.45*"/>
+                                    <ColumnDefinition Width="0.45*"/>
+                                    <ColumnDefinition Width="0.1*"/>
+                                </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="午休时长(h)："  VerticalAlignment="Center"/>
+                                    <hc:NumericUpDown Grid.Column="1" Style="{StaticResource NumericUpDownPlus}" DecimalPlaces="1" Value="{Binding SiestaTime}" />
+                                </Grid>
+                            <Grid Margin="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="0.45*"/>
+                                    <ColumnDefinition Width="0.45*"/>
+                                    <ColumnDefinition Width="0.1*"/>
+                                </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="下班后加班间隔(h)："  VerticalAlignment="Center"/>
+                                    <hc:NumericUpDown Grid.Column="1" Style="{StaticResource NumericUpDownPlus}" DecimalPlaces="1" Value="{Binding AgainWorkGapTime}"/>
+                                </Grid>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
                     <TabItem Header="阅读快捷键" Background="Transparent">
                         <Grid >
                             <ListBox ItemsSource="{Binding KeyInputUcs}" Background="Transparent" BorderThickness="0">
@@ -217,7 +260,9 @@
                     <TabItem Header="数据同步" Background="Transparent">
                         <Frame Source="../Pages/SyncDataPage.xaml"  BorderThickness="0"></Frame>
                     </TabItem>
-                    
+                    <TabItem Header="关于" Background="Transparent">
+                        <Frame Source="../Pages/HistoryPage.xaml" BorderThickness="0"></Frame>
+                    </TabItem>
                 </TabControl>
             </Grid>
         </Border>

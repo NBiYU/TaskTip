@@ -1,19 +1,12 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using HandyControl.Data;
 using Newtonsoft.Json;
-using NLog;
-using NLog.Layouts;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -25,7 +18,6 @@ using TaskTip.Models;
 using TaskTip.Services;
 using TaskTip.UserControls;
 using TaskTip.Views.Windows;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using MessageBox = HandyControl.Controls.MessageBox;
 
 namespace TaskTip.ViewModels
@@ -52,7 +44,11 @@ namespace TaskTip.ViewModels
         public string Title
         {
             get => TreeInfo.Name;
-            set => SetProperty(ref TreeInfo.Name, value);
+            set
+            {
+                SetProperty(ref TreeInfo.Name, string.Empty);
+                SetProperty(ref TreeInfo.Name, value);
+            }
         }
 
         public bool IsDirectory
@@ -65,6 +61,13 @@ namespace TaskTip.ViewModels
         {
             get => _nodeMoveVisibility;
             set => SetProperty(ref _nodeMoveVisibility, value);
+        }
+        
+        private Visibility _iconVisibility;
+        public Visibility IconVisibility
+        {
+            get => _iconVisibility;
+            set => SetProperty(ref _iconVisibility, value);
         }
 
         private bool _isNode;
@@ -193,7 +196,7 @@ namespace TaskTip.ViewModels
         {
             if (sender is not System.Windows.Controls.TextBox s) return;
 
-            TreeInfo.Name = s.Text;
+            //TreeInfo.Name = s.Text;
             EdiVisibility = Visibility.Collapsed;
 
             var control = GetThisControl(s.TemplatedParent);
@@ -210,7 +213,7 @@ namespace TaskTip.ViewModels
         [RelayCommand]
         public void NodeMove(string guid)
         {
-            if (IsNode)
+            if (IsNode &&!_isNodeMove)
             {
                 WeakReferenceMessenger.Default.Send(TreeInfo, Const.CONST_NODE_MOVE);
             }
@@ -254,20 +257,6 @@ namespace TaskTip.ViewModels
         private bool isClick = false;
         private DateTime oldDateTime = DateTime.Now;
 
-        [RelayCommand]
-        public void DoubleClick()
-        {
-            if ((DateTime.Now - oldDateTime).TotalMilliseconds < 1000 && isClick)
-            {
-                LoadFileRecord();
-                isClick = false;
-            }
-            else
-            {
-                isClick = true;
-                oldDateTime = DateTime.Now;
-            }
-        }
 
         #endregion
 
@@ -307,7 +296,7 @@ namespace TaskTip.ViewModels
         private MenuItemUserControl AddItem(TreeInfo info)
         {
             var control = new MenuItemUserControl();
-            control.RecordGrid.DataContext = new MenuItemUserControlModel(info);
+            control.DataContext = new MenuItemUserControlModel(info);
             //controlModel.TreeInfo = info;
             //controlModel.LoadContent();
             return control;
@@ -318,7 +307,7 @@ namespace TaskTip.ViewModels
             var control = new MenuItemUserControl();
             var model = new MenuItemUserControlModel(info);
             model.NodeMoveVisibility = nodeMoveVisibility;
-            control.RecordGrid.DataContext = model;
+            control.DataContext = model;
 
             //controlModel.TreeInfo = info;
             //controlModel.LoadContent();
@@ -371,7 +360,7 @@ namespace TaskTip.ViewModels
 
         private void ControlLogout(MenuItemUserControl control)
         {
-            var model = control.RecordGrid.DataContext as MenuItemUserControlModel;
+            var model = control.DataContext as MenuItemUserControlModel;
             model?.Unregister();
 
             if (control.MenuListItem.Items.Count == 0) return;
@@ -382,8 +371,6 @@ namespace TaskTip.ViewModels
             }
         }
 
-        #endregion
-
         private void MoveHandler(TreeInfo tree)
         {
             if (IsNode) return;
@@ -393,8 +380,11 @@ namespace TaskTip.ViewModels
 
 
             var layout = new MenuItemUserControl();
-            layout.RecordGrid.DataContext = new MenuItemUserControlModel(dirTree);
-
+            layout.DataContext = new MenuItemUserControlModel(dirTree);
+            if (layout.DataContext is MenuItemUserControlModel vm)
+            {
+                vm.IsNode = false;
+            }
             var window = new PopView
             {
                 TipMessage =
@@ -421,22 +411,28 @@ namespace TaskTip.ViewModels
             };
 
             var result = window.ShowDialog();
-
+            _isNodeMove = false;
             if (result == true)
             {
                 var item = ((ScrollViewer)window.Layout).Content as MenuItemUserControl;
                 var checkedGuid = FindCheckedItem(item);
                 window.Close();
-                _isNodeMove = false;
+
                 if (string.IsNullOrEmpty(checkedGuid))
                 {
                     ExecuteLogger("未选中目录，默认放弃", true, LogType.Warning);
+                    return;
+                }
+                if (tree.GUID == checkedGuid)
+                {
+                    MessageBox.Show("移动内容已在当前选择文件夹中");
                     return;
                 }
                 WeakReferenceMessenger.Default.Send(new CorrespondenceModel() { GUID = tree.GUID, Operation = OperationRequestType.Delete }, Const.CONST_NOTIFY_RECORD_ITEM);
                 WeakReferenceMessenger.Default.Send(new CorrespondenceModel() { GUID = checkedGuid, Operation = OperationRequestType.Add, Message = tree }, Const.CONST_NOTIFY_RECORD_ITEM);
                 //WeakReferenceMessenger.Default.Send(new CorrespondenceModel() { GUID = tree.GUID + "Move" + checkedGuid, Operation = OperationRequestType.Move, Message = tree }, Const.CONST_NOTIFY_RECORD_ITEM);
             }
+
         }
 
 
@@ -465,7 +461,7 @@ namespace TaskTip.ViewModels
 
         private string FindCheckedItem(MenuItemUserControl control)
         {
-            var model = control.RecordGrid.DataContext as MenuItemUserControlModel;
+            var model = control.DataContext as MenuItemUserControlModel;
             if (model == null) return string.Empty;
             var checkedGuid = string.Empty;
             if (model.MoveCheck)
@@ -483,10 +479,14 @@ namespace TaskTip.ViewModels
             return string.Empty;
         }
 
+        #endregion
+
         private void MenuItemsChanged()
         {
-            DirItems = new ObservableCollection<string>(TreeInfo.Menu?.Directories.Select(x => x.Name).ToList());
-            FileItems = new ObservableCollection<string>(TreeInfo.Menu?.Files.Select(x => x.Name).ToList());
+            if (TreeInfo.Menu == null) 
+                return;
+            DirItems = new ObservableCollection<string>(TreeInfo.Menu.Directories.Select(x => x.Name).ToList());
+            FileItems = new ObservableCollection<string>(TreeInfo.Menu.Files.Select(x => x.Name).ToList());
             MenuItems = new ObservableCollection<MenuItemUserControl>(MenuItems.OrderBy(x => x.Guid.IsEnabled == false));
 
             WeakReferenceMessenger.Default.Send(string.Empty, Const.CONST_RECORD_SAVE_CONFIG);
@@ -521,7 +521,6 @@ namespace TaskTip.ViewModels
 
         private void ParentChanged(CorrespondenceModel corr)
         {
-            if (NodeMoveVisibility == Visibility.Visible) return;
             Application.Current.Dispatcher.Invoke(() =>
             {
 
@@ -535,14 +534,15 @@ namespace TaskTip.ViewModels
                         WeakReferenceMessenger.Default.Send(new CorrespondenceModel() { GUID = endGuid, Operation = OperationRequestType.Add, Message = corr.Message }, Const.CONST_NOTIFY_RECORD_ITEM);
                         return;
                     case OperationRequestType.Delete:
+
+                        if (_isNodeMove) break;
+
                         var deleteItem = MenuItems.FirstOrDefault(x => x.Guid.Text == corr.GUID);
                         if (deleteItem == null) return;
 
                         MenuItems.Remove(deleteItem);
                         TreeInfo.Menu.Directories.RemoveAll(x => x.GUID == corr.GUID);
                         TreeInfo.Menu.Files.RemoveAll(x => x.GUID == corr.GUID);
-
-                        if (_isNodeMove) break;
 
                         var path = Path.Combine(GlobalVariable.RecordFilePath,
                             $"{deleteItem.Guid.Text}{GlobalVariable.EndFileFormat}");
@@ -551,7 +551,7 @@ namespace TaskTip.ViewModels
 
                         if (File.Exists(path)) File.Delete(path);
                         if (File.Exists(xamlPath)) File.Delete(xamlPath);
-                        OperationRecord.OperationRecordWrite(new TcpRequestData() { GUID = corr.GUID, OperationType = corr.Operation, SyncCategory = SyncFileCategory.Record, FileData = (deleteItem.RecordGrid.DataContext as MenuItemUserControlModel)?.TreeInfo });
+                        OperationRecord.OperationRecordWrite(new TcpRequestData() { GUID = corr.GUID, OperationType = corr.Operation, SyncCategory = SyncFileCategory.Record, FileData = (deleteItem.DataContext as MenuItemUserControlModel)?.TreeInfo });
                         break;
                     case OperationRequestType.Update:
                         var toolTipItem = MenuItems.FirstOrDefault(x => x.Guid.Text == corr.GUID);
@@ -560,7 +560,7 @@ namespace TaskTip.ViewModels
                         var updateTree = corr.Message as TreeInfo;
                         if (updateTree == null) return;
 
-                        var model = toolTipItem.RecordGrid.DataContext as MenuItemUserControlModel;
+                        var model = toolTipItem.DataContext as MenuItemUserControlModel;
                         model.Title = updateTree.Name;
 
                         if (updateTree.IsDirectory)
@@ -575,8 +575,9 @@ namespace TaskTip.ViewModels
                         }
                         OperationRecord.OperationRecordWrite(new TcpRequestData() { GUID = corr.GUID, OperationType = corr.Operation, SyncCategory = SyncFileCategory.Record, FileData = corr.Message });
                         break;
+                    
                     case OperationRequestType.Add:
-                        if (GUID != corr.GUID || NodeMoveVisibility == Visibility.Visible || !IsDirectory) return;
+                        if (GUID != corr.GUID || !IsDirectory) return;
 
                         var tree = corr.Message as TreeInfo;
 
@@ -646,24 +647,32 @@ namespace TaskTip.ViewModels
             try
             {
                 isLoad = true;
+                var rootJson = JsonConvert.SerializeObject(new TreeInfo()
+                {
+                    GUID = "RootDocument",
+                    Name = "根目录",
+                    IsDirectory = true,
+                    Menu = new MenuTreeModel()
+                    {
+                        Directories = new List<TreeInfo>(),
+                        Files = new List<TreeInfo>()
+                    }
+                }, Formatting.Indented);
                 if (!File.Exists(path))
                 {
-                    File.WriteAllText(GlobalVariable.MenuTreeConfigPath,
-                        JsonConvert.SerializeObject(new TreeInfo()
-                        {
-                            GUID = "RootDocument",
-                            Name = "根目录",
-                            IsDirectory = true,
-                            Menu = new MenuTreeModel()
-                            {
-                                Directories = new List<TreeInfo>(),
-                                Files = new List<TreeInfo>()
-                            }
-                        }, Formatting.Indented));
-
+                    if (Directory.Exists(Path.GetDirectoryName(path)))
+                    {
+                        File.WriteAllText(GlobalVariable.MenuTreeConfigPath, rootJson);
+                    }else
+                    {
+                        var processPathInfo =  Process.GetCurrentProcess().MainModule;
+                        LoadFile(processPathInfo.FileName.Split(processPathInfo.ModuleName)[0] + Path.GetFileName(path));
+                        return;
+                    }
                 }
                 var json = File.ReadAllText(path);
-                var content = JsonConvert.DeserializeObject<TreeInfo>(json);
+                rootJson = string.IsNullOrEmpty(json) ? rootJson : json;
+                var content = JsonConvert.DeserializeObject<TreeInfo>(rootJson);
                 TreeInfo = content;
                 IsNode = false;
                 ShowButtonGeometry = CollapsedGeometry;
@@ -671,7 +680,7 @@ namespace TaskTip.ViewModels
             }
             catch (Exception e)
             {
-                ExecuteLogger($"【{this}】配置文件读取异常：{e}", true, LogType.Error);
+                ExecuteLogger($"【{this}】配置文件读取异常：{e.Message}", true, LogType.Error);
             }
         }
 

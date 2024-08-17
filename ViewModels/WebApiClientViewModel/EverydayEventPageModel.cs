@@ -82,10 +82,6 @@ namespace TaskTip.ViewModels.WebApiClientViewModel
 
             Clipboard.SetText(control.Content.ToString());
         }
-
-
-
-        #region 功能函数
         [RelayCommand]
         public async Task InitPage()
         {
@@ -93,6 +89,9 @@ namespace TaskTip.ViewModels.WebApiClientViewModel
 
             await SendAsync();
         }
+        #endregion
+
+        #region 功能函数
 
         private Button AddItem(string content)
         {
@@ -101,7 +100,7 @@ namespace TaskTip.ViewModels.WebApiClientViewModel
             return btn;
         }
 
-        #endregion
+
 
         #endregion
 
@@ -121,6 +120,8 @@ namespace TaskTip.ViewModels.WebApiClientViewModel
             {
                 _client = new HttpRequest();
                 var baseUrl = "https://api.vvhan.com/api/";
+                var errMsg = string.Empty;
+
                 var queryParameter = new Dictionary<string, string>()
                 {
                     { "type", "json" }
@@ -137,25 +138,31 @@ namespace TaskTip.ViewModels.WebApiClientViewModel
                 };
 
                 var result = await _client.SendAsync(req);
-                if (result.StatusCode != 200)
+                if (result.StatusCode == 200)
                 {
-                    MessageBox.Show($"【{WebName}】读取异常，状态码：{result.StatusCode},异常信息:{result.Message}");
-                    return;
+                    var content = JObject.Parse(result.Content);
+                    if (content.First.First.ToObject<bool>())
+                    {
+                        var time = content["time"].ToObject<List<string>>();
+                        var items = content["data"].ToObject<List<string>>();
+                        await CompleteInvoke<dynamic>(new
+                        {
+                            Time = time,
+                            Items = items
+                        });
+                    }else
+                    {
+                        errMsg = $"【{WebName}】返回异常：结果[{content.First.First.ToObject<bool>()}]";
+                    }
+                }
+                else
+                {
+                    errMsg = $"【{WebName}】请求错误：代码：{result.StatusCode}";
                 }
 
-                var content = JObject.Parse(result.Content);
-                if (!content.First.First.ToObject<bool>())
-                {
-                    MessageBox.Show($"【{WebName}】返回异常：结果[{content.First.First.ToObject<bool>()}]");
-                    return;
-                }
-
-                var time = content["time"].ToObject<List<string>>();
-                var items = content["data"].ToObject<List<string>>();
-                await CompleteInvoke<dynamic>(new
-                {
-                    Time = time,
-                    Items = items
+                Application.Current.Dispatcher.Invoke(() => {
+                    LoadingVisibility = Visibility.Collapsed;
+                    if (!string.IsNullOrEmpty(errMsg)) MessageBox.Show(errMsg);
                 });
             });
         }

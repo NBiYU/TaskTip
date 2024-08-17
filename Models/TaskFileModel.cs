@@ -14,5 +14,10 @@ namespace TaskTip.Models
         public DateTime CompletedDateTime;
         public string EditTextTitle;
         public string EditTextText;
+
+        public override string ToString()
+        {
+            return EditTextTitle;
+        }
     }
 }
