@@ -1,5 +1,5 @@
 using System.Windows;using System.Windows.Controls;using System.Windows.Documents;namespace TaskTip.ViewModels.UserViewModel.CustomControl{    public static class CustomRichTextBox    {
-        #region -----Document------                                            public static readonly DependencyProperty BindableDocumentProperty =
+        #region -----Document------        public static readonly DependencyProperty BindableDocumentProperty =
            DependencyProperty.RegisterAttached("BindableDocument", typeof(FlowDocument), typeof(CustomRichTextBox), new PropertyMetadata(null, OnBindableDocumentChanged));        public static FlowDocument GetBindableDocument(DependencyObject obj)        {            return (FlowDocument)obj.GetValue(BindableDocumentProperty);        }        public static void SetBindableDocument(DependencyObject obj, FlowDocument value)        {            obj.SetValue(BindableDocumentProperty, value);        }        private static void OnBindableDocumentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)        {            var richTextBox = (RichTextBox)d;            richTextBox.Document = (FlowDocument)e.NewValue;        }
 
 

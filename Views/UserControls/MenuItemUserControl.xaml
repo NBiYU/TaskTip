@@ -20,7 +20,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock x:Name="Guid" Text="{Binding GUID}" Visibility="Collapsed" IsEnabled="{Binding IsDirectory}"/>
+        <TextBlock x:Name="TextGuid" Text="{Binding GUID}" Visibility="Collapsed" IsEnabled="{Binding IsDirectory}"/>
 
 
         <TextBox x:Name="BoxGrid"  Grid.Row="0"   HorizontalAlignment="Stretch">
@@ -35,7 +35,7 @@
                         <CheckBox x:Name="MoveCheckItem"  Grid.Column="0" IsChecked="{Binding MoveCheck}" Visibility="{Binding NodeMoveVisibility}">
                             <hc:Interaction.Triggers>
                                 <hc:EventTrigger EventName="Checked">
-                                    <hc:InvokeCommandAction Command="{Binding CheckChangedCommand}" CommandParameter="{Binding ElementName=Guid,Path=Text}"></hc:InvokeCommandAction>
+                                    <hc:InvokeCommandAction Command="{Binding CheckChangedCommand}" CommandParameter="{Binding ElementName=TextGuid,Path=Text}"></hc:InvokeCommandAction>
                                 </hc:EventTrigger>
                             </hc:Interaction.Triggers>
                         </CheckBox>
@@ -64,7 +64,7 @@
                                         </MenuItem.Icon>
                                     </MenuItem>
                                     <MenuItem  Header="移动" IsEnabled="{Binding IsNode}" Command="{Binding NodeMoveCommand}"
-                                               CommandParameter="{Binding ElementName=Guid,Path=Text}" >
+                                               CommandParameter="{Binding ElementName=TextGuid,Path=Text}" >
                                         <MenuItem.Icon>
                                             <Image Source="{StaticResource Move}"></Image>
                                         </MenuItem.Icon>
@@ -96,7 +96,7 @@
                                         <Path Grid.Column="2" Data="M5,7 L50,7" Stroke="Aqua"  StrokeThickness="2" HorizontalAlignment="Center"/>
                                     </Grid>
                                     <Grid Grid.Row="1">
-                                        <ListBox ItemsSource="{Binding DirItems}" BorderThickness="0" Visibility="{Binding DirVisibility}">
+                                        <ListBox ItemsSource="{Binding DirItems}" BorderThickness="0" >
                                             <ListBox.ItemContainerStyle>
                                                 <Style TargetType="ListBoxItem">
                                                     <Setter Property="Template">

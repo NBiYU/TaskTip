@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:TaskTip.Views"
+      xmlns:uc="clr-namespace:TaskTip.Views.UserControls"
       xmlns:hc="https://handyorg.github.io/handycontrol"
       xmlns:viewModel="clr-namespace:TaskTip.ViewModels"
       xmlns:pageModel="clr-namespace:TaskTip.ViewModels.PageModel"
@@ -21,8 +22,13 @@
         </hc:EventTrigger>
     </hc:Interaction.Triggers>
     
-    <Grid  Background="{StaticResource ThemeBackground}">
-        <hc:SimplePanel Grid.Row="0" x:Name="TaskListPanel"  HorizontalAlignment="Stretch" >
+    <Grid  Background="{StaticResource ThemeBackground}" >
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <uc:SearchDataUC ></uc:SearchDataUC>
+        <hc:SimplePanel Grid.Row="1" x:Name="TaskListPanel"  HorizontalAlignment="Stretch" >
             <Border BorderThickness="0" BorderBrush="Transparent" CornerRadius="0,0,6,6">
                 <ScrollViewer x:Name="ListScroll">
                     <ListBox  ItemsSource="{Binding TaskList}" Padding="0" Background="Transparent"

@@ -203,7 +203,7 @@ namespace TaskTip.ViewModels
             WeakReferenceMessenger.Default.Send(
                 new CorrespondenceModel()
                 {
-                    GUID = control.Guid.Text,
+                    GUID = control.TextGuid.Text,
                     Operation = OperationRequestType.Update,
                     Message = TreeInfo
                 },
@@ -225,7 +225,7 @@ namespace TaskTip.ViewModels
             var a = GetThisControl(control);
             if (a == null) return;
 
-            WeakReferenceMessenger.Default.Send(new CorrespondenceModel() { GUID = a.Guid.Text, Operation = OperationRequestType.Delete }, Const.CONST_NOTIFY_RECORD_ITEM);
+            WeakReferenceMessenger.Default.Send(new CorrespondenceModel() { GUID = a.TextGuid.Text, Operation = OperationRequestType.Delete }, Const.CONST_NOTIFY_RECORD_ITEM);
         }
 
         private string gg = Guid.NewGuid().ToString();
@@ -487,7 +487,7 @@ namespace TaskTip.ViewModels
                 return;
             DirItems = new ObservableCollection<string>(TreeInfo.Menu.Directories.Select(x => x.Name).ToList());
             FileItems = new ObservableCollection<string>(TreeInfo.Menu.Files.Select(x => x.Name).ToList());
-            MenuItems = new ObservableCollection<MenuItemUserControl>(MenuItems.OrderBy(x => x.Guid.IsEnabled == false));
+            MenuItems = new ObservableCollection<MenuItemUserControl>(MenuItems.OrderBy(x => x.TextGuid.IsEnabled == false));
 
             WeakReferenceMessenger.Default.Send(string.Empty, Const.CONST_RECORD_SAVE_CONFIG);
         }
@@ -537,7 +537,7 @@ namespace TaskTip.ViewModels
                     case OperationRequestType.DeleteNotWithFile:
                         if (_isNodeMove) break;
 
-                        var deleteItem = MenuItems.FirstOrDefault(x => x.Guid.Text == corr.GUID);
+                        var deleteItem = MenuItems.FirstOrDefault(x => x.TextGuid.Text == corr.GUID);
                         if (deleteItem == null) return;
 
                         MenuItems.Remove(deleteItem);
@@ -546,9 +546,9 @@ namespace TaskTip.ViewModels
                         if(corr.Operation == OperationRequestType.DeleteNotWithFile)
                         {
                             var path = Path.Combine(GlobalVariable.RecordFilePath,
-                                $"{deleteItem.Guid.Text}{GlobalVariable.EndFileFormat}");
+                                $"{deleteItem.TextGuid.Text}{GlobalVariable.EndFileFormat}");
                             var xamlPath = Path.Combine(GlobalVariable.RecordFilePath, "Xaml",
-                                $"{deleteItem.Guid.Text}{GlobalVariable.EndFileFormat}");
+                                $"{deleteItem.TextGuid.Text}{GlobalVariable.EndFileFormat}");
 
                             if (File.Exists(path)) File.Delete(path);
                             if (File.Exists(xamlPath)) File.Delete(xamlPath);
@@ -557,7 +557,7 @@ namespace TaskTip.ViewModels
                         OperationRecord.OperationRecordWrite(new TcpRequestData() { GUID = corr.GUID, OperationType = corr.Operation, SyncCategory = SyncFileCategory.Record, FileData = (deleteItem.DataContext as MenuItemUserControlModel)?.TreeInfo });
                         break;
                     case OperationRequestType.Update:
-                        var toolTipItem = MenuItems.FirstOrDefault(x => x.Guid.Text == corr.GUID);
+                        var toolTipItem = MenuItems.FirstOrDefault(x => x.TextGuid.Text == corr.GUID);
                         if (toolTipItem == null) return;
 
                         var updateTree = corr.Message as TreeInfo;

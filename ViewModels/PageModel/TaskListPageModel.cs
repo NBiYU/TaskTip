@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using HandyControl.Tools;
@@ -49,6 +50,8 @@ namespace TaskTip.ViewModels.PageModel
             get => taskList;
             set { SetProperty(ref taskList, value); }
         }
+        [ObservableProperty]
+        public ObservableCollection<SearchDataModel> searchCacheDatas;
 
 
         private ISchedulerFactory schedulerFactory;
@@ -145,7 +148,7 @@ namespace TaskTip.ViewModels.PageModel
             //从文件中获取当天的任务内容
             foreach (var filePath in filePaths)
             {
-                var json = JsonConvert.DeserializeObject<JObject>(File.ReadAllText(filePath));
+                var obj = JsonConvert.DeserializeObject<TaskFileModel>(File.ReadAllText(filePath));
                 try
                 {
                     //格式： 序号.任务标题：任务内容 ------- 是否完成
@@ -155,15 +158,14 @@ namespace TaskTip.ViewModels.PageModel
                         ? DateTime.Today
                         : DateTime.Today.AddDays(-1);
 
-                    if (json["TaskTimePlan"].Value<DateTime>().Date == outMode)
-                        todayTask.Add(todayTask.Count + 1 + "." + json["EditTextTitle"].Value<string>() + "：" +
-                                      json["EditTextText"].Value<string>() + " ----- " +
-                                      (json["IsCompleted"].Value<bool>() ? "已完成" : "未完成"));
+                    if (obj.TaskTimePlan.Date == outMode)
+                        todayTask.Add(todayTask.Count + 1 + "." + obj.EditTextTitle + "：" +
+                                      obj.EditTextText + " ----- " +
+                                      (obj.IsCompleted ? "已完成" : "未完成"));
 
-                    if (isCreateTomorrowPlan && json["TaskTimePlan"].Value<DateTime>().Date == outMode.AddDays(1))
+                    if (isCreateTomorrowPlan && obj.TaskTimePlan.Date == outMode.AddDays(1))
                     {
-                        tomorrowTask.Add(tomorrowTask.Count + 1 + "." + json["EditTextTitle"].Value<string>() + "：" +
-                                         json["EditTextText"].Value<string>());
+                        tomorrowTask.Add(tomorrowTask.Count + 1 + "." + obj.EditTextTitle + "：" + obj.EditTextText);
                     }
                 }
                 catch (Exception e)
@@ -365,7 +367,6 @@ namespace TaskTip.ViewModels.PageModel
         private void SortList()
         {
             TaskList = new(TaskList.OrderByDescending(x => (x.TaskGrid.DataContext as TaskListItemUserControlModel)!.CompletedDateTime).OrderBy(x => (x.TaskGrid.DataContext as TaskListItemUserControlModel)!.IsCompleted));
-
         }
 
 
@@ -392,6 +393,7 @@ namespace TaskTip.ViewModels.PageModel
             var readFile = modelList.OrderByDescending(x => x.CompletedDateTime).OrderBy(x => x.IsCompleted).Skip(TaskList.Count).Take(TaskList.Count + take > filePaths.Length ? filePaths.Length - TaskList.Count : take).ToList();
             var taskListControl = new List<TaskListItemUserControl>(TaskList);
             taskListControl.AddRange(ReadTaskFile(readFile.Select(x => x.GUID).ToList()));
+            InitSearchCache(modelList);
 
             TaskList = new ObservableCollection<TaskListItemUserControl>(taskListControl);
             
@@ -409,6 +411,10 @@ namespace TaskTip.ViewModels.PageModel
             return taskListControl;
         }
 
+        private void InitSearchCache(List<TaskFileModel> modelList)
+        {
+            SearchCacheDatas = new ObservableCollection<SearchDataModel>(modelList.Select(x => new SearchDataModel { Identifier = x.GUID, Title = x.EditTextTitle, Content = x.EditTextText }));
+        }
         #endregion
 
 

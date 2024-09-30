@@ -9,7 +9,7 @@
       Title="ToolMainPage">
 
     <Grid>
-        <TabControl TabStripPlacement="Left">
+        <TabControl TabStripPlacement="Bottom"  >
             <TabItem Header="工时计算" Background="Transparent">
                 <Frame Source="../Pages/ComplateWorkTimePage.xaml"></Frame>
             </TabItem>

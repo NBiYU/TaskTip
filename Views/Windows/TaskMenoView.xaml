@@ -78,12 +78,12 @@
                         <TabItem Header="记录" x:Name="RecordForMsg" Background="Transparent">
                             <Frame Content="{Binding FrameRecordPage}" Loaded="FrameworkElement_OnLoaded" Background="Transparent" BorderThickness="0"></Frame>
                         </TabItem>
-                        <TabItem Header="乐子" x:Name="HappyEvent" Background="Transparent">
+                        <!--<TabItem Header="乐子" x:Name="HappyEvent" Background="Transparent">
                             <Frame Source="../WebApiClientUI/HappyPage.xaml" Background="Transparent" BorderThickness="0"></Frame>
                         </TabItem>
                         <TabItem Header="阅读" x:Name="Fiction" Background="Transparent">
                             <Frame Source="../Pages/FictionPage.xaml" Background="Transparent" BorderThickness="0"></Frame>
-                        </TabItem>
+                        </TabItem>-->
                         <TabItem Header="小工具" x:Name="ToolMain" Background="Transparent">
                             <Frame Source="../ToolPage/ToolMainPage.xaml" Background="Transparent" BorderThickness="0"></Frame>
                         </TabItem>
