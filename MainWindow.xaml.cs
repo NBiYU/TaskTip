@@ -1,12 +1,9 @@
-using NLog.LayoutRenderers.Wrappers;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
-using TaskTip.Common;
+using TaskTip.Enums;
 using TaskTip.Services;
-using TaskTip.ViewModels.PageModel;
-using TaskTip.Views.Windows.PopWindow;
 
 namespace TaskTip
 {
@@ -25,19 +22,22 @@ namespace TaskTip
             {
                 GlobalVariable.FloatingViewClose();
                 GlobalVariable.FloatingTitleStyleViewClose();
+                GlobalVariable.SysRuntimeStatusViewClose();
                 GlobalVariable.CustomSetViewShow();
             }
             else
             {
-                if (GlobalVariable.IsFloatingImageStyle)
+                if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Image)
                 {
                     GlobalVariable.FloatingViewShow();
-                    GlobalVariable.FloatingTitleStyleViewClose();
                 }
-                else
+                else if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Title)
                 {
                     GlobalVariable.FloatingTitleStyleViewShow();
-                    GlobalVariable.FloatingViewClose();
+                }
+                else if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Status)
+                {
+                    GlobalVariable.SysRuntimeStatusViewShow();
                 }
             }
             //var window = new RegexHelpView();
@@ -52,14 +52,14 @@ namespace TaskTip
             var configPath = runtimePath + "config.txt";
             GlobalVariable.OperationRecordPath = runtimePath + "OperationRecordList.json";
             GlobalVariable.CustomThemePath = runtimePath + "CustomTheme.json";
-            
+
 
             if (File.Exists(configPath)) return false;
             GlobalVariable.SaveConfig("LocalKey", Guid.NewGuid());
             AddRule();
 
             File.WriteAllText(configPath, "Test");
-           
+
             Directory.CreateDirectory(GlobalVariable.RecordFilePath);
             Directory.CreateDirectory(GlobalVariable.TaskFilePath);
             Directory.CreateDirectory(GlobalVariable.MenoFilePath);
@@ -68,7 +68,7 @@ namespace TaskTip
             File.WriteAllText(GlobalVariable.OperationRecordPath, string.Empty);
             File.WriteAllText(GlobalVariable.CustomThemePath, string.Empty);
 
-            
+
 
             return true;
         }

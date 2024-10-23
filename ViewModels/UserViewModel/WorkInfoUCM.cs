@@ -16,7 +16,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using TaskTip.Models;
+using TaskTip.Models.DataModel;
 using TaskTip.Services;
 using TaskTip.Views;
 using TaskTip.Views.UserControls;

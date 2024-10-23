@@ -24,10 +24,10 @@
     
     <Grid  Background="{StaticResource ThemeBackground}" >
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <uc:SearchDataUC ></uc:SearchDataUC>
+        <!--<uc:SearchDataUC ></uc:SearchDataUC>-->
         <hc:SimplePanel Grid.Row="1" x:Name="TaskListPanel"  HorizontalAlignment="Stretch" >
             <Border BorderThickness="0" BorderBrush="Transparent" CornerRadius="0,0,6,6">
                 <ScrollViewer x:Name="ListScroll">

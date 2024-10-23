@@ -3,6 +3,8 @@ using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Configuration;
 using System.Windows.Input;
+
+using TaskTip.Enums;
 using TaskTip.Services;
 using Application = System.Windows.Application;
 
@@ -19,13 +21,17 @@ namespace TaskTip.ViewModels.UserViewModel
             {
                 return new Lazy<RelayCommand>(() => new RelayCommand(() =>
                 {
-                    if (GlobalVariable.IsFloatingImageStyle)
+                    if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Image)
                     {
                         GlobalVariable.FloatingViewShow();
                     }
-                    else
+                    else if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Title)
                     {
                         GlobalVariable.FloatingTitleStyleViewShow();
+                    }
+                    else if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Status)
+                    {
+                        GlobalVariable.SysRuntimeStatusViewShow();
                     }
                 })).Value;
             }
@@ -40,13 +46,17 @@ namespace TaskTip.ViewModels.UserViewModel
             {
                 return new Lazy<RelayCommand>(() => new RelayCommand(() =>
                 {
-                    if (GlobalVariable.IsFloatingImageStyle)
+                    if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Image)
                     {
                         GlobalVariable.FloatingViewHide();
                     }
-                    else
+                    else if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Title)
                     {
                         GlobalVariable.FloatingTitleStyleViewHide();
+                    }
+                    else if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Status)
+                    {
+                        GlobalVariable.SysRuntimeStatusViewHide();
                     }
                 })).Value;
             }

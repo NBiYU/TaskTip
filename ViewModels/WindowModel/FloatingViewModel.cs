@@ -5,6 +5,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using TaskTip.Common;
+using TaskTip.Enums;
 using TaskTip.Services;
 using MessageBox = System.Windows.MessageBox;
 
@@ -81,7 +82,6 @@ namespace TaskTip.ViewModels.WindowModel
                 else
                 {
                     SetProperty(ref imagePath, ((BitmapImage)Application.Current.Resources["ErrorImage"]).UriSource);
-                    MessageBox.Show("悬浮窗路径不存在");
                 }
             }
         }

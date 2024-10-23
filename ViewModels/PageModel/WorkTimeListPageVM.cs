@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TaskTip.Common;
-using TaskTip.Models;
+using TaskTip.Models.DataModel;
 using TaskTip.Services;
 using TaskTip.ViewModels.UserViewModel;
 using TaskTip.Views.UserControls;

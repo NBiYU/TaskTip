@@ -52,7 +52,7 @@ namespace TaskTip.Views.Windows
         {
             if (DataContext is SyncMainVM vm)
             {
-                await vm.ConfirmSyncCategory(((Button)sender).Content.ToString());
+                //await vm.ConfirmSyncCategory(((Button)sender).Content.ToString());
             }
         }
     }

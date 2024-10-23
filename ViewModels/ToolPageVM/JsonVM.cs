@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using TaskTip.Common;
-using TaskTip.Models;
+using TaskTip.Models.DataModel;
 using TaskTip.Views.Windows.PopWindow;
 
 namespace TaskTip.ViewModels.ToolPageVM

@@ -19,7 +19,10 @@ using System.Windows.Input;
 using TaskTip.Base;
 using TaskTip.Common;
 using TaskTip.Common.Extends;
+using TaskTip.Enums;
 using TaskTip.Models;
+using TaskTip.Models.CommonModel;
+using TaskTip.Models.DataModel;
 using TaskTip.Services;
 using TaskTip.ViewModels.UserViewModel;
 using TaskTip.Views;
@@ -38,7 +41,7 @@ namespace TaskTip.ViewModels.PageModel
         }
 
         private Visibility _loadingVisibility;
-        public Visibility LoadingVisibility { get=>_loadingVisibility; set=>SetProperty(ref _loadingVisibility,value); }
+        public Visibility LoadingVisibility { get => _loadingVisibility; set => SetProperty(ref _loadingVisibility, value); }
 
         /// <summary>
         /// 待完成的任务集合
@@ -218,7 +221,7 @@ namespace TaskTip.ViewModels.PageModel
                     scrollViewer.ScrollToTop();
                     return;
                 }
-                else if (scrollViewer.ScrollableHeight == scrollViewer.VerticalOffset && _oldScrollableHeight!= scrollViewer.ScrollableHeight)
+                else if (scrollViewer.ScrollableHeight == scrollViewer.VerticalOffset && _oldScrollableHeight != scrollViewer.ScrollableHeight)
                 {
                     _oldScrollableHeight = scrollViewer.ScrollableHeight;
                     LoadingVisibility = Visibility.Visible;
@@ -272,7 +275,8 @@ namespace TaskTip.ViewModels.PageModel
                             if (msgModel == null)
                             {
                                 TaskList.Insert(0, AddTaskListItemControl(corr.GUID));
-                            }else
+                            }
+                            else
                             {
                                 TaskList.Insert(0, AddTaskListItemControl(msgModel));
                             }
@@ -299,7 +303,7 @@ namespace TaskTip.ViewModels.PageModel
         /// <param name="e"></param>
         private async Task DeleteListItem(string sender)
         {
-            var path = Path.Combine(GlobalVariable.TaskFilePath ,sender + GlobalVariable.EndFileFormat);
+            var path = Path.Combine(GlobalVariable.TaskFilePath, sender + GlobalVariable.EndFileFormat);
 
             try
             {
@@ -396,7 +400,7 @@ namespace TaskTip.ViewModels.PageModel
             InitSearchCache(modelList);
 
             TaskList = new ObservableCollection<TaskListItemUserControl>(taskListControl);
-            
+
         }
 
         private List<TaskListItemUserControl> ReadTaskFile(List<string> files)

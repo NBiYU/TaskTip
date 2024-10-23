@@ -12,10 +12,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using TaskTip.Models;
 using TaskTip.Services;
 using TaskTip.UserControls;
 using MessageBox = HandyControl.Controls.MessageBox;
+using TaskTip.Models.DataModel;
 
 namespace TaskTip.ViewModels.WebApiClientViewModel
 {

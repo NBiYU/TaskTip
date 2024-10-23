@@ -29,9 +29,11 @@
     <None Remove="Resources\Sources\Image\FileIsNotExist.png" />
     <None Remove="Resources\Sources\Image\Fixed.png" />
     <None Remove="Resources\Sources\Image\fullscreen.png" />
+    <None Remove="Resources\Sources\Image\GgMenuRound.png" />
     <None Remove="Resources\Sources\Image\InitImage.png" />
     <None Remove="Resources\Sources\Image\line-60_icon-icons.com.png" />
     <None Remove="Resources\Sources\Image\Merger.png" />
+    <None Remove="Resources\Sources\Image\MingcuteSaveLine.png" />
     <None Remove="Resources\Sources\Image\Minimize.png" />
     <None Remove="Resources\Sources\Image\Refresh.png" />
     <None Remove="Resources\Sources\Image\rename_regular_icon.png" />
@@ -119,6 +121,9 @@
     <Resource Include="Resources\Sources\Image\fullscreen.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\Sources\Image\GgMenuRound.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\Sources\Image\InitImage.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -126,6 +131,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Sources\Image\Merger.png" />
+    <Resource Include="Resources\Sources\Image\MingcuteSaveLine.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\Sources\Image\Minimize.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>

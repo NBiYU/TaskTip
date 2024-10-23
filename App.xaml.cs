@@ -12,9 +12,11 @@ using System.Threading.Tasks;
 using TaskTip.Common.ServiceRegister;
 using Autofac;
 using Newtonsoft.Json;
-using TaskTip.Models;
 using TaskTip.Services;
 using System.Configuration;
+using TaskTip.Common;
+using TaskTip.Models.SettingModel;
+using TaskTip.Common.Helpers;
 
 namespace TaskTip
 {
@@ -33,7 +35,6 @@ namespace TaskTip
             var container = ServiceRegister.InitRegister();
             var tcpService = container.Resolve<IHostedService>();
             //tcpService.StartAsync(new System.Threading.CancellationToken());
-
             GlobalVariable.JsonConfiguration.TryGetValue<List<GradientColorModel>>("Themes:Default:1:CategoryThemes");
 
             base.OnStartup(e);

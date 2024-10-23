@@ -19,7 +19,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using TaskTip.Common;
 using TaskTip.Common.Extends;
+using TaskTip.Enums;
 using TaskTip.Models;
+using TaskTip.Models.DataModel;
 using TaskTip.Services;
 using Image = System.Windows.Controls.Image;
 
@@ -148,7 +150,7 @@ namespace TaskTip.ViewModels
 
         }
         public void CopyToDocument(FlowDocument from, FlowDocument to)
-        { 
+        {
             TextRange range = new TextRange(from.ContentStart, from.ContentEnd);
             MemoryStream stream = new MemoryStream();
             System.Windows.Markup.XamlWriter.Save(range, stream);
@@ -363,7 +365,7 @@ namespace TaskTip.ViewModels
                 {
                     if (inline is InlineUIContainer uiContainer && uiContainer.Child is T item)
                     {
-                        if(uiContainer.Child.Uid == control.Uid)
+                        if (uiContainer.Child.Uid == control.Uid)
                             uiContainer.Child = control;
                     }
                 }
@@ -442,9 +444,9 @@ namespace TaskTip.ViewModels
                     }
                 }
 
-                if(TreeInfo != tree && _clearPath.Count != 0)
+                if (TreeInfo != tree && _clearPath.Count != 0)
 
-                TextChangedVisibility = Visibility.Collapsed;
+                    TextChangedVisibility = Visibility.Collapsed;
 
                 TreeInfo = tree;
                 FlowDocument content = null;
@@ -463,7 +465,7 @@ namespace TaskTip.ViewModels
                         json.Text = ConvertPlainTextToXaml(json.Text);
                     }
                     var document = XamlReader.Parse(json.Text);
-                    content = document as FlowDocument ;
+                    content = document as FlowDocument;
                 }
 
                 CurrentTitle = TreeInfo.Name;
@@ -635,8 +637,8 @@ namespace TaskTip.ViewModels
                     }
 
                     var bitmapImage = new BitmapImage();
-                   
- 
+
+
                     //载入内存
                     using (var ms = new MemoryStream())
                     {
@@ -676,7 +678,7 @@ namespace TaskTip.ViewModels
             {
                 Uid = path,
                 Source = source,
-               
+
             };
         }
 

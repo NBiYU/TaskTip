@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;using CommunityToolkit.Mvvm.Input;using Newtonsoft.Json;using System;
 using System.Collections.Generic;using System.Collections.ObjectModel;using System.IO;using System.Linq;using System.Windows;
 using System.Windows.Media.Imaging;
-using TaskTip.Services;using TaskTip.Views.FictionPage;using TaskTipProject.Models;namespace TaskTip.ViewModels.FictionPageVM{    internal partial class MyFictionsVM:ObservableObject    {        private Visibility _descVisibility;        public Visibility DescVisibility
+using TaskTip.Models.DataModel;using TaskTip.Services;using TaskTip.Views.FictionPage;namespace TaskTip.ViewModels.FictionPageVM{    internal partial class MyFictionsVM:ObservableObject    {        private Visibility _descVisibility;        public Visibility DescVisibility
         {
             get=> _descVisibility;
             set=> SetProperty(ref _descVisibility, value);

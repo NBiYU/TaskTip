@@ -12,8 +12,9 @@ using Newtonsoft.Json;
 using TaskTip.Common;
 using TaskTip.Common.Extends;
 using TaskTip.Common.ExecuteServices;
-using TaskTip.Models;
 using TaskTip.Services;
+using TaskTip.Enums;
+using TaskTip.Models.DataModel;
 
 namespace TaskTip.ViewModels.UserViewModel
 {

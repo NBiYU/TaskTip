@@ -14,5 +14,5 @@
     <convert:SyncCheckConvert x:Key="SyncCheckConvert"/>
     <convert:TypeColorConvert x:Key="TypeColorConvert"/>
     <convert:JsonValueConvert x:Key="JsonValueConvert"/>
-    
+    <convert:FloatingStyleConvert x:Key="FloatingStyleConvert"/>
 </ResourceDictionary>

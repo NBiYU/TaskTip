@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using TaskTip.Extends.FictionAPI.LRY_API;
 using TaskTip.Extends.FictionAPI.OptionEnum;
+using TaskTip.Models.DataModel;
 using TaskTip.Views.FictionPage;
-using TaskTipProject.Models;
 
 namespace TaskTip.ViewModels.FictionPageVM
 {

@@ -17,8 +17,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using TaskTip.Models;
 using TaskTip.Services;
+using TaskTip.Enums;
+using TaskTip.Models.DataModel;
 
 namespace TaskTip.Common.ExecuteServices
 {
@@ -150,7 +151,7 @@ namespace TaskTip.Common.ExecuteServices
                     var targetFileName = Path.GetFileName(target);
 
                     var path = Path.Combine(GlobalVariable.RecordFilePath, targetFileName);
-                    var xamlPath = Path.Combine(GlobalVariable.RecordFilePath ,"Xaml", targetFileName);
+                    var xamlPath = Path.Combine(GlobalVariable.RecordFilePath, "Xaml", targetFileName);
                     var title = new RecordFileModel();
                     var text = string.Empty;
                     if (File.Exists(path))

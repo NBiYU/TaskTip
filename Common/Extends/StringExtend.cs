@@ -22,6 +22,11 @@ namespace TaskTip.Common.Extends
                 return strs.ToArray();
             }
             return default;
+            
+        }
+        public static bool IsNullOrEmpty(this string str)
+        {
+            return string.IsNullOrEmpty(str);
         }
     }
 }

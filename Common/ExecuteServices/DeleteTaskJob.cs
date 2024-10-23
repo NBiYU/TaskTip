@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 using System.Windows.Markup;
 using CommunityToolkit.Mvvm.Messaging;
 using Quartz;
-using TaskTip.Models;
+using TaskTip.Enums;
+using TaskTip.Models.DataModel;
 using TaskTip.Services;
 
 namespace TaskTip.Common.ExecuteServices

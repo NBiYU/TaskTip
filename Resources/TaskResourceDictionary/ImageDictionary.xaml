@@ -33,5 +33,7 @@
     <BitmapImage x:Key="Empty" UriSource="/Resources/Sources/Image/Empty.png"></BitmapImage>
     <BitmapImage x:Key="Fixed" UriSource="/Resources/Sources/Image/Fixed.png"></BitmapImage>
     <BitmapImage x:Key="Unpin" UriSource="/Resources/Sources/Image/Unpin.png"></BitmapImage>
-    
+    <BitmapImage x:Key="GgMenuRound" UriSource="/Resources/Sources/Image/GgMenuRound.png"/>
+    <BitmapImage x:Key="SaveMenuRound" UriSource="/Resources/Sources/Image/MingcuteSaveLine.png"/>
+
 </ResourceDictionary>

@@ -14,6 +14,9 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using TaskTip.Common;
+using TaskTip.Common.Extends;
+using TaskTip.Enums;
+using TaskTip.Models.CommonModel;
 using TaskTip.Services;
 using TaskTip.Views;
 using TaskTip.Views.UserControls;
@@ -47,17 +50,22 @@ namespace TaskTip.ViewModels.WindowModel
                 ChangedValueSave(nameof(AutoStartUp), AutoStartUp);
             }
         }
-        private bool _isFloatingImageStyle;
+
         #region 悬浮窗设置属性
-        public bool IsFloatingImageStyle
+        [ObservableProperty]
+        private ObservableCollection<OptionModel<FloatingStyleEnum>> _floatingStyles;
+        private OptionModel<FloatingStyleEnum> _floatingStyle;
+        public OptionModel<FloatingStyleEnum> FloatingStyle
         {
-            get => _isFloatingImageStyle;
+            get => _floatingStyle;
             set
             {
-                SetProperty(ref _isFloatingImageStyle, value);
-                ChangedValueSave(nameof(IsFloatingImageStyle), IsFloatingImageStyle);
+                SetProperty(ref _floatingStyle, value);
+                ChangedValueSave(nameof(FloatingStyle), (int)FloatingStyle.Value);
                 IsFloatingStyleChanged();
                 AutoSizeImage = true;
+                IsFloatingImageStyle = FloatingStyle.Value == FloatingStyleEnum.Image;
+                IsFloatingStatusStyle = FloatingStyle.Value == FloatingStyleEnum.Status;
             }
         }
 
@@ -75,6 +83,17 @@ namespace TaskTip.ViewModels.WindowModel
                 FloatingViewState();
             }
         }
+        private bool _floatingStatusIsFixed;
+        public bool FloatingStatusIsFixed
+        {
+            get => _floatingStatusIsFixed;
+            set{
+                SetProperty(ref _floatingStatusIsFixed, value);
+                ChangedValueSave(nameof(FloatingStatusIsFixed), FloatingStatusIsFixed);
+            }
+        }
+        [ObservableProperty]
+        public bool _isFloatingStatusStyle;
 
         private double _floatingSetWidth;
         /// <summary>
@@ -90,7 +109,12 @@ namespace TaskTip.ViewModels.WindowModel
                 ChangedValueSave(nameof(FloatingSetWidth), _floatingSetWidth);
             }
         }
-
+        
+        private bool _isFloatingImageStyle;
+        public bool IsFloatingImageStyle {
+            get => _isFloatingImageStyle;
+            set => SetProperty(ref _isFloatingImageStyle, value);
+        }
 
         private double _floatingSetHeight;
         /// <summary>
@@ -293,25 +317,37 @@ namespace TaskTip.ViewModels.WindowModel
             if (ChangedValue.Count != 0)
             {
                 isClose = true;
-                if (MessageBox.Show($"您有未保存的内容：\n{JsonConvert.SerializeObject(ChangedValue,Formatting.Indented)}", "是否不保存更改直接退出",
+                if (MessageBox.Show($"您有未保存的内容：\n{JsonConvert.SerializeObject(ChangedValue, Formatting.Indented)}", "是否不保存更改直接退出",
                         MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                     return;
                 foreach (var val in ChangedValue)
                 {
-                    GetType().GetProperty(val.Key)?.SetValue(this, GlobalVariable.ValueToType(ConfigurationManager.AppSettings.Get(val.Key)));
+                    if(val.Key == nameof(FloatingStyle))
+                    {
+                        var value = (FloatingStyleEnum)GlobalVariable.ValueToType(ConfigurationManager.AppSettings.Get(val.Key));
+                        GetType().GetProperty(val.Key)?.SetValue(this, new OptionModel<FloatingStyleEnum> { Name = value.GetDesc(), Value = value });
+                    }
+                    else
+                    {
+                        GetType().GetProperty(val.Key)?.SetValue(this, GlobalVariable.ValueToType(ConfigurationManager.AppSettings.Get(val.Key)));
+                    }
                 }
             }
 
             ChangedValue.Clear();
 
 
-            if (GlobalVariable.IsFloatingImageStyle)
+            if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Image)
             {
                 GlobalVariable.FloatingViewShow();
             }
-            else
+            else if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Title)
             {
                 GlobalVariable.FloatingTitleStyleViewShow();
+            }
+            else if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Status)
+            {
+                GlobalVariable.SysRuntimeStatusViewShow();
             }
 
             //GlobalVariable.CustomSetViewHide();
@@ -352,9 +388,14 @@ namespace TaskTip.ViewModels.WindowModel
                         PathChanged();
                     }
 
+
                     GlobalVariable.SaveConfig(ChangedValue);
                     MessageBox.Show("设置已保存");
-
+                    if (ChangedValue.ContainsKey(nameof(FloatingStatusIsFixed)))
+                    {
+                        GlobalVariable.SysRuntimeStatusViewClose();
+                        GlobalVariable.SysRuntimeStatusViewShow();
+                    }
                     ChangedValue.Clear();
                     AutoStart(AutoStartUp);
 
@@ -421,14 +462,21 @@ namespace TaskTip.ViewModels.WindowModel
 
         private void IsFloatingStyleChanged()
         {
-            if (IsFloatingImageStyle)
+            GlobalVariable.SysRuntimeStatusViewClose();
+            GlobalVariable.FloatingTitleStyleViewClose();
+            GlobalVariable.FloatingViewClose();
+            GlobalVariable.TaskMenoViewClose();
+            if (FloatingStyle.Value == FloatingStyleEnum.Image)
             {
-                GlobalVariable.FloatingTitleStyleViewClose();
+                GlobalVariable.FloatingViewShow();
             }
-            else
+            else if (FloatingStyle.Value == FloatingStyleEnum.Title)
             {
-                GlobalVariable.FloatingViewClose();
-                GlobalVariable.TaskMenoViewClose();
+                GlobalVariable.FloatingTitleStyleViewShow();
+            }
+            else if (FloatingStyle.Value == FloatingStyleEnum.Status)
+            {
+                GlobalVariable.SysRuntimeStatusViewShow();
             }
 
         }
@@ -502,7 +550,7 @@ namespace TaskTip.ViewModels.WindowModel
                 GlobalVariable.FloatingViewShow(FloatingBgPath);
                 FloatingSetVisibility = Visibility.Visible;
             }
-           
+
         }
 
 
@@ -529,15 +577,15 @@ namespace TaskTip.ViewModels.WindowModel
 
         #region 阅读小说热键
 
-        private ObservableCollection<KeyInputUC> _keyInputUcs=new();
+        private ObservableCollection<KeyInputUC> _keyInputUcs = new();
 
-        public ObservableCollection<KeyInputUC> KeyInputUcs 
+        public ObservableCollection<KeyInputUC> KeyInputUcs
         {
             get => _keyInputUcs;
-            set=> SetProperty(ref _keyInputUcs,value);
+            set => SetProperty(ref _keyInputUcs, value);
         }
 
-        
+
         private List<KeyInputUC> AddKeyInputUc(params string[] ucNames)
         {
             var collection = new List<KeyInputUC>();
@@ -558,7 +606,7 @@ namespace TaskTip.ViewModels.WindowModel
                         var checkKeyExisted = hotKeys.FirstOrDefault(x => x.KeyASCII == saveKey);
                         if (checkKeyExisted != null && checkKeyExisted.HotKeyName.ToString() != _hotKeyRelevancyName[uc.HotKeyName.Text])
                         {
-                            MessageBox.Show($"当前设置快捷键和”{_hotKeyRelevancyName.First(x=>x.Value == checkKeyExisted.HotKeyName.ToString()).Key}“快捷键冲突");
+                            MessageBox.Show($"当前设置快捷键和”{_hotKeyRelevancyName.First(x => x.Value == checkKeyExisted.HotKeyName.ToString()).Key}“快捷键冲突");
                             uc.InputKeys = new int[2];
                             return;
                         }
@@ -572,14 +620,14 @@ namespace TaskTip.ViewModels.WindowModel
                             return;
                         }
                         GlobalVariable.JsonConfiguration[$"HotKeys:ReadUIHotKeys:{idx}:KeyASCII", GetType()] = saveKey;
-                        
+
                         // 如果界面已打开，通知重新注册
                         if (FictionReadView.HotKeyManagers.Count != 0)
                             WeakReferenceMessenger.Default.Send(string.Empty, Const.CONST_HOT_KEY_RE_REGISTER);
                     }
                 };
                 string hotKeys = relevancyName.First(x => x.HotKeyName == _hotKeyRelevancyName[name]).KeyASCII;
-                control.InputKeys = Array.ConvertAll(hotKeys.ToString().Split("+"),int.Parse);
+                control.InputKeys = Array.ConvertAll(hotKeys.ToString().Split("+"), int.Parse);
                 collection.Add(control);
             }
 
@@ -592,12 +640,12 @@ namespace TaskTip.ViewModels.WindowModel
 
         private void PathChanged()
         {
-            var taskPath = Path.Combine(TaskTipPath , nameof(GlobalVariable.TaskFilePath));
-            var menoPath = Path.Combine(TaskTipPath , nameof(GlobalVariable.MenoFilePath));
+            var taskPath = Path.Combine(TaskTipPath, nameof(GlobalVariable.TaskFilePath));
+            var menoPath = Path.Combine(TaskTipPath, nameof(GlobalVariable.MenoFilePath));
             var recordPath = Path.Combine(TaskTipPath, nameof(GlobalVariable.RecordFilePath));
-            var fictionCachePath = Path.Combine(TaskTipPath ,"Fictions");
-            var fictionSetPath = Path.Combine(fictionCachePath , "FictionProgress.json");
-            var jsonPath = Path.Combine(TaskTipPath ,"MenuTreeConfig.json");
+            var fictionCachePath = Path.Combine(TaskTipPath, "Fictions");
+            var fictionSetPath = Path.Combine(fictionCachePath, "FictionProgress.json");
+            var jsonPath = Path.Combine(TaskTipPath, "MenuTreeConfig.json");
             var workTimeRecordPath = Path.Combine(TaskTipPath, "WorkTime.json");
 
             if (!Directory.Exists(taskPath)) Directory.CreateDirectory(taskPath);
@@ -644,7 +692,7 @@ namespace TaskTip.ViewModels.WindowModel
         public string CheckConfig()
         {
             var isEmptyMsg = string.Empty;
-            isEmptyMsg += string.IsNullOrWhiteSpace(FloatingBgPath) ? "悬浮窗背景不能为空\n" : "";
+            if(FloatingStyle.Value == FloatingStyleEnum.Image) isEmptyMsg += string.IsNullOrWhiteSpace(FloatingBgPath) ? "处于图片悬浮模式时，悬浮窗背景不能为空\n" : "";
             isEmptyMsg += string.IsNullOrWhiteSpace(TaskTipPath) ? "保存路径不能为空\n" : "";
             isEmptyMsg += !Regex.IsMatch(DeleteTimes, @"^[0-9]+$") ? "计划删除天数格式异常" : "";
             isEmptyMsg += !Regex.IsMatch(DailyTaskEndTime, @"^\d{1,2}:\d{1,2}?$") ? "每日截时间格式异常" : "";
@@ -689,7 +737,8 @@ namespace TaskTip.ViewModels.WindowModel
                         var allCovertResult = MessageBox.Show($"检测到有{allFile.Length} 待移动，后续是否默认覆盖", "覆盖", MessageBoxButton.YesNo);
                         if (allCovertResult == MessageBoxResult.Yes) isAllCovert = true;
                         else isAllCovert = false;
-                    }else if (isAllCovert == false)
+                    }
+                    else if (isAllCovert == false)
                     {
                         var coverResult = MessageBox.Show($"{Path.GetFileNameWithoutExtension(dfilePath)} 在新位置已存在，是否覆盖", "覆盖", MessageBoxButton.YesNo);
                         if (coverResult == MessageBoxResult.No) continue;
@@ -790,7 +839,7 @@ namespace TaskTip.ViewModels.WindowModel
 
         private void InitHotKeyKeyValue()
         {
-            _hotKeyRelevancyName.Add("最小化",Const.CONST_HOT_KEY_HIDE);
+            _hotKeyRelevancyName.Add("最小化", Const.CONST_HOT_KEY_HIDE);
             _hotKeyRelevancyName.Add("显示", Const.CONST_HOT_KEY_SHOW);
             _hotKeyRelevancyName.Add("关闭", Const.CONST_HOT_KEY_CLOSE);
             _hotKeyRelevancyName.Add("上一页", Const.CONST_HOT_KEY_PREVIEW);
@@ -800,10 +849,15 @@ namespace TaskTip.ViewModels.WindowModel
 
         private void InitProperty()
         {
+            _floatingStyles = new ObservableCollection<OptionModel<FloatingStyleEnum>>(Enum.GetValues(typeof(FloatingStyleEnum))
+                .Cast<FloatingStyleEnum>()
+                .Select(x => new OptionModel<FloatingStyleEnum> { Name = x.GetDesc(), Value = x }));
             FloatingBgPath = GlobalVariable.FloatingBgPath;
             TaskTipPath = GlobalVariable.TaskTipPath;
             DeleteTimes = GlobalVariable.DeleteTimes.ToString();
-            IsFloatingImageStyle = GlobalVariable.IsFloatingImageStyle;
+            FloatingStyle = _floatingStyles.FirstOrDefault(x=>x.Value == GlobalVariable.FloatingStyle)!;
+
+            FloatingStatusIsFixed = GlobalVariable.FloatingStatusIsFixed;
 
             AutoSizeImage = GlobalVariable.AutoSizeImage;
             FloatingSetHeight = GlobalVariable.FloatingSetHeight;
@@ -820,8 +874,8 @@ namespace TaskTip.ViewModels.WindowModel
             SiestaTime = GlobalVariable.SiestaTime;
             AgainWorkGapTime = GlobalVariable.AgainWorkGapTime;
 
-            KeyInputUcs = new ObservableCollection<KeyInputUC>(AddKeyInputUc(_hotKeyRelevancyName.Keys.Select(x=>x).ToArray()));
-            
+            KeyInputUcs = new ObservableCollection<KeyInputUC>(AddKeyInputUc(_hotKeyRelevancyName.Keys.Select(x => x).ToArray()));
+
         }
 
         public CustomSetViewModel()
@@ -832,7 +886,5 @@ namespace TaskTip.ViewModels.WindowModel
         }
 
         #endregion
-
-
     }
 }

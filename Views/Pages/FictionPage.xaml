@@ -9,9 +9,9 @@
       mc:Ignorable="d" 
       d:DesignWidth="{Binding PageWidth,Mode=TwoWay}"
       Title="FictionPage">
-    <Page.DataContext>
+    <!--<Page.DataContext>
         <viewModel:FictionPageVM/>
-    </Page.DataContext>
+    </Page.DataContext>-->
     <Grid>
         <!--<Grid.RowDefinitions>
             <RowDefinition Height="*"/>

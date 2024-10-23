@@ -12,9 +12,10 @@ using CommunityToolkit.Mvvm.Messaging;
 using TaskTip.Pages;
 using TaskTip.Services;
 using TaskTip.Views;
-using TaskTip.Models;
 using TaskTip.ViewModels.UserViewModel;
 using TaskTip.Common;
+using TaskTip.Enums;
+using TaskTip.Models.DataModel;
 
 namespace TaskTip.ViewModels.WindowModel
 {
@@ -33,7 +34,7 @@ namespace TaskTip.ViewModels.WindowModel
         public string TimeoutListString
         {
             get => _timeoutListString;
-            set=>SetProperty(ref _timeoutListString, value);
+            set => SetProperty(ref _timeoutListString, value);
         }
 
 
@@ -124,13 +125,17 @@ namespace TaskTip.ViewModels.WindowModel
         public void Mini()
         {
             GlobalVariable.TaskMenoViewHide();
-            if (GlobalVariable.IsFloatingImageStyle)
+            if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Image)
             {
                 GlobalVariable.FloatingViewShow();
             }
-            else
+            else if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Title)
             {
                 GlobalVariable.FloatingTitleStyleViewShow();
+            }
+            else if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Status)
+            {
+                GlobalVariable.SysRuntimeStatusViewShow();
             }
 
         }
@@ -170,9 +175,9 @@ namespace TaskTip.ViewModels.WindowModel
                 var vms = taskList.Select(x => (TaskListItemUserControlModel)x.DataContext).ToList();
                 var timeoutVms = vms.Where(x => x.TaskTimePlan != DateTime.MinValue && x.TaskTimePlan < DateTime.Now && x.IsCompleted == false).ToList();
                 TimeoutTitle = $"存在 {timeoutVms.Count} 个超时任务";
-                TimeoutListString = timeoutVms.Count != 0 ? string.Join("\n", timeoutVms.Select(x=>x.EditTextTitle)) : "当前无超时任务" ;
+                TimeoutListString = timeoutVms.Count != 0 ? string.Join("\n", timeoutVms.Select(x => x.EditTextTitle)) : "当前无超时任务";
             }
-                
+
         }
 
         #endregion
@@ -182,11 +187,11 @@ namespace TaskTip.ViewModels.WindowModel
         private void InitRegister()
         {
             WeakReferenceMessenger.Default.Register<CorrespondenceModel, string>(this, Const.CONST_TASK_LIST_CHANGED,
-                (obj, msg) => 
-                { 
-                    if(countNum++ == 0)TaskListPageModelOnTaskListChanged(msg);
+                (obj, msg) =>
+                {
+                    if (countNum++ == 0) TaskListPageModelOnTaskListChanged(msg);
                     else countNum = 0;
-                 });
+                });
         }
 
         /// <summary>

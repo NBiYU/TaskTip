@@ -13,6 +13,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Configuration;
 using NLog;
 using TaskTip.Common;
+using TaskTip.Enums;
 using TaskTip.Pages;
 using TaskTip.ViewModels.WindowModel;
 using TaskTip.Views;
@@ -59,7 +60,7 @@ namespace TaskTip.Services
         /// <summary>
         /// 任务文件保存路径
         /// </summary>
-        public static string TaskFilePath => Path.Combine(TaskTipPath ,nameof(TaskFilePath));
+        public static string TaskFilePath => Path.Combine(TaskTipPath, nameof(TaskFilePath));
 
         /// <summary>
         /// 记事文件保存路径
@@ -69,14 +70,14 @@ namespace TaskTip.Services
         /// <summary>
         /// 记录文件路径
         /// </summary>
-        public static string RecordFilePath => Path.Combine(TaskTipPath ,nameof(RecordFilePath));
+        public static string RecordFilePath => Path.Combine(TaskTipPath, nameof(RecordFilePath));
 
         /// <summary>
         /// 目录树配置文件
         /// </summary>
-        public static string MenuTreeConfigPath => Path.Combine(TaskTipPath , "MenuTreeConfig.json");
+        public static string MenuTreeConfigPath => Path.Combine(TaskTipPath, "MenuTreeConfig.json");
 
-        public static string FictionProgressPath => Path.Combine(TaskTipPath  ,"Fictions" , "FictionProgress.json");
+        public static string FictionProgressPath => Path.Combine(TaskTipPath, "Fictions", "FictionProgress.json");
 
         public static string FictionCachePath => Path.Combine(TaskTipPath, "Fictions");
         public static string? WorkTimeRecordPath = Path.Combine(TaskTipPath, "WorkTime.json");
@@ -113,12 +114,13 @@ namespace TaskTip.Services
         /// <summary>
         /// 是否启用悬浮窗样式
         /// </summary>
-        public static bool IsFloatingImageStyle => ValueToType(ConfigurationManager.AppSettings[nameof(IsFloatingImageStyle)] ?? "true");
+        public static FloatingStyleEnum FloatingStyle => (FloatingStyleEnum)ValueToType(ConfigurationManager.AppSettings[nameof(FloatingStyle)] ?? "1");
 
         /// <summary>
         /// 自动删除时间
         /// </summary>
         public static int DeleteTimes => ValueToType(ConfigurationManager.AppSettings[nameof(DeleteTimes)] ?? "99");
+        public static bool FloatingStatusIsFixed => ValueToType(ConfigurationManager.AppSettings[nameof(FloatingStatusIsFixed)] ?? "false");
 
         public static bool IsEnableAutoDelete => ValueToType(ConfigurationManager.AppSettings[nameof(IsEnableAutoDelete)] ?? "false");
 
@@ -223,17 +225,6 @@ namespace TaskTip.Services
             }
             return val;
         }
- 
-
-        #endregion
-
-        #region 窗口初始化
-
-        public static FloatingView FloatingView { get; set; } = new();
-        public static TaskMenoView TaskMenoView { get; set; } = new();
-        public static FloatingTitleStyleView FloatingTitleStyleView { get; set; } = new();
-        public static CustomSetView CustomSetView { get; set; } = new();
-        public static EditFullScreenView EditFullScreenView { get; set; } = new();
 
 
         #endregion
@@ -242,7 +233,7 @@ namespace TaskTip.Services
 
 
         #region Floating
-
+        public static FloatingView FloatingView { get; set; } = new();
         public static void FloatingViewShow(string imagePath = "")
         {
 
@@ -268,7 +259,7 @@ namespace TaskTip.Services
 
         public static void FloatingViewClose()
         {
-            if (!FloatingView.IsClosed)
+            if (FloatingView != null && !FloatingView.IsClosed)
             {
                 FloatingView.Close();
             }
@@ -277,7 +268,7 @@ namespace TaskTip.Services
         #endregion
 
         #region FloatingTitleStyle
-
+        public static FloatingTitleStyleView FloatingTitleStyleView { get; set; } = new();
         public static void FloatingTitleStyleViewShow()
         {
             if (FloatingTitleStyleView.IsClosed)
@@ -298,14 +289,45 @@ namespace TaskTip.Services
 
         public static void FloatingTitleStyleViewClose()
         {
-            if (!FloatingTitleStyleView.IsClosed)
+            if (FloatingTitleStyleView != null && !FloatingTitleStyleView.IsClosed)
             {
                 FloatingTitleStyleView.Close();
             }
         }
         #endregion
-        #region TaskMeno
 
+        #region FloatingStatusStyle
+        public static SysRuntimeStatusView SysRuntimeStatusView { get; set; } = new();
+        public static void SysRuntimeStatusViewShow()
+        {
+            if (SysRuntimeStatusView.IsClosed)
+            {
+                SysRuntimeStatusView = new();
+            }
+            SysRuntimeStatusView.Show();
+        }
+
+        public static void SysRuntimeStatusViewHide()
+        {
+            if (SysRuntimeStatusView.IsClosed)
+            {
+                SysRuntimeStatusView = new();
+            }
+            SysRuntimeStatusView.Hide();
+        }
+
+        public static void SysRuntimeStatusViewClose()
+        {
+            if (SysRuntimeStatusView != null && !SysRuntimeStatusView.IsClosed)
+            {
+                SysRuntimeStatusView.Close();
+            }
+        }
+
+        #endregion
+
+        #region TaskMeno
+        public static TaskMenoView TaskMenoView { get; set; } = new();
         public static void TaskMenoViewShow()
         {
             if (TaskMenoView.IsClosed)
@@ -325,7 +347,7 @@ namespace TaskTip.Services
 
         public static void TaskMenoViewClose()
         {
-            if (!TaskMenoView.IsClosed)
+            if (TaskMenoView != null && !TaskMenoView.IsClosed)
             {
                 TaskMenoView.Close();
             }
@@ -334,7 +356,7 @@ namespace TaskTip.Services
         #endregion
 
         #region CustomSet
-
+        public static CustomSetView CustomSetView { get; set; } = new();
         public static void CustomSetViewShow()
         {
             if (CustomSetView.IsClosed)
@@ -355,7 +377,7 @@ namespace TaskTip.Services
 
         public static void CustomSetViewClose()
         {
-            if (!CustomSetView.IsClosed)
+            if (CustomSetView != null && !CustomSetView.IsClosed)
             {
                 CustomSetView.Close();
             }
@@ -364,7 +386,7 @@ namespace TaskTip.Services
         #endregion
 
         #region EditFullScreenView
-
+        public static EditFullScreenView EditFullScreenView { get; set; } = new();
         public static void EditFullScreenViewShow()
         {
             if (EditFullScreenView.IsClosed)
@@ -385,7 +407,7 @@ namespace TaskTip.Services
 
         public static void EditFullScreenViewClose()
         {
-            if (!EditFullScreenView.IsClosed)
+            if (EditFullScreenView != null && !EditFullScreenView.IsClosed)
             {
                 EditFullScreenView.Close();
             }

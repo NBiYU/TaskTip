@@ -14,7 +14,9 @@ using System.Windows.Media.Imaging;
 using TaskTip.Base;
 using TaskTip.Common;
 using TaskTip.Common.Extends;
+using TaskTip.Enums;
 using TaskTip.Models;
+using TaskTip.Models.DataModel;
 using TaskTip.Services;
 using TaskTip.UserControls;
 using TaskTip.Views.Windows;
@@ -62,7 +64,7 @@ namespace TaskTip.ViewModels
             get => _nodeMoveVisibility;
             set => SetProperty(ref _nodeMoveVisibility, value);
         }
-        
+
         private Visibility _iconVisibility;
         public Visibility IconVisibility
         {
@@ -213,7 +215,7 @@ namespace TaskTip.ViewModels
         [RelayCommand]
         public void NodeMove(string guid)
         {
-            if (IsNode &&!_isNodeMove)
+            if (IsNode && !_isNodeMove)
             {
                 WeakReferenceMessenger.Default.Send(TreeInfo, Const.CONST_NODE_MOVE);
             }
@@ -483,7 +485,7 @@ namespace TaskTip.ViewModels
 
         private void MenuItemsChanged()
         {
-            if (TreeInfo.Menu == null) 
+            if (TreeInfo.Menu == null)
                 return;
             DirItems = new ObservableCollection<string>(TreeInfo.Menu.Directories.Select(x => x.Name).ToList());
             FileItems = new ObservableCollection<string>(TreeInfo.Menu.Files.Select(x => x.Name).ToList());
@@ -543,7 +545,7 @@ namespace TaskTip.ViewModels
                         MenuItems.Remove(deleteItem);
                         TreeInfo.Menu.Directories.RemoveAll(x => x.GUID == corr.GUID);
                         TreeInfo.Menu.Files.RemoveAll(x => x.GUID == corr.GUID);
-                        if(corr.Operation == OperationRequestType.DeleteNotWithFile)
+                        if (corr.Operation == OperationRequestType.DeleteNotWithFile)
                         {
                             var path = Path.Combine(GlobalVariable.RecordFilePath,
                                 $"{deleteItem.TextGuid.Text}{GlobalVariable.EndFileFormat}");
@@ -578,7 +580,7 @@ namespace TaskTip.ViewModels
                         }
                         OperationRecord.OperationRecordWrite(new TcpRequestData() { GUID = corr.GUID, OperationType = corr.Operation, SyncCategory = SyncFileCategory.Record, FileData = corr.Message });
                         break;
-                    
+
                     case OperationRequestType.Add:
                         if (GUID != corr.GUID || !IsDirectory) return;
 
@@ -666,9 +668,10 @@ namespace TaskTip.ViewModels
                     if (Directory.Exists(Path.GetDirectoryName(path)))
                     {
                         File.WriteAllText(GlobalVariable.MenuTreeConfigPath, rootJson);
-                    }else
+                    }
+                    else
                     {
-                        var processPathInfo =  Process.GetCurrentProcess().MainModule;
+                        var processPathInfo = Process.GetCurrentProcess().MainModule;
                         LoadFile(processPathInfo.FileName.Split(processPathInfo.ModuleName)[0] + Path.GetFileName(path));
                         return;
                     }

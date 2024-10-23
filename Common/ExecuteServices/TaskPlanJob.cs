@@ -14,12 +14,13 @@ using System.Windows.Threading;
 using CommunityToolkit.Mvvm.Messaging;
 using HandyControl.Data;
 using Hardcodet.Wpf.TaskbarNotification;
-using TaskTip.Common;
 using TaskTip.Views;
 using MessageBox = System.Windows.MessageBox;
 using TaskTip.Models;
 using TaskTip.Services;
 using System.Reflection.Metadata;
+using TaskTip.Enums;
+using TaskTip.Models.DataModel;
 
 namespace TaskTip.Common.ExecuteServices
 {
@@ -35,7 +36,7 @@ namespace TaskTip.Common.ExecuteServices
         {
 
             var guid = context.JobDetail.Key.ToString().Substring(context.JobDetail.Key.ToString().IndexOf("Job") + 3);
-            var path = Path.Combine(GlobalVariable.TaskFilePath , $"{guid}{GlobalVariable.EndFileFormat}");
+            var path = Path.Combine(GlobalVariable.TaskFilePath, $"{guid}{GlobalVariable.EndFileFormat}");
             var errorMsg = string.Empty;
 
             if (!File.Exists(path))
@@ -69,7 +70,7 @@ namespace TaskTip.Common.ExecuteServices
 
                 var taskBalloonTip = new TaskbarIcon();
                 taskBalloonTip.ShowBalloonTip(title, msg, icon);
-                    
+
                 WeakReferenceMessenger.Default.Send(
                     new TaskStatusModel()
                     {

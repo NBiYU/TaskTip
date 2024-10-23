@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
-using TaskTip.Models;
+using TaskTip.Models.DataModel;
 
 namespace TaskTip.ViewModels.Converters
 {

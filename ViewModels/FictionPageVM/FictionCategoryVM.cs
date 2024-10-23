@@ -12,8 +12,8 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using TaskTip.Extends.FictionAPI.LRY_API;
 using TaskTip.Extends.FictionAPI.OptionEnum;
+using TaskTip.Models.DataModel;
 using TaskTip.Views.FictionPage;
-using TaskTipProject.Models;
 
 namespace TaskTip.ViewModels.FictionPageVM
 {
