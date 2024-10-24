@@ -1,115 +1,150 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Management;
+using System.Net;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using TaskTip.Common.Extends;
+using TaskTip.Models.DataModel;
 
 namespace TaskTip.Common.Helpers
 {
     public static class NetworkAdapterHelper
     {
-        public static void SetIPAddress(string adapterName, string ipAddress = "", string subnetMask = "", string gateway = "")
+        public static ManagementObject GetNetworkAdapterInstance(string adapterName)
         {
-            string qry = "SELECT * FROM MSFT_NetAdapter WHERE Virtual=False";
-            ManagementScope scope = new ManagementScope(@"\\.\ROOT\StandardCimv2");
-            ObjectQuery query = new ObjectQuery(qry);
-            ManagementObjectSearcher mos = new ManagementObjectSearcher(scope, query);
-            ManagementObjectCollection moc = mos.Get();
+            string query = "SELECT * FROM Win32_NetworkAdapterConfiguration WHERE IPEnabled = TRUE";
+
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(query);
+            ManagementObjectCollection moc = searcher.Get();
+
+            foreach (ManagementObject mo in moc)
+            {
+                if ((bool)mo["IPEnabled"] == true && mo["Caption"].ToString().Contains(adapterName))
+                {
+                    return mo;
+                }
+            }
+            return null;
+        }
+        public static AdapterDataModel GetNetworkAdapterInfo(string adapterName)
+        {
+            var mo = GetNetworkAdapterInstance(adapterName);
+            if (mo != null)
+            {
+                return mo.GetNetworkAdapterInfo();
+            }
+            return null;
+        }
+        public static AdapterDataModel GetNetworkAdapterInfo(this ManagementObject mo)
+        {
+            try
+            {
+                return new AdapterDataModel
+                {
+                    IPEnabled = (bool)mo["IPEnabled"],
+                    IPAddress = (string[])mo["IPAddress"],
+                    Description = (string)mo["Description"],
+                    MACAddress = (string)mo["MACAddress"],
+                    DHCPEnabled = (bool)mo["DHCPEnabled"],
+                    IPSubnet = (string[])mo["IPSubnet"],
+                    DefaultIPGateway = (string[])mo["DefaultIPGateway"],
+                    DNSServerSearchOrder = (string[])mo["DNSServerSearchOrder"],
+                    DNSHostName = (string)mo["DNSHostName"],
+                    DNSDomain = (string)mo["DNSDomain"],
+                    DHCPServer = (string)mo["DHCPServer"]
+                };
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+        }
+        public static void SetIPWithDnsAddress(string adapterName, string ipAddress = "", string subnetMask = "", string gateway = "", string dns = "")
+        {
+            string query = "SELECT * FROM Win32_NetworkAdapterConfiguration WHERE IPEnabled = TRUE";
+
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(query);
+            ManagementObjectCollection moc = searcher.Get();
 
             foreach (ManagementObject mo in moc)
             {
                 if ((bool)mo["IPEnabled"] == true && mo["Caption"].ToString().Contains(adapterName))
                 {
                     ManagementBaseObject newIP = mo.GetMethodParameters("EnableStatic");
-                    if(!ipAddress.IsNullOrEmpty()) newIP["IPAddress"] = new string[] { ipAddress };
-                    if (!subnetMask.IsNullOrEmpty()) newIP["SubnetMask"] = new string[] { subnetMask };
+                    if (!ipAddress.IsNullOrEmpty()) newIP["IPAddress"] = new string[] { ipAddress };
+                    if (subnetMask.IsNullOrEmpty()) subnetMask = "255.255.255.0";
+                    newIP["SubnetMask"] = new string[] { subnetMask };
                     mo.InvokeMethod("EnableStatic", newIP, null);
 
                     ManagementBaseObject newGateway = mo.GetMethodParameters("SetGateways");
                     if (!gateway.IsNullOrEmpty()) newGateway["DefaultIPGateway"] = new string[] { gateway };
                     mo.InvokeMethod("SetGateways", newGateway, null);
+
+                    if (!dns.IsNullOrEmpty())
+                    {
+                        ManagementBaseObject newDNS = mo.GetMethodParameters("SetDNSServerSearchOrder");
+                        newDNS["DNSServerSearchOrder"] = dns;
+                        mo.InvokeMethod("SetDNSServerSearchOrder", newDNS, null);
+                    }
+                    break;
                 }
             }
         }
-        public static void ShowNetworkInterfaces()
+        public static void SetIPWithDnsAddress(this ManagementObject mo, string ipAddress = "", string subnetMask = "", string gateway = "", string dns = "")
         {
-            SetIPAddress("");
-            IPGlobalProperties computerProperties = IPGlobalProperties.GetIPGlobalProperties();
-            NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
-            Console.WriteLine("Interface information for {0}.{1}     ",
-                    computerProperties.HostName, computerProperties.DomainName);
-            if (nics == null || nics.Length < 1)
+            ManagementBaseObject newIP = mo.GetMethodParameters("EnableStatic");
+            if (!ipAddress.IsNullOrEmpty()) newIP["IPAddress"] = new string[] { ipAddress };
+            if (subnetMask.IsNullOrEmpty()) subnetMask = "255.255.255.0";
+            newIP["SubnetMask"] = new string[] { subnetMask };
+            mo.InvokeMethod("EnableStatic", newIP, null);
+
+            ManagementBaseObject newGateway = mo.GetMethodParameters("SetGateways");
+            if (!gateway.IsNullOrEmpty()) newGateway["DefaultIPGateway"] = new string[] { gateway };
+            mo.InvokeMethod("SetGateways", newGateway, null);
+
+            if (!dns.IsNullOrEmpty())
             {
-                Console.WriteLine("  No network interfaces found.");
-                return;
+                ManagementBaseObject newDNS = mo.GetMethodParameters("SetDNSServerSearchOrder");
+                newDNS["DNSServerSearchOrder"] = dns;
+                mo.InvokeMethod("SetDNSServerSearchOrder", newDNS, null);
             }
+        }
+        public static void SetIPWithDnsDHCP(string adapterName, bool DHCP = false)
+        {
+            string query = "SELECT * FROM Win32_NetworkAdapterConfiguration WHERE IPEnabled = TRUE";
 
-            Console.WriteLine("  Number of interfaces .................... : {0}", nics.Length);
-            foreach (NetworkInterface adapter in nics)
+            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(query))
             {
-                IPInterfaceProperties properties = adapter.GetIPProperties();
-                Console.WriteLine();
-                Console.WriteLine(adapter.Description);
-                Console.WriteLine(String.Empty.PadLeft(adapter.Description.Length, '='));
-                Console.WriteLine("  Interface type .......................... : {0}", adapter.NetworkInterfaceType);
-                Console.WriteLine("  Physical Address ........................ : {0}",
-                           adapter.GetPhysicalAddress().ToString());
-                Console.WriteLine("  Operational status ...................... : {0}",
-                    adapter.OperationalStatus);
-                string versions = "";
-
-                // Create a display string for the supported IP versions.
-                if (adapter.Supports(NetworkInterfaceComponent.IPv4))
+                foreach (ManagementObject mo in searcher.Get())
                 {
-                    versions = "IPv4";
-                }
-                if (adapter.Supports(NetworkInterfaceComponent.IPv6))
-                {
-                    if (versions.Length > 0)
+                    if (mo["Description"] != null && mo["Description"].ToString().Contains(adapterName))
                     {
-                        versions += " ";
-                    }
-                    versions += "IPv6";
-                }
-                Console.WriteLine("  IP version .............................. : {0}", versions);
-
-                // The following information is not useful for loopback adapters.
-                if (adapter.NetworkInterfaceType == NetworkInterfaceType.Loopback)
-                {
-                    continue;
-                }
-                Console.WriteLine("  DNS suffix .............................. : {0}",
-                    properties.DnsSuffix);
-
-                string label;
-                if (adapter.Supports(NetworkInterfaceComponent.IPv4))
-                {
-                    IPv4InterfaceProperties ipv4 = properties.GetIPv4Properties();
-                    Console.WriteLine("  MTU...................................... : {0}", ipv4.Mtu);
-                    if (ipv4.UsesWins)
-                    {
-
-                        IPAddressCollection winsServers = properties.WinsServersAddresses;
-                        if (winsServers.Count > 0)
+                        if (DHCP)
                         {
-                            label = "  WINS Servers ............................ :";
+                            mo.InvokeMethod("EnableDHCP", null);
+                            var dnsParams = mo.GetMethodParameters("SetDNSServerSearchOrder");
+                            dnsParams["DNSServerSearchOrder"] = null;
+                            var dnsResult = mo.InvokeMethod("SetDNSServerSearchOrder", dnsParams, null);
                         }
+
+                        break;
                     }
                 }
-
-                Console.WriteLine("  DNS enabled ............................. : {0}",
-                    properties.IsDnsEnabled);
-                Console.WriteLine("  Dynamically configured DNS .............. : {0}",
-                    properties.IsDynamicDnsEnabled);
-                Console.WriteLine("  Receive Only ............................ : {0}",
-                    adapter.IsReceiveOnly);
-                Console.WriteLine("  Multicast ............................... : {0}",
-                    adapter.SupportsMulticast);
-
-                Console.WriteLine();
+            }
+        }
+        public static void SetIPWithDnsDHCP(this ManagementObject mo, bool DHCP = false)
+        {
+            if (DHCP)
+            {
+                mo.InvokeMethod("EnableDHCP", null);
+                var dnsParams = mo.GetMethodParameters("SetDNSServerSearchOrder");
+                dnsParams["DNSServerSearchOrder"] = null;
+                var dnsResult = mo.InvokeMethod("SetDNSServerSearchOrder", dnsParams, null);
             }
         }
         public static List<string> GetNetworkInterfaces()

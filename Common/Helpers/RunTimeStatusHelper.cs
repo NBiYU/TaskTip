@@ -46,8 +46,9 @@ namespace TaskTip.Common
             return s;
         }
 
-        public static List<string> GetTargetCounters(string cagetory,string instance) {
-            var instances =  new PerformanceCounterCategory(cagetory);
+        public static List<string> GetTargetCounters(string cagetory, string instance)
+        {
+            var instances = new PerformanceCounterCategory(cagetory);
 
             throw new NotImplementedException();
         }
@@ -108,7 +109,7 @@ namespace TaskTip.Common
                 uploadSpeed /= 1024;
                 uploadUnit++;
             }
-            return $"↑{uploadSpeed} {uploadUnit switch { 0 => "b/s", 1 => "Kb/s", 2 => "Mb/s", 3 => "Gb/s",_=>"????" }} | ↓{downloadSpeed} {downloadUnit switch { 0 => "b/s", 1 => "Kb/s", 2 => "Mb/s", 3 => "Gb/s",_=>"????" }}";
+            return $"↑{uploadSpeed} {uploadUnit switch { 0 => "b/s", 1 => "Kb/s", 2 => "Mb/s", 3 => "Gb/s", _ => "????" }} | ↓{downloadSpeed} {downloadUnit switch { 0 => "b/s", 1 => "Kb/s", 2 => "Mb/s", 3 => "Gb/s", _ => "????" }}";
         }
 
         public static string GetPhysicalDiskStatus()
@@ -163,25 +164,34 @@ namespace TaskTip.Common
 
         public static async Task<string> GetNetDownloadSpeedStatusAsync(string cardName)
         {
-            // 获取网络接口上传速率
-            var downloadCounter = new PerformanceCounter("Network Interface", "Bytes Received/sec", cardName);
-
-
-            var downloadUnit = 0;
-            var downloadSpeed = downloadCounter.NextValue();
-            await Task.Delay(1000);
-            downloadSpeed = downloadCounter.NextValue();
-            while (downloadSpeed > 1024)
+            try
             {
-                downloadSpeed /= 1024;
-                downloadUnit++;
+                // 获取网络接口上传速率
+                var downloadCounter = new PerformanceCounter("Network Adapter", "Bytes Received/sec", cardName.Replace("(", "[").Replace(")", "]"));
+
+
+                var downloadUnit = 0;
+                var downloadSpeed = downloadCounter.NextValue();
+                await Task.Delay(1000);
+                downloadSpeed = downloadCounter.NextValue();
+                while (downloadSpeed > 1024)
+                {
+                    downloadSpeed /= 1024;
+                    downloadUnit++;
+                }
+                return $"{downloadSpeed:0.00} {downloadUnit switch { 0 => "B/s", 1 => "KB/s", 2 => "MB/s", 3 => "GB/s", _ => "??" }}";
             }
-            return $"{downloadSpeed:0.00} {downloadUnit switch { 0 => "B/s", 1 => "KB/s", 2 => "MB/s", 3 => "GB/s", _ => "??" }}";
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return "???";
+            }
+
         }
 
         public static async Task<string> GetNetUploadSpeedStatusAsync(string cardName)
         {
-            var uploadCounter = new PerformanceCounter("Network Interface", "Bytes Sent/sec", cardName);
+            var uploadCounter = new PerformanceCounter("Network Adapter", "Bytes Sent/sec", cardName.Replace("(", "[").Replace(")", "]"));
             var uploadUnit = 0;
             var uploadSpeed = uploadCounter.NextValue();
             await Task.Delay(1000);

@@ -15,4 +15,5 @@
     <convert:TypeColorConvert x:Key="TypeColorConvert"/>
     <convert:JsonValueConvert x:Key="JsonValueConvert"/>
     <convert:FloatingStyleConvert x:Key="FloatingStyleConvert"/>
+    <convert:ControlTypeVisibilityConvert x:Key="ControlTypeVisibilityConvert"/>
 </ResourceDictionary>

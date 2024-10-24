@@ -84,6 +84,11 @@ namespace TaskTip.ViewModels
             set => SetProperty(ref _fullScreenSource, value);
         }
 
+        [ObservableProperty]
+        public string _searchStr;
+        [ObservableProperty]
+        public string _searchResult;
+
         #endregion
 
         #region 指令处理函数

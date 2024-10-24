@@ -54,12 +54,11 @@ namespace TaskTip.ViewModels.PageModel
             set { SetProperty(ref taskList, value); }
         }
         [ObservableProperty]
-        public ObservableCollection<SearchDataModel> searchCacheDatas;
-
-
+        public string _searchStr;
+        
         private ISchedulerFactory schedulerFactory;
         private IScheduler scheduler;
-
+        private List<TaskFileModel> _fileDataCache;
 
         /// <summary>
         /// 生成一个新的TaskListItem空控件
@@ -230,6 +229,18 @@ namespace TaskTip.ViewModels.PageModel
                 }
             }
         }
+
+        [RelayCommand]
+        public void SearchDataHandler()
+        {
+            if (SearchStr.IsNullOrEmpty())
+            {
+                TaskLoaded();
+                return;
+            }
+            var searchResult = _fileDataCache.Where(x => x.EditTextTitle.Contains(SearchStr) || x.EditTextText.Contains(SearchStr));
+            TaskList = new ObservableCollection<TaskListItemUserControl>(ReadTaskFile(searchResult.Select(x => x.GUID).ToList()));
+        }
         #endregion
 
         #region 外部控件处理事件
@@ -397,8 +408,7 @@ namespace TaskTip.ViewModels.PageModel
             var readFile = modelList.OrderByDescending(x => x.CompletedDateTime).OrderBy(x => x.IsCompleted).Skip(TaskList.Count).Take(TaskList.Count + take > filePaths.Length ? filePaths.Length - TaskList.Count : take).ToList();
             var taskListControl = new List<TaskListItemUserControl>(TaskList);
             taskListControl.AddRange(ReadTaskFile(readFile.Select(x => x.GUID).ToList()));
-            InitSearchCache(modelList);
-
+            _fileDataCache = modelList;
             TaskList = new ObservableCollection<TaskListItemUserControl>(taskListControl);
 
         }
@@ -415,10 +425,6 @@ namespace TaskTip.ViewModels.PageModel
             return taskListControl;
         }
 
-        private void InitSearchCache(List<TaskFileModel> modelList)
-        {
-            SearchCacheDatas = new ObservableCollection<SearchDataModel>(modelList.Select(x => new SearchDataModel { Identifier = x.GUID, Title = x.EditTextTitle, Content = x.EditTextText }));
-        }
         #endregion
 
 

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using TaskTip.Base;
 using TaskTip.Common;
@@ -52,7 +53,7 @@ namespace TaskTip.ViewModels.PageModel
             var adapters = NetworkAdapterHelper.GetNetworkInterfaces();
             var config = ConfigHelper.ReadConfig<SysRuntimeConfigModel>(Const.RuntimeStatusConfig);
             NetworkCardList = new ObservableCollection<string>(adapters);
-            SelectNetworkCard = config?.NetworkCardName ?? NetworkCardList.FirstOrDefault() ?? string.Empty;
+            SelectNetworkCard = config?.NetworkCardName;
             ThemeList = new ObservableCollection<ThemeSelectorUC>(GetThemeUC(config));
             ActionsList = new ObservableCollection<FloatingSideModel>(new List<FloatingSideModel> {
                 new FloatingSideModel{
@@ -63,7 +64,7 @@ namespace TaskTip.ViewModels.PageModel
         }
         private IEnumerable<ThemeSelectorUC> GetThemeUC(SysRuntimeConfigModel config)
         {
-            var theme = config?.FontTheme ??  GetDefaultTheme();
+            var theme = config?.FontTheme ?? GetDefaultTheme();
             var themeControl = new List<ThemeSelectorUC>();
             var list = theme.CategoryThemes.OrderBy(x => x.ID).ToList();
             foreach (GradientColorModel item in list)
@@ -76,7 +77,7 @@ namespace TaskTip.ViewModels.PageModel
         private void Save(object? obj)
         {
             if (MessageBox.Show("是否保存", "Tip", MessageBoxButton.YesNo) == MessageBoxResult.No) return;
-            GlobalVariable.SysRuntimeStatusViewClose();
+
             var model = new SysRuntimeConfigModel
             {
                 NetworkCardName = SelectNetworkCard,
@@ -88,7 +89,11 @@ namespace TaskTip.ViewModels.PageModel
                 }
             };
             var result = ConfigHelper.SaveConfig(model, Const.RuntimeStatusConfig);
-            GlobalVariable.SysRuntimeStatusViewShow();
+            if (GlobalVariable.FloatingStyle == Enums.FloatingStyleEnum.Status)
+            {
+                GlobalVariable.SysRuntimeStatusViewClose();
+                GlobalVariable.SysRuntimeStatusViewShow();
+            }
 
             MessageBox.Show($"保存{(result ? "成功" : "失败")}");
         }
@@ -108,7 +113,7 @@ namespace TaskTip.ViewModels.PageModel
                         StartY = 0.0,
                         EndX = 1.0,
                         EndY = 1.0,
-                        ColorModels = new List<ColorModel>{ new() { ColorHex = "#FFFFFFFF",Offset = 0.0 } }
+                        ColorModels = new List<ColorModel>{ new() { ColorHex = "#000000", Offset = 0.0 } }
                     },
                     new (){
                         ID = 1,
@@ -118,7 +123,7 @@ namespace TaskTip.ViewModels.PageModel
                         StartY = 0.0,
                         EndX = 1.0,
                         EndY = 1.0,
-                        ColorModels = new List<ColorModel>{ new() { ColorHex = "#FFFFFFFF",Offset = 0.0 } }
+                        ColorModels = new List<ColorModel>{ new() { ColorHex = "#000000", Offset = 0.0 } }
 
                     },
                     new (){
@@ -129,7 +134,7 @@ namespace TaskTip.ViewModels.PageModel
                         StartY = 0.0,
                         EndX = 1.0,
                         EndY = 1.0,
-                        ColorModels = new List<ColorModel>{ new() { ColorHex = "#FFFFFFFF",Offset = 0.0 } }
+                        ColorModels = new List<ColorModel>{ new() { ColorHex = "#000000",Offset = 0.0 } }
 
                     },
                     new (){
@@ -140,7 +145,18 @@ namespace TaskTip.ViewModels.PageModel
                         StartY = 0.0,
                         EndX = 1.0,
                         EndY = 1.0,
-                        ColorModels = new List<ColorModel>{ new() { ColorHex = "#FFFFFFFF",Offset = 0.0 } }
+                        ColorModels = new List<ColorModel>{ new() { ColorHex = "#000000",Offset = 0.0 } }
+                    },
+                    new ()
+                    {
+                        ID=4,
+                        CategoryName = "背景颜色",
+                        IsLinear = true,
+                        StartX = 0.0,
+                        StartY = 0.0,
+                        EndX = 1.0,
+                        EndY = 1.0,
+                        ColorModels = new List<ColorModel>{ new ColorModel() { ColorHex = Colors.AliceBlue.ToString(),Offset=0.0 } }
                     }
                 }
             };
@@ -148,7 +164,8 @@ namespace TaskTip.ViewModels.PageModel
 
         #endregion
 
-        public SysRuntimeStatusSetPageVM() {
+        public SysRuntimeStatusSetPageVM()
+        {
             Init();
         }
     }
