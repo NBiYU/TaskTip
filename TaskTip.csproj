@@ -1,12 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
-
   <ItemGroup>
     <None Remove="appsettings.json" />
     <None Remove="nlog.config" />
@@ -21,6 +19,20 @@
     <None Remove="Resources\Sources\Image\Conflict.png" />
     <None Remove="Resources\Sources\Image\Copy_Paste_Move_Square.png" />
     <None Remove="Resources\Sources\Image\Downloading.gif" />
+    <None Remove="Resources\Sources\Image\EditImage\Bold.png" />
+    <None Remove="Resources\Sources\Image\EditImage\DecreaseIndent.png" />
+    <None Remove="Resources\Sources\Image\EditImage\IncreaseIndent.png" />
+    <None Remove="Resources\Sources\Image\EditImage\Italic.png" />
+    <None Remove="Resources\Sources\Image\EditImage\ListNumber.png" />
+    <None Remove="Resources\Sources\Image\EditImage\Menu.png" />
+    <None Remove="Resources\Sources\Image\EditImage\Strikethrough.png" />
+    <None Remove="Resources\Sources\Image\EditImage\TextAligncenter.png" />
+    <None Remove="Resources\Sources\Image\EditImage\TextAlignleft.png" />
+    <None Remove="Resources\Sources\Image\EditImage\TextAlignright.png" />
+    <None Remove="Resources\Sources\Image\EditImage\TextformatSubscript.png" />
+    <None Remove="Resources\Sources\Image\EditImage\TextformatSuperscript.png" />
+    <None Remove="Resources\Sources\Image\EditImage\TextJustify.png" />
+    <None Remove="Resources\Sources\Image\EditImage\Underline.png" />
     <None Remove="Resources\Sources\Image\Empty.png" />
     <None Remove="Resources\Sources\Image\Error.png" />
     <None Remove="Resources\Sources\Image\ErrorImage.png" />
@@ -47,7 +59,6 @@
     <None Remove="Resources\Sources\Image\Visibility.png" />
     <None Remove="Resources\Sources\Image\WaitDownload.png" />
   </ItemGroup>
-
   <ItemGroup>
     <COMReference Include="NetFwTypeLib">
       <WrapperTool>tlbimp</WrapperTool>
@@ -59,7 +70,6 @@
       <EmbedInteropTypes>true</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
-
   <ItemGroup>
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -67,9 +77,50 @@
     <Content Include="nlog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\Sources\Image\EditImage\Bold.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Sources\Image\EditImage\DecreaseIndent.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Sources\Image\EditImage\IncreaseIndent.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Sources\Image\EditImage\Italic.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Sources\Image\EditImage\ListNumber.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Sources\Image\EditImage\Menu.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Sources\Image\EditImage\Strikethrough.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Sources\Image\EditImage\TextAligncenter.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Sources\Image\EditImage\TextAlignleft.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Sources\Image\EditImage\TextAlignright.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Sources\Image\EditImage\TextformatSubscript.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Sources\Image\EditImage\TextformatSuperscript.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Sources\Image\EditImage\TextJustify.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Sources\Image\EditImage\Underline.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\Sources\Image\Empty.png" />
   </ItemGroup>
-
   <ItemGroup>
     <Resource Include="Resources\Sources\Image\Add.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -171,7 +222,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Autofac" Version="7.1.0" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
@@ -179,12 +229,13 @@
     <PackageReference Include="HandyControl" Version="3.4.0" />
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
     <PackageReference Include="Hardcodet.Wpf.TaskbarNotification" Version="1.0.5" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0-rc.1.23419.4" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0-rc.1.23419.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NLog" Version="5.2.4" />
     <PackageReference Include="Quartz" Version="3.7.0" />
     <PackageReference Include="System.Management" Version="8.0.0" />
+    <PackageReference Include="System.ObjectModel" Version="4.3.0" />
     <PackageReference Include="System.ServiceModel.Duplex" Version="4.10.*" />
     <PackageReference Include="System.ServiceModel.Federation" Version="4.10.*" />
     <PackageReference Include="System.ServiceModel.Http" Version="4.10.*" />
@@ -192,11 +243,9 @@
     <PackageReference Include="System.ServiceModel.NetTcp" Version="4.10.*" />
     <PackageReference Include="System.ServiceModel.Security" Version="4.10.*" />
   </ItemGroup>
-
   <ItemGroup>
     <None Update="App.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
 </Project>

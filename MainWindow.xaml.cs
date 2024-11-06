@@ -18,31 +18,31 @@ namespace TaskTip
             InitializeComponent();
             var isFirstLoad = InitConfig();
 
-            if (isFirstLoad)
-            {
-                GlobalVariable.FloatingViewClose();
-                GlobalVariable.FloatingTitleStyleViewClose();
-                GlobalVariable.SysRuntimeStatusViewClose();
-                GlobalVariable.CustomSetViewShow();
-            }
-            else
-            {
-                if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Image)
-                {
-                    GlobalVariable.FloatingViewShow();
-                }
-                else if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Title)
-                {
-                    GlobalVariable.FloatingTitleStyleViewShow();
-                }
-                else if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Status)
-                {
-                    GlobalVariable.SysRuntimeStatusViewShow();
-                }
-            }
+            //if (isFirstLoad)
+            //{
+            //    GlobalVariable.FloatingViewClose();
+            //    GlobalVariable.FloatingTitleStyleViewClose();
+            //    GlobalVariable.SysRuntimeStatusViewClose();
+            //    GlobalVariable.CustomSetViewShow();
+            //}
+            //else
+            //{
+            //    if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Image)
+            //    {
+            //        GlobalVariable.FloatingViewShow();
+            //    }
+            //    else if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Title)
+            //    {
+            //        GlobalVariable.FloatingTitleStyleViewShow();
+            //    }
+            //    else if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Status)
+            //    {
+            //        GlobalVariable.SysRuntimeStatusViewShow();
+            //    }
+            //}
             //var window = new RegexHelpView();
             //window.Show();
-            this.Close();
+            //this.Close();
         }
 
         private bool InitConfig()

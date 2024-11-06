@@ -1,5 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Common image -->
     <BitmapImage x:Key="ArrowsFullscreen" UriSource="/Resources/Sources/Image/arrows_fullscreen.png"></BitmapImage>
     <BitmapImage x:Key="Clock" UriSource="/Resources/Sources/Image/Clock.png"></BitmapImage>
     <BitmapImage x:Key="Close" UriSource="/Resources/Sources/Image/Close.png"></BitmapImage>
@@ -36,4 +37,19 @@
     <BitmapImage x:Key="GgMenuRound" UriSource="/Resources/Sources/Image/GgMenuRound.png"/>
     <BitmapImage x:Key="SaveMenuRound" UriSource="/Resources/Sources/Image/MingcuteSaveLine.png"/>
 
+    <!-- Eidt image by Framework7 Icons -->
+    <BitmapImage x:Key="EditBold" UriSource="/Resources/Sources/Image/EditImage/Bold.png"/>
+    <BitmapImage x:Key="EditItalic" UriSource="/Resources/Sources/Image/EditImage/Italic.png"/>
+    <BitmapImage x:Key="EditListNumber" UriSource="/Resources/Sources/Image/EditImage/ListNumber.png"/>
+    <BitmapImage x:Key="EditMenu" UriSource="/Resources/Sources/Image/EditImage/Menu.png"/>
+    <BitmapImage x:Key="EditStrikethrough" UriSource="/Resources/Sources/Image/EditImage/Strikethrough.png"/>
+    <BitmapImage x:Key="EditTextAligncenter" UriSource="/Resources/Sources/Image/EditImage/TextAligncenter.png"/>
+    <BitmapImage x:Key="EditTextAlignleft" UriSource="/Resources/Sources/Image/EditImage/TextAlignleft.png"/>
+    <BitmapImage x:Key="EditTextAlignright" UriSource="/Resources/Sources/Image/EditImage/TextAlignright.png"/>
+    <BitmapImage x:Key="EditTextformatSubscript" UriSource="/Resources/Sources/Image/EditImage/TextformatSubscript.png"/>
+    <BitmapImage x:Key="EditTextformatSuperscript" UriSource="/Resources/Sources/Image/EditImage/TextformatSuperscript.png"/>
+    <BitmapImage x:Key="EditTextJustify" UriSource="/Resources/Sources/Image/EditImage/TextJustify.png"/>
+    <BitmapImage x:Key="EditUnderline" UriSource="/Resources/Sources/Image/EditImage/Underline.png"/>
+    <BitmapImage x:Key="EditDecreaseIndent" UriSource="/Resources/Sources/Image/EditImage/DecreaseIndent.png"/>
+    <BitmapImage x:Key="EditIncreaseIndent" UriSource="/Resources/Sources/Image/EditImage/IncreaseIndent.png"/>
 </ResourceDictionary>

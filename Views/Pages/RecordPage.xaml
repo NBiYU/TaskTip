@@ -4,7 +4,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:view="clr-namespace:TaskTip.UserControls"
-      xmlns:viewModel="clr-namespace:TaskTip.ViewModels"
+      xmlns:viewModel="clr-namespace:TaskTip.ViewModels"   
       xmlns:customControl="clr-namespace:TaskTip.ViewModels.UserViewModel.CustomControl"
       xmlns:hc="https://handyorg.github.io/handycontrol"
       mc:Ignorable="d" 
@@ -16,11 +16,11 @@
     </Page.DataContext>
 
     <Grid Margin="0,5">
-        <Grid.RowDefinitions>
+        <!--<Grid.RowDefinitions>
             <RowDefinition Height="0.7*"/>
             <RowDefinition Height="9.3*"/>
-        </Grid.RowDefinitions>
-        <Border Grid.Row="0" CornerRadius="5" BorderThickness="1" Margin="5" BorderBrush="Gray" Background="White">
+        </Grid.RowDefinitions>-->
+        <!--<Border Grid.Row="0" CornerRadius="5" BorderThickness="1" Margin="5" BorderBrush="Gray" Background="White">
             <Grid >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="9*"/>
@@ -31,11 +31,12 @@
                     <Image Source="{StaticResource Search}"></Image>
                 </Button>
             </Grid>
-        </Border>
+        </Border>-->
         <Grid   Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="45*"/>
+                <ColumnDefinition Width="109*"/>
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Column="0">
@@ -44,7 +45,7 @@
                 </hc:ScrollViewer>
             </Grid>
 
-            <Grid Grid.Column="1"  Margin="5,0,5,0">
+            <Grid Grid.Column="1"  Margin="5,0,5,0" Grid.ColumnSpan="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
@@ -93,6 +94,7 @@
                             </hc:EventTrigger>
                         </hc:Interaction.Triggers>
                     </RichTextBox>
+                    <!--<WebBrowser></WebBrowser>-->
                 </Grid>
             </Grid>
         </Grid>

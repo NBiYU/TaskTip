@@ -5,12 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TaskTip"
         xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:uc="clr-namespace:TaskTip.Views.UserControls"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <local:MainWindow x:Key="MainWindow"/>
     </Window.Resources>
     <Grid DataContext="MainWindow" Margin="15">
+        <uc:HtmlEditorUC></uc:HtmlEditorUC>
         <!--<hc:CircleProgressBar Value="100" FontSize="30" />
         <ScrollViewer>
             <WebBrowser x:Name="webBrowser" Width="200" Height="700"></WebBrowser>
