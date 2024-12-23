@@ -26,13 +26,8 @@ namespace TaskTip.Views
     {
         public FloatingView()
         {
-
-
-            var screenHeight = SystemParameters.WorkArea.Height;
-            var screenWidth = SystemParameters.WorkArea.Width;
-            this.Left = screenWidth * 0.5;
-            this.Top = screenHeight * 0.5;
-
+            Left = GlobalVariable.Left;
+            Top = GlobalVariable.Top;
             WindowStyleChanged(null);
 
             InitializeComponent();
@@ -53,8 +48,6 @@ namespace TaskTip.Views
         /// <param name="e"></param>
         private void WindowStyleChanged(string sender)
         {
-
-
             if (!string.IsNullOrEmpty(sender))
             {
                 var size = sender.Split(':');

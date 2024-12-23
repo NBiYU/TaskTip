@@ -55,8 +55,20 @@ namespace TaskTip.ViewModels.ToolPageVM
         public string TransformTip { get => _transformTip; set => SetProperty(ref _transformTip, value); }
         public int GridColumnId { get => _gridColumnId; set=>SetProperty(ref _gridColumnId, value); }
         public string JsonString { get => _jsonString;set=>SetProperty(ref _jsonString, value); }
-        public JsonEntityModel EntityModel { get => _entityModel; set => SetProperty(ref _entityModel, value); }
-        public string ErrMsg { get => _errMsg; set => SetProperty(ref _errMsg, value); }
+        public JsonEntityModel EntityModel { get => _entityModel; set {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    SetProperty(ref _entityModel, value);
+                });
+            } }
+        public string ErrMsg { get => _errMsg; set
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    SetProperty(ref _errMsg, value);
+                });
+            }
+        }
         #endregion 属性
 
         #region 指令
@@ -110,23 +122,27 @@ namespace TaskTip.ViewModels.ToolPageVM
         #region 处理函数
         public async Task JsonStringToEntity()
         {
-            try
+            _ = Task.Run(async() =>
             {
-                var obj = JsonConvert.DeserializeObject<JObject>(JsonString);
-                if (obj == null) { EntityModel = new JsonEntityModel(new JObject()); return; };
-                var model = new JsonEntityModel();
-                foreach (var children in obj.Children().Values())
-                { 
-                    model.SubsetList.Add(await GetBaseTypeEntity(children));
+                try
+                {
+                    var obj = JsonConvert.DeserializeObject<JObject>(JsonString);
+                    if (obj == null) { EntityModel = new JsonEntityModel(new JObject()); return; };
+                    var model = new JsonEntityModel();
+                    foreach (var children in obj.Children().Values())
+                    {
+                        model.SubsetList.Add(await GetBaseTypeEntity(children));
+                    }
+                    EntityModel = model;
+                    //JsonString = JsonConvert.SerializeObject(obj,Formatting.Indented);
+                    ErrMsg = string.Empty;
                 }
-                EntityModel = model;
-                //JsonString = JsonConvert.SerializeObject(obj,Formatting.Indented);
-                ErrMsg = string.Empty;
-            }
-            catch (Exception ex)
-            {
-                ErrMsg = ex.Message;  
-            }
+                catch (Exception ex)
+                {
+                    ErrMsg = ex.Message;
+                }
+            });
+            
         }
         private  async Task<JsonEntityModel> GetBaseTypeEntity(JToken obj)
         {

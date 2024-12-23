@@ -27,7 +27,8 @@ namespace TaskTip.Services
     {
 
         #region 共享属性
-
+        public static double Left { get; set; } = SystemParameters.WorkArea.Height * 0.3;
+        public static double Top {  get; set; } = SystemParameters.WorkArea.Width * 0.3;
         public static string LocalKey => ConfigurationManager.AppSettings[nameof(LocalKey)] ?? "";
 
         /// <summary>
@@ -44,6 +45,8 @@ namespace TaskTip.Services
         /// </summary>
         public static bool CanSyncEnable => ValueToType(ConfigurationManager.AppSettings[nameof(CanSyncEnable)] ?? "false");
 
+        public static string RecordVersion => ConfigurationManager.AppSettings[nameof(RecordVersion)] ?? "";
+        public static string RecordMaxVersion => "HTML";
         /// <summary>
         /// 软件文件夹保存路径
         /// </summary>
@@ -53,7 +56,8 @@ namespace TaskTip.Services
             {
                 var processPathInfo = Process.GetCurrentProcess().MainModule;
                 var runtimePath = processPathInfo.FileName.Split(processPathInfo.ModuleName)[0];
-                return string.IsNullOrEmpty(ConfigurationManager.AppSettings[nameof(TaskTipPath)]) ? runtimePath : ConfigurationManager.AppSettings[nameof(TaskTipPath)]!;
+                var cachePath = ConfigurationManager.AppSettings[nameof(TaskTipPath)];
+                return string.IsNullOrEmpty(cachePath) ? runtimePath : cachePath!;
             }
         }
 
@@ -138,9 +142,6 @@ namespace TaskTip.Services
         public static double AgainWorkGapTime => double.Parse(ConfigurationManager.AppSettings[nameof(AgainWorkGapTime)] ?? "0");
         internal static string WorkStartTime => ConfigurationManager.AppSettings[nameof(WorkStartTime)] ?? "";
 
-
-
-
         #endregion
 
         #region 静态页面
@@ -189,7 +190,7 @@ namespace TaskTip.Services
                 Configurations.Save();
                 ConfigurationManager.RefreshSection("appSettings");
 
-                WeakReferenceMessenger.Default.Send<string, string>(string.Empty, Const.CONST_CONFIG_CHANGED);
+                WeakReferenceMessenger.Default.Send(string.Empty, Const.CONST_CONFIG_CHANGED);
             }
             catch (Exception e)
             {
@@ -230,6 +231,55 @@ namespace TaskTip.Services
         #endregion
 
         #region 窗口显示状态管理
+
+
+        #region FloatingWindow
+
+        public static void SwitchFloating(FloatingStyleEnum styleEnum)
+        {
+            if (styleEnum == FloatingStyleEnum.Image)
+            {
+                GlobalVariable.FloatingViewShow();
+            }
+            else if (styleEnum == FloatingStyleEnum.Title)
+            {
+                GlobalVariable.FloatingTitleStyleViewShow();
+            }
+            else if (styleEnum == FloatingStyleEnum.Status)
+            {
+                GlobalVariable.SysRuntimeStatusViewShow();
+            }
+            else if (styleEnum == FloatingStyleEnum.Task)
+            {
+                FloatingTaskViewShow();
+            }
+        }
+        public static void FloatingClose()
+        {
+            if (FloatingStyle == FloatingStyleEnum.Image)
+            {
+                FloatingViewClose();
+            }
+            else if (FloatingStyle == FloatingStyleEnum.Title)
+            {
+                FloatingTitleStyleViewClose();
+            }
+            else if (FloatingStyle == FloatingStyleEnum.Status)
+            {
+                SysRuntimeStatusViewClose();
+            }
+            else if (FloatingStyle == FloatingStyleEnum.Task)
+            {
+                FloatingTaskViewClose();
+            }
+        }
+        public static void FloatingCloseAll()
+        {
+            FloatingViewClose();
+            FloatingTitleStyleViewClose();
+            SysRuntimeStatusViewClose();
+            FloatingTaskViewClose();
+        }
 
 
         #region Floating
@@ -326,6 +376,39 @@ namespace TaskTip.Services
 
         #endregion
 
+        #region FloatingTaskStyle
+
+        private static FloatingTaskView FloatingTaskView = new();
+        public static void FloatingTaskViewShow()
+        {
+            if (FloatingTaskView.IsClosed)
+            {
+                FloatingTaskView = new();
+            }
+            FloatingTaskView.Show();
+        }
+
+        public static void FloatingTaskViewHide()
+        {
+            if (FloatingTaskView.IsClosed)
+            {
+                FloatingTaskView = new();
+            }
+            FloatingTaskView.Hide();
+        }
+
+        public static void FloatingTaskViewClose()
+        {
+            if (FloatingTaskView != null && !FloatingTaskView.IsClosed)
+            {
+                FloatingTaskView.Close();
+            }
+        }
+
+        #endregion
+
+        #endregion
+
         #region TaskMeno
         public static TaskMenoView TaskMenoView { get; set; } = new();
         public static void TaskMenoViewShow()
@@ -338,15 +421,21 @@ namespace TaskTip.Services
         }
         public static void TaskMenoViewHide()
         {
+            
             if (TaskMenoView.IsClosed)
             {
                 TaskMenoView = new TaskMenoView();
             }
+
+            Left = TaskMenoView.Left + TaskMenoView.Width;
+            Top = TaskMenoView.Top + TaskMenoView.Height;
             TaskMenoView.Hide();
         }
 
         public static void TaskMenoViewClose()
         {
+            Left = TaskMenoView.Left + TaskMenoView.Width;
+            Top = TaskMenoView.Top + TaskMenoView.Height;
             if (TaskMenoView != null && !TaskMenoView.IsClosed)
             {
                 TaskMenoView.Close();
@@ -372,11 +461,15 @@ namespace TaskTip.Services
             {
                 CustomSetView = new CustomSetView();
             }
+            Left = CustomSetView.Left + CustomSetView.Width;
+            Top = CustomSetView.Top + CustomSetView.Height;
             CustomSetView.Hide();
         }
 
         public static void CustomSetViewClose()
         {
+            Left = CustomSetView.Left + CustomSetView.Width;
+            Top = CustomSetView.Top + CustomSetView.Height;
             if (CustomSetView != null && !CustomSetView.IsClosed)
             {
                 CustomSetView.Close();

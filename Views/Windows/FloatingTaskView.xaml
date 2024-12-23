@@ -1,0 +1,93 @@
+﻿<Window x:Class="TaskTip.Views.Windows.FloatingTaskView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TaskTip.Views.Windows"
+        xmlns:model="clr-namespace:TaskTip.Models.DataModel"
+        xmlns:vm="clr-namespace:TaskTip.ViewModels.WindowModel"
+        mc:Ignorable="d" WindowStyle="None"   ShowInTaskbar="False" ResizeMode="NoResize" Topmost="True" SizeToContent="WidthAndHeight" 
+        Title="FloatingTaskView" Width="350"  MinWidth="350"  MouseLeftButtonDown="Window_MouseLeftButtonDown" Background="Transparent" AllowsTransparency="True">
+    <Window.DataContext>
+        <vm:FloatingTaskVM/>
+    </Window.DataContext>
+    <Grid>
+        <!-- 主布局 -->
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10">
+        <!-- 左侧圆形 -->
+        <Border x:Name="FloatingCircle" Panel.ZIndex="2"
+                Width="60" Height="60" CornerRadius="30"
+                Background="White" BorderBrush="Gray" BorderThickness="2"
+                VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,10,10,0"
+                >
+            <Grid HorizontalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="还有" FontSize="10" VerticalAlignment="Bottom"></TextBlock>
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding TaskCount}" FontSize="15" VerticalAlignment="Bottom"></TextBlock>
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="个" FontSize="10" VerticalAlignment="Bottom"></TextBlock>
+                <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" FontSize="10" Text="任务未完成" ></TextBlock>
+            </Grid>
+        </Border>
+
+        <!-- 右侧任务内容 -->
+        <StackPanel Orientation="Vertical" Margin="-21,8,0,0" Visibility="{Binding TopListVisibility}">
+            <!-- 任务列表 -->
+                <Border x:Name="TaskListPanel" Background="White"
+                    BorderBrush="Gray" BorderThickness="0,2,2,1"
+                     Margin="0,8,0,0" Width="200">
+                <ListBox Height="40" ItemsSource="{Binding TopCollection}" Background="Transparent" Margin="2" BorderThickness="0" HorizontalContentAlignment="Stretch" >
+                    <ListBox.ItemTemplate>
+                        <DataTemplate >
+                            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="8,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="1*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <CheckBox Grid.Column="0" IsChecked="{Binding IsCompletedProperty}" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+                                <TextBlock Grid.Column="1" Margin="10,0,10,0" Text="{Binding EditTextTitleProperty}"  VerticalAlignment="Center" />
+                                <Button Grid.Column="2" FontSize="10" Height="20" Padding="1" Click="Button_Click" HorizontalAlignment="Right">详细</Button>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBoxItem">
+                                        <Border Background="{TemplateBinding Background}">
+                                            <ContentPresenter />
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter  Property="Background" Value="{StaticResource SelectedBackgroundBrush}" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+            </Border>
+
+            <!-- 任务详细内容 -->
+            <Border x:Name="TaskDetailPanel"
+                    BorderBrush="Gray" BorderThickness="2,0,2,2" Width="200" Height="150" Background="White"
+                    Visibility="{Binding DtlVisibility}">
+                <ScrollViewer  >
+                    <TextBlock Margin="5" Text="{Binding DtlContent}" TextWrapping="Wrap" ></TextBlock>
+                </ScrollViewer>
+            </Border>
+        </StackPanel>
+    </StackPanel>
+    </Grid>
+</Window>

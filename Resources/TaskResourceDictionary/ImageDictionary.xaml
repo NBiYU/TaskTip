@@ -52,4 +52,54 @@
     <BitmapImage x:Key="EditUnderline" UriSource="/Resources/Sources/Image/EditImage/Underline.png"/>
     <BitmapImage x:Key="EditDecreaseIndent" UriSource="/Resources/Sources/Image/EditImage/DecreaseIndent.png"/>
     <BitmapImage x:Key="EditIncreaseIndent" UriSource="/Resources/Sources/Image/EditImage/IncreaseIndent.png"/>
+    <BitmapImage x:Key="EditBrowser" UriSource="/Resources/Sources/Image/EditImage/browser.png" />
+    <BitmapImage x:Key="EditDel" UriSource="/Resources/Sources/Image/EditImage/text_strikethrough_thin_icon_171473.png" />
+    <BitmapImage x:Key="EditErase" UriSource="/Resources/Sources/Image/EditImage/erase.png" />
+    <BitmapImage x:Key="EditError" UriSource="/Resources/Sources/Image/EditImage/error.png" />
+    <BitmapImage x:Key="EditFind" UriSource="/Resources/Sources/Image/EditImage/find.png" />
+    <BitmapImage x:Key="EditGoto" UriSource="/Resources/Sources/Image/EditImage/goto.png" />
+    <BitmapImage x:Key="EditHelp" UriSource="/Resources/Sources/Image/EditImage/help.png" />
+    <BitmapImage x:Key="EditClearhtml" UriSource="/Resources/Sources/Image/EditImage/ke-icon-clearhtml.png" />
+    <BitmapImage x:Key="EditCopy" UriSource="/Resources/Sources/Image/EditImage/ke-icon-copy.png" />
+    <BitmapImage x:Key="EditCut" UriSource="/Resources/Sources/Image/EditImage/ke-icon-cut.png" />
+    <BitmapImage x:Key="EditEmoticons" UriSource="/Resources/Sources/Image/EditImage/ke-icon-emoticons.png" />
+    <BitmapImage x:Key="EditForecolor" UriSource="/Resources/Sources/Image/EditImage/ke-icon-forecolor.png" />
+    <BitmapImage x:Key="EditHilitecolor" UriSource="/Resources/Sources/Image/EditImage/ke-icon-hilitecolor.png" />
+    <BitmapImage x:Key="EditHr" UriSource="/Resources/Sources/Image/EditImage/ke-icon-hr.png" />
+    <BitmapImage x:Key="EditImage" UriSource="/Resources/Sources/Image/EditImage/ke-icon-image.png" />
+    <BitmapImage x:Key="EditIndent" UriSource="/Resources/Sources/Image/EditImage/ke-icon-indent.png" />
+    <BitmapImage x:Key="EditIndentLeft" UriSource="/Resources/Sources/Image/EditImage/text_indent_left_icon_184629.png" />
+    <BitmapImage x:Key="EditIndentRight" UriSource="/Resources/Sources/Image/EditImage/text_indent_right_icon_184628.png" />
+    <BitmapImage x:Key="EditInsertfile" UriSource="/Resources/Sources/Image/EditImage/ke-icon-insertfile.png" />
+    <BitmapImage x:Key="EditInsertorderedlist" UriSource="/Resources/Sources/Image/EditImage/ke-icon-insertorderedlist.png" />
+    <BitmapImage x:Key="EditInsertunorderedlist" UriSource="/Resources/Sources/Image/EditImage/ke-icon-insertunorderedlist.png" />
+    <BitmapImage x:Key="EditJustifycenter" UriSource="/Resources/Sources/Image/EditImage/ke-icon-justifycenter.png" />
+    <BitmapImage x:Key="EditJustifyfull" UriSource="/Resources/Sources/Image/EditImage/ke-icon-justifyfull.png" />
+    <BitmapImage x:Key="EditJustifyleft" UriSource="/Resources/Sources/Image/EditImage/ke-icon-justifyleft.png" />
+    <BitmapImage x:Key="EditJustifyright" UriSource="/Resources/Sources/Image/EditImage/ke-icon-justifyright.png" />
+    <BitmapImage x:Key="EditLink" UriSource="/Resources/Sources/Image/EditImage/chainlinks_102720.png" />
+    <BitmapImage x:Key="EditOutdent" UriSource="/Resources/Sources/Image/EditImage/ke-icon-outdent.png" />
+    <BitmapImage x:Key="EditPaste" UriSource="/Resources/Sources/Image/EditImage/ke-icon-paste.png" />
+    <BitmapImage x:Key="EditPreview" UriSource="/Resources/Sources/Image/EditImage/ke-icon-preview.png" />
+    <BitmapImage x:Key="EditPrint" UriSource="/Resources/Sources/Image/EditImage/ke-icon-print.png" />
+    <BitmapImage x:Key="EditRedo" UriSource="/Resources/Sources/Image/EditImage/ke-icon-redo.png" />
+    <BitmapImage x:Key="EditSelectall" UriSource="/Resources/Sources/Image/EditImage/ke-icon-selectall.png" />
+    <BitmapImage x:Key="EditSource" UriSource="/Resources/Sources/Image/EditImage/ke-icon-source.png" />
+    <BitmapImage x:Key="EditSubscript" UriSource="/Resources/Sources/Image/EditImage/ke-icon-subscript.png" />
+    <BitmapImage x:Key="Edituperscript" UriSource="/Resources/Sources/Image/EditImage/ke-icon-superscript.png" />
+    <BitmapImage x:Key="EditTable" UriSource="/Resources/Sources/Image/EditImage/table-grid_icon-icons.com_73384.png" />
+    <BitmapImage x:Key="EditTxt" UriSource="/Resources/Sources/Image/EditImage/ke-icon-txt.png" />
+    <BitmapImage x:Key="EditUndo" UriSource="/Resources/Sources/Image/EditImage/ke-icon-undo.png" />
+    <BitmapImage x:Key="EditNew" UriSource="/Resources/Sources/Image/EditImage/new.png" />
+    <BitmapImage x:Key="EditOpen" UriSource="/Resources/Sources/Image/EditImage/open.png" />
+    <BitmapImage x:Key="EditProp" UriSource="/Resources/Sources/Image/EditImage/prop.png" />
+    <BitmapImage x:Key="EditRefresh" UriSource="/Resources/Sources/Image/EditImage/refresh.png" />
+    <BitmapImage x:Key="EditReplace" UriSource="/Resources/Sources/Image/EditImage/replace.png" />
+    <BitmapImage x:Key="EditSave" UriSource="/Resources/Sources/Image/EditImage/save.png" />
+    <BitmapImage x:Key="EditSaveas" UriSource="/Resources/Sources/Image/EditImage/saveas.png" />
+    <BitmapImage x:Key="EditSpelling" UriSource="/Resources/Sources/Image/EditImage/spelling.png" />
+    <BitmapImage x:Key="EditWindow" UriSource="/Resources/Sources/Image/EditImage/window.png" />
+    <BitmapImage x:Key="EditZoomIn" UriSource="/Resources/Sources/Image/EditImage/ZoomIn.png" />
+    <BitmapImage x:Key="EditZoomOut" UriSource="/Resources/Sources/Image/EditImage/ZoomOut.png" />
+
 </ResourceDictionary>

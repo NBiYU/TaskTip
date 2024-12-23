@@ -87,7 +87,8 @@ namespace TaskTip.ViewModels.WindowModel
         public bool FloatingStatusIsFixed
         {
             get => _floatingStatusIsFixed;
-            set{
+            set
+            {
                 SetProperty(ref _floatingStatusIsFixed, value);
                 ChangedValueSave(nameof(FloatingStatusIsFixed), FloatingStatusIsFixed);
             }
@@ -109,9 +110,10 @@ namespace TaskTip.ViewModels.WindowModel
                 ChangedValueSave(nameof(FloatingSetWidth), _floatingSetWidth);
             }
         }
-        
+
         private bool _isFloatingImageStyle;
-        public bool IsFloatingImageStyle {
+        public bool IsFloatingImageStyle
+        {
             get => _isFloatingImageStyle;
             set => SetProperty(ref _isFloatingImageStyle, value);
         }
@@ -322,7 +324,7 @@ namespace TaskTip.ViewModels.WindowModel
                     return;
                 foreach (var val in ChangedValue)
                 {
-                    if(val.Key == nameof(FloatingStyle))
+                    if (val.Key == nameof(FloatingStyle))
                     {
                         var value = (FloatingStyleEnum)GlobalVariable.ValueToType(ConfigurationManager.AppSettings.Get(val.Key));
                         GetType().GetProperty(val.Key)?.SetValue(this, new OptionModel<FloatingStyleEnum> { Name = value.GetDesc(), Value = value });
@@ -337,18 +339,7 @@ namespace TaskTip.ViewModels.WindowModel
             ChangedValue.Clear();
 
 
-            if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Image)
-            {
-                GlobalVariable.FloatingViewShow();
-            }
-            else if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Title)
-            {
-                GlobalVariable.FloatingTitleStyleViewShow();
-            }
-            else if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Status)
-            {
-                GlobalVariable.SysRuntimeStatusViewShow();
-            }
+            GlobalVariable.SwitchFloating(GlobalVariable.FloatingStyle);
 
             //GlobalVariable.CustomSetViewHide();
             GlobalVariable.CustomSetViewHide();
@@ -391,11 +382,7 @@ namespace TaskTip.ViewModels.WindowModel
 
                     GlobalVariable.SaveConfig(ChangedValue);
                     MessageBox.Show("设置已保存");
-                    if (ChangedValue.ContainsKey(nameof(FloatingStatusIsFixed)))
-                    {
-                        GlobalVariable.SysRuntimeStatusViewClose();
-                        GlobalVariable.SysRuntimeStatusViewShow();
-                    }
+                    //GlobalVariable.SwitchFloating(FloatingStyle.Value);
                     ChangedValue.Clear();
                     AutoStart(AutoStartUp);
 
@@ -466,19 +453,7 @@ namespace TaskTip.ViewModels.WindowModel
             GlobalVariable.FloatingTitleStyleViewClose();
             GlobalVariable.FloatingViewClose();
             GlobalVariable.TaskMenoViewClose();
-            if (FloatingStyle.Value == FloatingStyleEnum.Image)
-            {
-                GlobalVariable.FloatingViewShow();
-            }
-            else if (FloatingStyle.Value == FloatingStyleEnum.Title)
-            {
-                GlobalVariable.FloatingTitleStyleViewShow();
-            }
-            else if (FloatingStyle.Value == FloatingStyleEnum.Status)
-            {
-                GlobalVariable.SysRuntimeStatusViewShow();
-            }
-
+            //GlobalVariable.SwitchFloating(GlobalVariable.FloatingStyle)
         }
 
         #endregion
@@ -658,8 +633,6 @@ namespace TaskTip.ViewModels.WindowModel
             DirMove(GlobalVariable.RecordFilePath, recordPath);
             DirMove(GlobalVariable.RecordFilePath, fictionCachePath);
 
-
-
             if (File.Exists(jsonPath))
             {
                 if (MessageBox.Show("MenuTreeConfig.json文件已存在，是否覆盖", "文件移动", MessageBoxButton.YesNo,
@@ -692,7 +665,7 @@ namespace TaskTip.ViewModels.WindowModel
         public string CheckConfig()
         {
             var isEmptyMsg = string.Empty;
-            if(FloatingStyle.Value == FloatingStyleEnum.Image) isEmptyMsg += string.IsNullOrWhiteSpace(FloatingBgPath) ? "处于图片悬浮模式时，悬浮窗背景不能为空\n" : "";
+            if (FloatingStyle.Value == FloatingStyleEnum.Image) isEmptyMsg += string.IsNullOrWhiteSpace(FloatingBgPath) ? "处于图片悬浮模式时，悬浮窗背景不能为空\n" : "";
             isEmptyMsg += string.IsNullOrWhiteSpace(TaskTipPath) ? "保存路径不能为空\n" : "";
             isEmptyMsg += !Regex.IsMatch(DeleteTimes, @"^[0-9]+$") ? "计划删除天数格式异常" : "";
             isEmptyMsg += !Regex.IsMatch(DailyTaskEndTime, @"^\d{1,2}:\d{1,2}?$") ? "每日截时间格式异常" : "";
@@ -855,7 +828,7 @@ namespace TaskTip.ViewModels.WindowModel
             FloatingBgPath = GlobalVariable.FloatingBgPath;
             TaskTipPath = GlobalVariable.TaskTipPath;
             DeleteTimes = GlobalVariable.DeleteTimes.ToString();
-            FloatingStyle = _floatingStyles.FirstOrDefault(x=>x.Value == GlobalVariable.FloatingStyle)!;
+            FloatingStyle = _floatingStyles.FirstOrDefault(x => x.Value == GlobalVariable.FloatingStyle)!;
 
             FloatingStatusIsFixed = GlobalVariable.FloatingStatusIsFixed;
 

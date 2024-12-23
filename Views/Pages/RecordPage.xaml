@@ -7,6 +7,7 @@
       xmlns:viewModel="clr-namespace:TaskTip.ViewModels"   
       xmlns:customControl="clr-namespace:TaskTip.ViewModels.UserViewModel.CustomControl"
       xmlns:hc="https://handyorg.github.io/handycontrol"
+      xmlns:editor="clr-namespace:TaskTip.Views.UserControls.HtmlUC3"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       
@@ -79,11 +80,15 @@
                             </LinearGradientBrush>
                         </Border.Background>
                     </Border>
-                    <Button Grid.Column="3" Margin="5" Command="{Binding FullScreenChangedCommand}" IsEnabled="{Binding OtherControlIsEnable}" Background="Transparent" BorderThickness="0">
+                    <Button Grid.Column="3" Margin="5" Command="{Binding FullScreenChangedCommand}"  Background="Transparent" BorderThickness="0">
                         <Image Source="{Binding FullScreenSource}"></Image>
                     </Button>
                 </Grid>
-                <Grid Grid.Row="1" x:Name="RichTextGrid" IsEnabled="{Binding OtherControlIsEnable}">
+                <Grid Grid.Row="1" IsEnabled="{Binding OtherControlIsEnable}">
+                    <editor:EditorUC  EditorContent="{Binding TextContent,Mode=TwoWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></editor:EditorUC>
+                </Grid>
+
+                <!--<Grid Grid.Row="1" x:Name="RichTextGrid" IsEnabled="{Binding OtherControlIsEnable}">
 
                     <RichTextBox SpellCheck.IsEnabled ="True" AcceptsReturn="True" AcceptsTab="True"  TabIndex="1"
                              customControl:CustomRichTextBox.BindableDocument="{Binding RichContent}" 
@@ -94,8 +99,7 @@
                             </hc:EventTrigger>
                         </hc:Interaction.Triggers>
                     </RichTextBox>
-                    <!--<WebBrowser></WebBrowser>-->
-                </Grid>
+                </Grid>-->
             </Grid>
         </Grid>
     </Grid>

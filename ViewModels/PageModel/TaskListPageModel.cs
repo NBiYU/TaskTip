@@ -55,7 +55,7 @@ namespace TaskTip.ViewModels.PageModel
         }
         [ObservableProperty]
         public string _searchStr;
-        
+
         private ISchedulerFactory schedulerFactory;
         private IScheduler scheduler;
         private List<TaskFileModel> _fileDataCache;
@@ -391,7 +391,7 @@ namespace TaskTip.ViewModels.PageModel
         /// <param name="fileType"></param>
         private void LoadReadTaskFile(string dirPath)
         {
-            if (string.IsNullOrEmpty(dirPath))
+            if (string.IsNullOrEmpty(dirPath) || !Directory.Exists(dirPath))
                 return;
             var config = new ConfigurationHelper();
 
@@ -430,7 +430,7 @@ namespace TaskTip.ViewModels.PageModel
 
         private void InitRegister()
         {
-            WeakReferenceMessenger.Default.Register<string, string>(this, Const.CONST_TASK_RELOAD, (obj, msg) => { LoadReadTaskFile(msg); });
+            WeakReferenceMessenger.Default.Register<string, string>(this, Const.CONST_TASK_RELOAD, (obj, msg) => { TaskList.Clear(); LoadReadTaskFile(msg); });
             WeakReferenceMessenger.Default.Register<CorrespondenceModel, string>(this, Const.CONST_LISTITEM_CHANGED, async (obj, msg) => { await ListItemChanged(msg); });
             WeakReferenceMessenger.Default.Register<CorrespondenceModel, string>(this, Const.CONST_TASK_LIST_CHANGED, (obj, msg) => { IsCompletedChanged(msg); });
             WeakReferenceMessenger.Default.Register<TaskTimeModel, string>(this, Const.CONST_SCHEDULE_CREATE,

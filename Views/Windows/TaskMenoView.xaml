@@ -6,22 +6,23 @@
         xmlns:windowModel="clr-namespace:TaskTip.ViewModels.WindowModel"
         xmlns:hc="https://handyorg.github.io/handycontrol"
         xmlns:converts="clr-namespace:TaskTip.ViewModels.Converters"
+        xmlns:page="clr-namespace:TaskTip.Pages"
         mc:Ignorable="d"
-        WindowStyle="None" 
-        AllowsTransparency="True" Background="Transparent"
-        OpacityMask="Green" ResizeMode="NoResize"  Topmost="True"
+        WindowStyle="None" Background="Transparent"
+        ResizeMode="NoResize"  Topmost="True" AllowsTransparency="True"
         MouseLeftButtonDown="TaskMenoView_OnMouseLeftButtonDown"
         Icon="{StaticResource Favicon}"
 >
+    <Window.DataContext>
+        <windowModel:TaskMenoViewModel/>
+    </Window.DataContext>
     <Window.Resources>
-        <windowModel:TaskMenoViewModel x:Key="TaskMenoViewModel"/>
         <converts:ThemeColorConvert x:Key="ThemeColorConvert"></converts:ThemeColorConvert>
     </Window.Resources>
 
-    <Grid Background="Transparent" DataContext="{Binding Source={StaticResource TaskMenoViewModel}}" 
-              Height="{Binding TaskMenoHeight}" Width="{Binding TaskMenoWidth}">
-        <Border BorderThickness="1" BorderBrush="Gray"  CornerRadius="15,15,10,10" Background="{DynamicResource ThemeBackgroundColor}">
-            <Grid >
+    <Border Background="{DynamicResource ThemeBackgroundColor}"  CornerRadius="12,12,15,15">
+        <Grid Height="{Binding TaskMenoHeight}" Width="{Binding TaskMenoWidth}">
+            <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="*"></RowDefinition>
@@ -40,63 +41,63 @@
                             <RowDefinition/>
                         </Grid.RowDefinitions>
                         <TextBlock Grid.Row="0" HorizontalAlignment="Left" Margin="10" 
-                               Text="{Binding Title,Mode=TwoWay}" 
-                               Style="{StaticResource TextBlockLargeBold}"
-                               FontSize="18"/>
+                                   Text="{Binding Title,Mode=TwoWay}" 
+                                   Style="{StaticResource TextBlockLargeBold}"
+                                   FontSize="18"/>
                         <TextBlock Grid.Row="1" HorizontalAlignment="Left" Margin="10,5"
-                                   Text="{Binding TimeoutTitle,Mode=TwoWay}" 
-                                   FontSize="12" Foreground="Red">
+                                       Text="{Binding TimeoutTitle,Mode=TwoWay}" 
+                                       FontSize="12" Foreground="Red">
                             <TextBlock.ToolTip>
                                 <TextBlock Text="{Binding TimeoutListString}"/>
                             </TextBlock.ToolTip>
-                        </TextBlock>
+                            </TextBlock>
                     </Grid>
 
                     <Button Grid.Column="1" HorizontalAlignment="Right" Padding="0" 
-                             Background="Transparent" BorderThickness="0"
-                            Command="{Binding MiniCommand}" Focusable="False">
+                                 Background="Transparent" BorderThickness="0"
+                                Command="{Binding MiniCommand}" Focusable="False">
                         <Image Source="{StaticResource Minimize}" Width="30" Height="30"/>
                     </Button>
                     <Button Grid.Column="2" HorizontalAlignment="Right" Padding="0" Margin="15" 
-                             Background="Transparent" BorderThickness="0"
-                            Command="{Binding SetCommand}" Focusable="False" >
+                                 Background="Transparent" BorderThickness="0"
+                                Command="{Binding SetCommand}" Focusable="False" >
                         <Image Source="{StaticResource Setting}" Width="30" Height="30"/>
                     </Button>
                 </Grid>
 
-                <Border Grid.Row="1" BorderThickness="0" CornerRadius="12,12,15,15">
+                <Border Grid.Row="1" BorderThickness="0,1,0,0">
                     <Border.Background>
                         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                             <GradientStop Color="Transparent" />
                         </LinearGradientBrush>
                     </Border.Background>
                     <!--功能栏-->
-                    <TabControl x:Name="TabC" TabStripPlacement="Top" Background="Transparent" BorderThickness="0">
+                    <TabControl  x:Name="TabC" TabStripPlacement="Top" Background="Transparent" VirtualizingStackPanel.IsVirtualizing="False">
                         <TabItem Header="任务" Background="Transparent">
                             <Frame Source="../../Views/Pages/TaskListPage.xaml" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="Transparent" BorderThickness="0"></Frame>
                         </TabItem>
                         <TabItem Header="记录" x:Name="RecordForMsg" Background="Transparent">
-                            <Frame Content="{Binding FrameRecordPage}" Loaded="FrameworkElement_OnLoaded" Background="Transparent" BorderThickness="0"></Frame>
+                            <Frame NavigationUIVisibility="Hidden"  Loaded="FrameworkElement_OnLoaded" Background="White" BorderThickness="0"></Frame>
                         </TabItem>
                         <!--<TabItem Header="乐子" x:Name="HappyEvent" Background="Transparent">
-                            <Frame Source="../WebApiClientUI/HappyPage.xaml" Background="Transparent" BorderThickness="0"></Frame>
-                        </TabItem>
-                        <TabItem Header="阅读" x:Name="Fiction" Background="Transparent">
-                            <Frame Source="../Pages/FictionPage.xaml" Background="Transparent" BorderThickness="0"></Frame>
-                        </TabItem>-->
+                                <Frame Source="../WebApiClientUI/HappyPage.xaml" Background="Transparent" BorderThickness="0"></Frame>
+                            </TabItem>
+                            <TabItem Header="阅读" x:Name="Fiction" Background="Transparent">
+                                <Frame Source="../Pages/FictionPage.xaml" Background="Transparent" BorderThickness="0"></Frame>
+                            </TabItem>-->
                         <TabItem Header="小工具" x:Name="ToolMain" Background="Transparent">
-                            <Frame Source="../ToolPage/ToolMainPage.xaml" Background="Transparent" BorderThickness="0"></Frame>
+                            <Frame NavigationUIVisibility="Hidden" JournalOwnership="OwnsJournal" Source="../ToolPage/ToolMainPage.xaml" Background="Transparent" BorderThickness="0"></Frame>
                         </TabItem>
                         <hc:Interaction.Triggers>
                             <hc:EventTrigger EventName="SelectionChanged">
                                 <hc:InvokeCommandAction 
-                                    Command="{Binding TabControlSelectCommand}" 
-                                    CommandParameter="{Binding ElementName=TabC,Path=SelectedItem}"></hc:InvokeCommandAction>
+                                        Command="{Binding TabControlSelectCommand}" 
+                                        CommandParameter="{Binding ElementName=TabC,Path=SelectedItem}"></hc:InvokeCommandAction>
                             </hc:EventTrigger>
                         </hc:Interaction.Triggers>
                     </TabControl>
                 </Border>
             </Grid>
-        </Border>
-    </Grid>
+        </Grid>
+    </Border>
 </Window>

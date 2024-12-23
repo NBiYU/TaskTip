@@ -32,6 +32,17 @@ namespace TaskTip.Common.Helpers
             }
             return Colors.AliceBlue;
         }
+        public static List<FontFamily> GetAllFontFamily()
+        {
+            var fontFamily = new List<FontFamily>();
+            System.Drawing.Text.InstalledFontCollection font = new System.Drawing.Text.InstalledFontCollection();
+            System.Drawing.FontFamily[] array = font.Families;
+            foreach (var item in array)
+            {
+                fontFamily.Add(new FontFamily(item.Name));
+            }
+            return fontFamily;
+        }
         private static Color ConvertToColor(int value)
         {
             return Color.FromArgb(
@@ -41,5 +52,7 @@ namespace TaskTip.Common.Helpers
                 (byte)value
             );
         }
+
+
     }
 }

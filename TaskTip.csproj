@@ -20,18 +20,23 @@
     <None Remove="Resources\Sources\Image\Copy_Paste_Move_Square.png" />
     <None Remove="Resources\Sources\Image\Downloading.gif" />
     <None Remove="Resources\Sources\Image\EditImage\Bold.png" />
+    <None Remove="Resources\Sources\Image\EditImage\chainlinks_102720.png" />
     <None Remove="Resources\Sources\Image\EditImage\DecreaseIndent.png" />
     <None Remove="Resources\Sources\Image\EditImage\IncreaseIndent.png" />
     <None Remove="Resources\Sources\Image\EditImage\Italic.png" />
     <None Remove="Resources\Sources\Image\EditImage\ListNumber.png" />
     <None Remove="Resources\Sources\Image\EditImage\Menu.png" />
     <None Remove="Resources\Sources\Image\EditImage\Strikethrough.png" />
+    <None Remove="Resources\Sources\Image\EditImage\table-grid_icon-icons.com_73384.png" />
     <None Remove="Resources\Sources\Image\EditImage\TextAligncenter.png" />
     <None Remove="Resources\Sources\Image\EditImage\TextAlignleft.png" />
     <None Remove="Resources\Sources\Image\EditImage\TextAlignright.png" />
     <None Remove="Resources\Sources\Image\EditImage\TextformatSubscript.png" />
     <None Remove="Resources\Sources\Image\EditImage\TextformatSuperscript.png" />
     <None Remove="Resources\Sources\Image\EditImage\TextJustify.png" />
+    <None Remove="Resources\Sources\Image\EditImage\text_indent_left_icon_184629.png" />
+    <None Remove="Resources\Sources\Image\EditImage\text_indent_right_icon_184628.png" />
+    <None Remove="Resources\Sources\Image\EditImage\text_strikethrough_thin_icon_171473.png" />
     <None Remove="Resources\Sources\Image\EditImage\Underline.png" />
     <None Remove="Resources\Sources\Image\Empty.png" />
     <None Remove="Resources\Sources\Image\Error.png" />
@@ -69,6 +74,15 @@
       <Isolated>false</Isolated>
       <EmbedInteropTypes>true</EmbedInteropTypes>
     </COMReference>
+    <COMReference Include="MSHTML">
+      <WrapperTool>tlbimp</WrapperTool>
+      <VersionMinor>0</VersionMinor>
+      <VersionMajor>4</VersionMajor>
+      <Guid>3050f1c5-98b5-11cf-bb82-00aa00bdce0b</Guid>
+      <Lcid>0</Lcid>
+      <Isolated>false</Isolated>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="appsettings.json">
@@ -77,7 +91,13 @@
     <Content Include="nlog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\Sources\Image\EditImage\text_strikethrough_thin_icon_171473.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\Sources\Image\EditImage\Bold.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Sources\Image\EditImage\chainlinks_102720.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Sources\Image\EditImage\DecreaseIndent.png">
@@ -98,6 +118,9 @@
     <Resource Include="Resources\Sources\Image\EditImage\Strikethrough.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\Sources\Image\EditImage\table-grid_icon-icons.com_73384.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\Sources\Image\EditImage\TextAligncenter.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -114,6 +137,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Sources\Image\EditImage\TextJustify.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Sources\Image\EditImage\text_indent_left_icon_184629.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Sources\Image\EditImage\text_indent_right_icon_184628.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Sources\Image\EditImage\Underline.png">
@@ -231,6 +260,7 @@
     <PackageReference Include="Hardcodet.Wpf.TaskbarNotification" Version="1.0.5" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2950-prerelease" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NLog" Version="5.2.4" />
     <PackageReference Include="Quartz" Version="3.7.0" />

@@ -64,7 +64,7 @@
                                         </MenuItem.Icon>
                                     </MenuItem>
                                     <MenuItem  Header="移动" IsEnabled="{Binding IsNode}" Command="{Binding NodeMoveCommand}"
-                                               CommandParameter="{Binding ElementName=TextGuid,Path=Text}" >
+                                                >
                                         <MenuItem.Icon>
                                             <Image Source="{StaticResource Move}"></Image>
                                         </MenuItem.Icon>

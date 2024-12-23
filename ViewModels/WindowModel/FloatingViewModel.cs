@@ -87,8 +87,6 @@ namespace TaskTip.ViewModels.WindowModel
         }
 
         #endregion
-
-
         /// <summary>
         /// 窗体改变函数
         /// </summary>

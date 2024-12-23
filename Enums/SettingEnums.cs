@@ -14,6 +14,8 @@ namespace TaskTip.Enums
         [Description("标题悬浮")]
         Title,
         [Description("状态悬浮")]
-        Status
+        Status,
+        [Description("任务")]
+        Task
     }
 }

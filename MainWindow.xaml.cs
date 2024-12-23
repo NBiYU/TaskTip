@@ -1,9 +1,15 @@
+using Microsoft.Win32;
+
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Windows;
+using TaskTip.Common.Extends;
 using TaskTip.Enums;
+using TaskTip.Pages;
 using TaskTip.Services;
+using TaskTip.Views.Windows;
 
 namespace TaskTip
 {
@@ -16,35 +22,33 @@ namespace TaskTip
         {
 
             InitializeComponent();
+
+            #region ≥ı ºªØ
+
             var isFirstLoad = InitConfig();
 
-            //if (isFirstLoad)
-            //{
-            //    GlobalVariable.FloatingViewClose();
-            //    GlobalVariable.FloatingTitleStyleViewClose();
-            //    GlobalVariable.SysRuntimeStatusViewClose();
-            //    GlobalVariable.CustomSetViewShow();
-            //}
-            //else
-            //{
-            //    if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Image)
-            //    {
-            //        GlobalVariable.FloatingViewShow();
-            //    }
-            //    else if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Title)
-            //    {
-            //        GlobalVariable.FloatingTitleStyleViewShow();
-            //    }
-            //    else if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Status)
-            //    {
-            //        GlobalVariable.SysRuntimeStatusViewShow();
-            //    }
-            //}
-            //var window = new RegexHelpView();
-            //window.Show();
-            //this.Close();
-        }
+            if (isFirstLoad)
+            {
+                GlobalVariable.FloatingCloseAll();
+                GlobalVariable.CustomSetViewShow();
+            }
+            else
+            {
+                if (!GlobalVariable.RecordVersion.IsNullOrEmpty() && GlobalVariable.RecordVersion != GlobalVariable.RecordMaxVersion)
+                {
+                    var window = new ResoureceLoading();
+                    window.Show();
+                }
+                if (GlobalVariable.FloatingStyle != FloatingStyleEnum.Image)
+                {
+                    GlobalVariable.FloatingCloseAll();
+                }
+                GlobalVariable.SwitchFloating(GlobalVariable.FloatingStyle);
+            }
+            this.Close();
 
+            #endregion
+        }
         private bool InitConfig()
         {
             var processPathInfo = Process.GetCurrentProcess().MainModule;
@@ -74,7 +78,6 @@ namespace TaskTip
         }
 
 
-
         private void AddRule()
         {
 
@@ -98,5 +101,6 @@ namespace TaskTip
                 process.WaitForExit();
             }
         }
+
     }
 }

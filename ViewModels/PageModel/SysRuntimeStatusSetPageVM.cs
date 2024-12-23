@@ -69,7 +69,7 @@ namespace TaskTip.ViewModels.PageModel
             var list = theme.CategoryThemes.OrderBy(x => x.ID).ToList();
             foreach (GradientColorModel item in list)
             {
-                var control = new ThemeSelectorUC(item);
+                var control = new ThemeSelectorUC(item,false);
                 control.ThemeSelectUCGrid.IsEnabled = theme.IsCustom;
                 yield return control;
             }

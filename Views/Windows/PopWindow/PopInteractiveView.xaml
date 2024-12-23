@@ -56,7 +56,7 @@
                                         </MultiBinding>
                                     </TextBox.Visibility>
                                 </TextBox>
-                                <ComboBox ItemsSource="{Binding Data}" Margin="5"  Width="250" SelectedValue="{Binding SelectData}">
+                                <ComboBox ItemsSource="{Binding Data}" Margin="5" HorizontalAlignment="Left" Width="200" SelectedValue="{Binding SelectData}">
                                     <ComboBox.Visibility>
                                         <MultiBinding Converter="{StaticResource ControlTypeVisibilityConvert}">
                                             <Binding Path="." Source="Dropdown"></Binding>

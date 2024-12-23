@@ -25,17 +25,7 @@ namespace TaskTip.Pages
                 TextBox textBox = (TextBox)sender;
                 textBox.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
             }
-
-            var viewModel = (RecordPageModel)RichTextGrid.DataContext;
-
-            viewModel.OnKey(sender, e);
         }
 
-        private void RichText_KeyDown(object sender, KeyEventArgs e)
-        {
-            var viewModel = (RecordPageModel)RichTextGrid.DataContext;
-
-            viewModel.OnKey(sender, e);
-        }
     }
 }

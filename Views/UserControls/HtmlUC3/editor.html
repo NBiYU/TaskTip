@@ -1,0 +1,195 @@
+﻿<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <title>HTML Editor</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+        }
+
+        #editor-container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #editor {
+            flex: 1; /* 填满剩余空间 */
+            overflow: auto; /* 确保内容溢出时可滚动 */
+            border: 1px solid #ccc;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div id='editor-container'>
+        <div id='editor' contenteditable='true'></div>
+    </div>
+    <script>
+        function setFontSizeStyle(size) {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                let selectedElement = range.commonAncestorContainer;
+
+                if (selectedElement.nodeType !== 1) {
+                    selectedElement = selectedElement.parentElement;
+                }
+                selectedElement.style.fontSize = size;
+            }
+        }
+
+        function insertHr() {
+            const hr = document.createElement('hr');
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                range.insertNode(hr);
+                range.setStartAfter(hr);
+                range.collapse(true);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            } else {
+                editor.appendChild(hr);
+            }
+        }
+        function setOrRemoveLink() {
+            const result = removeLink();
+            if (!result) {
+                setLink();
+            }
+        }
+        function setLink() {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+
+                const anchor = document.createElement('a');
+                anchor.href = selection.toString();;
+                anchor.textContent = selection.toString();
+
+                range.deleteContents();
+                range.insertNode(anchor);
+
+                range.setStartAfter(anchor);
+                range.setEndAfter(anchor);
+                selection.removeAllRanges();
+            }
+        }
+        function removeLink() {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                let parent = range.commonAncestorContainer;
+
+                if (parent.nodeType === 3) {
+                    parent = parent.parentNode;
+                }
+
+                if (parent.tagName === "A") {
+                    const span = document.createElement("span");
+                    span.textContent = parent.textContent;
+
+                    parent.replaceWith(span);
+                    console.log("Link removed.");
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function sendMessage(type, data) {
+            window.chrome.webview.postMessage({ type, data });
+        }
+        const editor = document.getElementById('editor');
+
+        editor.addEventListener('input', () => {
+            const content = editor.innerHTML;
+            sendMessage('contentChanged', content);
+        });
+        editor.removeEventListener('click', handleClick);
+
+        function handleClick(event) {
+            const target = event.target;
+
+            if (!editor.contains(target)) return;
+
+            if (target.tagName === 'A') {
+                event.preventDefault();
+                const href = target.getAttribute('href');
+                window.chrome.webview.postMessage({ type: 'linkClicked', data: href });
+                return;
+            }
+
+            if (target.closest('a')) {
+                event.preventDefault();
+                const href = target.closest('a').getAttribute('href');
+                window.chrome.webview.postMessage({ type: 'linkClicked', data: href });
+            }
+        }
+
+        // 确保只绑定一次事件监听器
+        editor.addEventListener('click', handleClick);
+        document.addEventListener('selectionchange', () => {
+            const selection = window.getSelection();
+            let isLink = false;
+            if (selection.rangeCount > 0) {
+                
+                const range = selection.getRangeAt(0);
+                let selectedElement = range.commonAncestorContainer;
+                // 获取选中文本的背景颜色
+                if (selectedElement.nodeType !== 1) {
+                    selectedElement = selectedElement.parentElement;
+                }
+                if (selectedElement.tagName === 'A' || (selectedElement.parentElement && selectedElement.parentElement.tagName === 'A')) {
+                    isLink = true;
+                }
+                const computedStyle = window.getComputedStyle(selectedElement);
+                    
+                sendMessage('styleChanged', {
+                    bold: document.queryCommandState('bold'),
+                    italic: document.queryCommandState('italic'),
+                    underline: document.queryCommandState('underline'),
+                    strikeThrough: document.queryCommandState('strikeThrough'),
+                    isLink: isLink,
+                    foreColor: document.queryCommandValue('foreColor'), // 返回文本颜色
+                    hiliteColor: computedStyle.backgroundColor, // 使用 getComputedStyle 获取背景颜色
+                    textAlign: computedStyle.textAlign,
+                    fontFamily: computedStyle.fontFamily,
+                    fontSize:computedStyle.fontSize,
+                });
+            } else {
+                sendMessage('styleChanged', {});
+            }
+        });
+        document.addEventListener('keydown', function(event) {
+            // 捕获快捷键，如 Ctrl+B 加粗
+            let keyCombination = '';
+            if (event.ctrlKey) keyCombination += 'Ctrl+';
+                event.altKey) keyCombination += 'Alt+';
+            if (event.shiftKey) keyCombination += 'Shift+';
+            keyCombination += event.key;
+
+            // 将快捷键推送到 WPF
+            if (window.chrome && window.chrome.webview) {
+                window.chrome.webview.postMessage({
+                    type: 'shortcut',
+                    data: keyCombination
+                });
+            }
+        });
+
+        window.chrome.webview.addEventListener('message', event => {
+            const message = event.data;
+            if (message.type === 'setContent') {
+                editor.innerHTML = message.data;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -21,18 +21,7 @@ namespace TaskTip.ViewModels.UserViewModel
             {
                 return new Lazy<RelayCommand>(() => new RelayCommand(() =>
                 {
-                    if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Image)
-                    {
-                        GlobalVariable.FloatingViewShow();
-                    }
-                    else if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Title)
-                    {
-                        GlobalVariable.FloatingTitleStyleViewShow();
-                    }
-                    else if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Status)
-                    {
-                        GlobalVariable.SysRuntimeStatusViewShow();
-                    }
+                    GlobalVariable.SwitchFloating(GlobalVariable.FloatingStyle);
                 })).Value;
             }
         }
@@ -46,18 +35,7 @@ namespace TaskTip.ViewModels.UserViewModel
             {
                 return new Lazy<RelayCommand>(() => new RelayCommand(() =>
                 {
-                    if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Image)
-                    {
-                        GlobalVariable.FloatingViewHide();
-                    }
-                    else if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Title)
-                    {
-                        GlobalVariable.FloatingTitleStyleViewHide();
-                    }
-                    else if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Status)
-                    {
-                        GlobalVariable.SysRuntimeStatusViewHide();
-                    }
+                    GlobalVariable.SwitchFloating(GlobalVariable.FloatingStyle);
                 })).Value;
             }
         }

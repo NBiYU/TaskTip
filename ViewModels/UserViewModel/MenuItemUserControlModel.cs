@@ -32,7 +32,6 @@ namespace TaskTip.ViewModels
         private bool isCheckChanged = false;
         private string windowGuid = Guid.NewGuid().ToString();
 
-
         #region 属性
 
 
@@ -665,16 +664,11 @@ namespace TaskTip.ViewModels
                 }, Formatting.Indented);
                 if (!File.Exists(path))
                 {
-                    if (Directory.Exists(Path.GetDirectoryName(path)))
+                    if (!Directory.Exists(Path.GetDirectoryName(path)))
                     {
-                        File.WriteAllText(GlobalVariable.MenuTreeConfigPath, rootJson);
+                        Directory.CreateDirectory(Path.GetDirectoryName(path));
                     }
-                    else
-                    {
-                        var processPathInfo = Process.GetCurrentProcess().MainModule;
-                        LoadFile(processPathInfo.FileName.Split(processPathInfo.ModuleName)[0] + Path.GetFileName(path));
-                        return;
-                    }
+                    File.WriteAllText(GlobalVariable.MenuTreeConfigPath, rootJson);
                 }
                 var json = File.ReadAllText(path);
                 rootJson = string.IsNullOrEmpty(json) ? rootJson : json;

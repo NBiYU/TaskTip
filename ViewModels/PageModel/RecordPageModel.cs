@@ -1,35 +1,35 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+
 using Newtonsoft.Json;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+
 using TaskTip.Common;
 using TaskTip.Common.Extends;
 using TaskTip.Enums;
-using TaskTip.Models;
 using TaskTip.Models.DataModel;
 using TaskTip.Services;
+
 using Image = System.Windows.Controls.Image;
 
 namespace TaskTip.ViewModels
 {
     public partial class RecordPageModel : ObservableObject
     {
-
         #region 属性
 
         private TreeInfo TreeInfo;
@@ -38,6 +38,18 @@ namespace TaskTip.ViewModels
         private Dictionary<string, string> RegexRule;
         private List<DataFormat> DataFormatList;
         private List<string> _clearPath = new();
+
+
+
+        private string _textContent;
+        public string TextContent
+        {
+            get => _textContent;
+            set {
+                if(value!=TextContent) EditTextChanged();
+                SetProperty(ref _textContent, value);
+             }
+        }
 
         private Visibility _sidewaysVisibility;
         public Visibility SidewaysVisibility
@@ -119,25 +131,10 @@ namespace TaskTip.ViewModels
 
                 var path = System.IO.Path.Combine(GlobalVariable.RecordFilePath, TreeInfo.GUID) + GlobalVariable.EndFileFormat;
 
-                var iamges = FindItemInRichTextBox<Image>(RichContent.ContentStart);
-                for (int i = 0; i < iamges.Count; i++)
-                {
-                    ReplaceItemInRichTextBox<Image>(new Image()
-                    {
-                        Uid = iamges[i].Uid,
-                        Source = new BitmapImage() { UriSource = new Uri(iamges[i].Uid) },
-                    }, RichContent.ContentStart);
-                }
-
-                var content = RichContent.GetString();
-
+                var content = TextContent;
                 WriteJsonContent(path, new RecordFileModel() { GUID = TreeInfo.GUID, Title = TreeInfo.Name, Text = content });
 
                 LoadRecord(TreeInfo);
-
-                _clearPath.RemoveAll(x => iamges.FirstOrDefault(i => i.Uid == x) == null);
-
-
 
                 WeakReferenceMessenger.Default.Send(new CorrespondenceModel()
                 {
@@ -180,7 +177,6 @@ namespace TaskTip.ViewModels
                 FullScreenSource = ((BitmapImage)Application.Current.Resources["Fullscreen"]).UriSource; //new Uri("pack://application:,,,/Resources/fullscreen.png");
                 GlobalVariable.EditFullScreenViewShow();
                 GlobalVariable.TaskMenoViewClose();
-
             }
             else
             {
@@ -189,7 +185,6 @@ namespace TaskTip.ViewModels
                 GlobalVariable.TaskMenoViewShow();
             }
         }
-
         #endregion
 
         #region 功能函数
@@ -449,69 +444,23 @@ namespace TaskTip.ViewModels
                     }
                 }
 
-                if (TreeInfo != tree && _clearPath.Count != 0)
-
-                    TextChangedVisibility = Visibility.Collapsed;
-
                 TreeInfo = tree;
-                FlowDocument content = null;
 
                 SidewaysVisibility = _isFullScreen ? Visibility.Visible : Visibility.Collapsed;
                 OtherControlIsEnable = true;
 
-                var xamlPath = System.IO.Path.Combine(GlobalVariable.RecordFilePath, "Xaml", tree.GUID) + GlobalVariable.EndFileFormat;
                 var path = System.IO.Path.Combine(GlobalVariable.RecordFilePath, tree.GUID) + GlobalVariable.EndFileFormat;
-
+                var content = string.Empty;
                 if (File.Exists(path))
                 {
                     var json = ReadJsonContent(path);
-                    if (string.IsNullOrEmpty(json.Text))
-                    {
-                        json.Text = ConvertPlainTextToXaml(json.Text);
-                    }
-                    var document = XamlReader.Parse(json.Text);
-                    content = document as FlowDocument;
+                    content = json.Text;
                 }
-
+                TextContent = content;
                 CurrentTitle = TreeInfo.Name;
 
-                RichContent = content ?? new FlowDocument();
                 _isLoad = false;
 
-                #region 旧版加载
-
-                //if (!File.Exists(path)) WriteJsonContent(path,new RecordFileModel(){Title = tree.Name});
-                //if (!File.Exists(xamlPath)) WriteXamlContent(xamlPath,new FlowDocument());
-
-                //var jsonText = ReadJsonContent(path);
-                //if (!string.IsNullOrEmpty(jsonText.Text))
-                //{
-                //    var xaml = ConvertPlainTextToXaml(jsonText.Text);
-                //    jsonText.Title = tree.Name;
-                //    jsonText.Text = string.Empty;
-                //    WriteJsonContent(path, jsonText);
-                //    File.WriteAllText(xamlPath, xaml);
-                //}
-
-                //var fileText = File.ReadAllText(xamlPath);
-
-                //var content = new FlowDocument();
-                //if (string.IsNullOrEmpty(fileText))
-                //{
-                //    WriteXamlContent(xamlPath, content);
-                //    content = ReadXamlContent(xamlPath) as FlowDocument;
-                //}
-                //else
-                //{
-                //    content = XamlReader.Parse(fileText) as FlowDocument;
-                //    if (content == null)
-                //    {
-                //        MessageBox.Show($"{tree.Name}解析失败");
-                //        return;
-                //    }
-                //}
-
-                #endregion
             }
             catch (Exception e)
             {
@@ -546,8 +495,6 @@ namespace TaskTip.ViewModels
             return JsonConvert.DeserializeObject<RecordFileModel>(file) ?? new RecordFileModel();
 
         }
-
-
 
         private FlowDocument TrimTransparent(FlowDocument content)
         {
@@ -818,6 +765,4 @@ namespace TaskTip.ViewModels
 
         #endregion
     }
-
-
 }

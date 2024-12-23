@@ -125,18 +125,7 @@ namespace TaskTip.ViewModels.WindowModel
         public void Mini()
         {
             GlobalVariable.TaskMenoViewHide();
-            if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Image)
-            {
-                GlobalVariable.FloatingViewShow();
-            }
-            else if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Title)
-            {
-                GlobalVariable.FloatingTitleStyleViewShow();
-            }
-            else if (GlobalVariable.FloatingStyle == FloatingStyleEnum.Status)
-            {
-                GlobalVariable.SysRuntimeStatusViewShow();
-            }
+            GlobalVariable.SwitchFloating(GlobalVariable.FloatingStyle);
 
         }
 
