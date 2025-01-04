@@ -32,7 +32,7 @@
                 <ColumnDefinition Width="0.3*"/>
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0" Text="当前使用主题：" VerticalAlignment="Center" FontSize="15"/>
-            <hc:ComboBox Grid.Column="2" x:Name="ThemeComboBox" Width="130"  ShowClearButton="True" 
+            <hc:ComboBox Grid.Column="2" x:Name="ThemeComboBox" Width="130" 
                          ItemsSource="{Binding ThemesCollection}"  Text="{Binding NotifyThemeName}" IsEditable="{Binding IsCustom}"
                       SelectedItem="{Binding SelectThemeName,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
                 <hc:Interaction.Triggers>

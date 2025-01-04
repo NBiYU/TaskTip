@@ -36,6 +36,8 @@
     <BitmapImage x:Key="Unpin" UriSource="/Resources/Sources/Image/Unpin.png"></BitmapImage>
     <BitmapImage x:Key="GgMenuRound" UriSource="/Resources/Sources/Image/GgMenuRound.png"/>
     <BitmapImage x:Key="SaveMenuRound" UriSource="/Resources/Sources/Image/MingcuteSaveLine.png"/>
+    <BitmapImage x:Key="ChevronDown" UriSource="/Resources/Sources/Image/chevron-down.png" />
+    <BitmapImage x:Key="ChevronLeft" UriSource="/Resources/Sources/Image/chevron-left.png" />
 
     <!-- Eidt image by Framework7 Icons -->
     <BitmapImage x:Key="EditBold" UriSource="/Resources/Sources/Image/EditImage/Bold.png"/>

@@ -1,15 +1,16 @@
-using Microsoft.Win32;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
 using System.Windows;
+
+using TaskTip.Common;
 using TaskTip.Common.Extends;
-using TaskTip.Enums;
-using TaskTip.Pages;
+using TaskTip.Models.Enums;
 using TaskTip.Services;
 using TaskTip.Views.Windows;
+using TaskTip.Views.Windows.PopWindow;
 
 namespace TaskTip
 {
@@ -18,36 +19,37 @@ namespace TaskTip
     /// </summary>
     public partial class MainWindow : Window
     {
+
         public MainWindow()
         {
 
             InitializeComponent();
-
             #region 初始化
 
             var isFirstLoad = InitConfig();
 
             if (isFirstLoad)
             {
-                GlobalVariable.FloatingCloseAll();
-                GlobalVariable.CustomSetViewShow();
+                WindowResource.FloatingCloseAll();
+                WindowResource.CustomSetViewShow();
             }
             else
             {
                 if (!GlobalVariable.RecordVersion.IsNullOrEmpty() && GlobalVariable.RecordVersion != GlobalVariable.RecordMaxVersion)
                 {
                     var window = new ResoureceLoading();
-                    window.Show();
+                    window.ShowDialog();
                 }
                 if (GlobalVariable.FloatingStyle != FloatingStyleEnum.Image)
                 {
-                    GlobalVariable.FloatingCloseAll();
+                    WindowResource.FloatingCloseAll();
                 }
-                GlobalVariable.SwitchFloating(GlobalVariable.FloatingStyle);
+                WindowResource.SwitchFloatingShow(GlobalVariable.FloatingStyle);
             }
-            this.Close();
+
 
             #endregion
+            //this.Close();
         }
         private bool InitConfig()
         {
@@ -60,7 +62,6 @@ namespace TaskTip
 
             if (File.Exists(configPath)) return false;
             GlobalVariable.SaveConfig("LocalKey", Guid.NewGuid());
-            AddRule();
 
             File.WriteAllText(configPath, "Test");
 
@@ -77,30 +78,15 @@ namespace TaskTip
             return true;
         }
 
-
-        private void AddRule()
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
-
-            string ruleName = "TaskTipTcp"; // 防火墙规则名称
-            string portNumber = GlobalVariable.JsonConfiguration["TCPReceive:Port"] ?? throw new Exception("注册端口号异常"); // 要开放的端口号
-
-            // 创建进程启动信息
-            ProcessStartInfo startInfo = new();
-            startInfo.FileName = "netsh";
-            startInfo.Arguments =
-                $"advfirewall firewall add rule name=\"{ruleName}\" dir=in action=allow protocol=TCP localport={portNumber}";
-            startInfo.RedirectStandardOutput = true;
-            startInfo.UseShellExecute = false;
-            startInfo.CreateNoWindow = true;
-
-            // 启动进程并等待执行完成
-            using (Process process = new Process())
-            {
-                process.StartInfo = startInfo;
-                process.Start();
-                process.WaitForExit();
-            }
+            var a = new ClockSelectorPop();
+            a.Confirmed += (o,e) => {
+                MessageBox.Show($"选择时间：{o}");
+            };
+            a.ShowDialog();
         }
-
     }
+
+    
 }

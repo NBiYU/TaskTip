@@ -7,6 +7,7 @@
       xmlns:viewModel="clr-namespace:TaskTip.ViewModels"   
       xmlns:customControl="clr-namespace:TaskTip.ViewModels.UserViewModel.CustomControl"
       xmlns:hc="https://handyorg.github.io/handycontrol"
+      xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
       xmlns:editor="clr-namespace:TaskTip.Views.UserControls.HtmlUC3"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
@@ -63,11 +64,11 @@
                     <TextBox Grid.Column="1" Margin="5,5,5,5" FontSize="15" FontWeight="DemiBold" 
                          Padding="10,0,0,0" IsEnabled="{Binding OtherControlIsEnable}"
                          Text="{Binding CurrentTitle,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" TabIndex="0" KeyDown="UIElement_OnKeyDown">
-                        <hc:Interaction.Triggers>
-                            <hc:EventTrigger EventName="TextChanged">
-                                <hc:InvokeCommandAction Command="{Binding EditTextChangedCommand}"></hc:InvokeCommandAction>
-                            </hc:EventTrigger>
-                        </hc:Interaction.Triggers>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="TextChanged">
+                                <i:InvokeCommandAction Command="{Binding EditTextChangedCommand}"></i:InvokeCommandAction>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
                     </TextBox>
                     <Button Grid.Column="2" IsEnabled="{Binding OtherControlIsEnable}" Command="{Binding SaveCommand}" Padding="0" Background="Transparent" BorderThickness="0">
                         <Image Source="{StaticResource Save}" Width="30" Height="25"/>
@@ -87,19 +88,6 @@
                 <Grid Grid.Row="1" IsEnabled="{Binding OtherControlIsEnable}">
                     <editor:EditorUC  EditorContent="{Binding TextContent,Mode=TwoWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></editor:EditorUC>
                 </Grid>
-
-                <!--<Grid Grid.Row="1" x:Name="RichTextGrid" IsEnabled="{Binding OtherControlIsEnable}">
-
-                    <RichTextBox SpellCheck.IsEnabled ="True" AcceptsReturn="True" AcceptsTab="True"  TabIndex="1"
-                             customControl:CustomRichTextBox.BindableDocument="{Binding RichContent}" 
-                             PreviewKeyDown="RichText_KeyDown" x:Name="EditBox" >
-                        <hc:Interaction.Triggers>
-                            <hc:EventTrigger EventName="TextChanged">
-                                <hc:InvokeCommandAction Command="{Binding EditTextChangedCommand}"></hc:InvokeCommandAction>
-                            </hc:EventTrigger>
-                        </hc:Interaction.Triggers>
-                    </RichTextBox>
-                </Grid>-->
             </Grid>
         </Grid>
     </Grid>

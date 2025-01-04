@@ -10,7 +10,7 @@
         xmlns:hc="https://handyorg.github.io/handycontrol"
         xmlns:windowModel="clr-namespace:TaskTip.ViewModels.WindowModel"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
-        xmlns:enums="clr-namespace:TaskTip.Enums"
+        xmlns:enums="clr-namespace:TaskTip.Models.Enums"
         mc:Ignorable="d"
         Title="设置"
         WindowStyle="None" WindowStartupLocation="CenterScreen"  Background="Transparent" AllowsTransparency="True"

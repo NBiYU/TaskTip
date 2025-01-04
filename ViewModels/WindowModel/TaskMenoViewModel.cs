@@ -14,8 +14,10 @@ using TaskTip.Services;
 using TaskTip.Views;
 using TaskTip.ViewModels.UserViewModel;
 using TaskTip.Common;
-using TaskTip.Enums;
+using TaskTip.Models.Enums;
 using TaskTip.Models.DataModel;
+using TaskTip.Models.Entities;
+using System.Collections.Generic;
 
 namespace TaskTip.ViewModels.WindowModel
 {
@@ -40,7 +42,7 @@ namespace TaskTip.ViewModels.WindowModel
 
         public Page FrameRecordPage
         {
-            get => GlobalVariable.RecordPage;
+            get => WindowResource.RecordPage;
         }
 
         private object taskMenoWidth;
@@ -124,8 +126,8 @@ namespace TaskTip.ViewModels.WindowModel
         [RelayCommand]
         public void Mini()
         {
-            GlobalVariable.TaskMenoViewHide();
-            GlobalVariable.SwitchFloating(GlobalVariable.FloatingStyle);
+            WindowResource.TaskMenoViewHide();
+            WindowResource.SwitchFloatingShow(GlobalVariable.FloatingStyle);
 
         }
 
@@ -135,8 +137,8 @@ namespace TaskTip.ViewModels.WindowModel
         [RelayCommand]
         public void Set()
         {
-            GlobalVariable.CustomSetViewShow();
-            GlobalVariable.TaskMenoViewHide();
+            WindowResource.CustomSetViewShow();
+            WindowResource.TaskMenoViewHide();
         }
 
         /// <summary>
@@ -149,7 +151,7 @@ namespace TaskTip.ViewModels.WindowModel
             if (sender is not TabItem item) return;
             if (item.Header.ToString() != "记录") return;
 
-            GlobalVariable.EditFullScreenViewClose();
+            WindowResource.EditFullScreenViewClose();
         }
 
         #endregion
@@ -158,11 +160,10 @@ namespace TaskTip.ViewModels.WindowModel
 
         private void TaskListPageModelOnTaskListChanged(CorrespondenceModel corr)
         {
-            if (corr.Message is ObservableCollection<TaskListItemUserControl> taskList)
+            if (corr.Message is ObservableCollection<TaskFileModel> taskList)
             {
-                Title = $"还有 {taskList.Count(x => x.IsCompleted.IsChecked == false)} 个任务未完成";
-                var vms = taskList.Select(x => (TaskListItemUserControlModel)x.DataContext).ToList();
-                var timeoutVms = vms.Where(x => x.TaskTimePlan != DateTime.MinValue && x.TaskTimePlan < DateTime.Now && x.IsCompleted == false).ToList();
+                Title = $"还有 {taskList.Count(x => x.IsCompleted == false)} 个任务未完成";
+                var timeoutVms = taskList.Where(x => x.TaskTimePlan != DateTime.MinValue && x.TaskTimePlan < DateTime.Now && x.IsCompleted == false).ToList();
                 TimeoutTitle = $"存在 {timeoutVms.Count} 个超时任务";
                 TimeoutListString = timeoutVms.Count != 0 ? string.Join("\n", timeoutVms.Select(x => x.EditTextTitle)) : "当前无超时任务";
             }
@@ -172,14 +173,12 @@ namespace TaskTip.ViewModels.WindowModel
         #endregion
 
         #region 初始化
-        private int countNum = 0;
         private void InitRegister()
         {
             WeakReferenceMessenger.Default.Register<CorrespondenceModel, string>(this, Const.CONST_TASK_LIST_CHANGED,
                 (obj, msg) =>
                 {
-                    if (countNum++ == 0) TaskListPageModelOnTaskListChanged(msg);
-                    else countNum = 0;
+                    TaskListPageModelOnTaskListChanged(msg);
                 });
         }
 

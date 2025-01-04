@@ -1,4 +1,10 @@
-using CommunityToolkit.Mvvm.ComponentModel;using CommunityToolkit.Mvvm.Input;using Newtonsoft.Json;using System;using System.Collections.Generic;using System.Collections.ObjectModel;using System.IO;using System.Linq;using System.Text.RegularExpressions;using System.Threading;using System.Threading.Tasks;using System.Windows;using System.Windows.Media;using TaskTip.Enums;using TaskTip.Extends.FictionAPI.LRY_API;using TaskTip.Models;using TaskTip.Models.DataModel;using TaskTip.Services;namespace TaskTip.ViewModels.WindowModel.PopVM{    public partial class FictionReadVM : ObservableObject    {
+using CommunityToolkit.Mvvm.ComponentModel;using CommunityToolkit.Mvvm.Input;
+
+using Newtonsoft.Json;
+
+using System;using System.Collections.Generic;using System.Collections.ObjectModel;using System.IO;using System.Linq;using System.Text.RegularExpressions;using System.Threading;using System.Threading.Tasks;using System.Windows;using System.Windows.Media;
+
+using TaskTip.Extends.FictionAPI.LRY_API;using TaskTip.Models;using TaskTip.Models.DataModel;using TaskTip.Models.Enums;using TaskTip.Services;namespace TaskTip.ViewModels.WindowModel.PopVM{    public partial class FictionReadVM : ObservableObject    {
 
 
         #region »ù´¡³ÉÔ±

@@ -9,6 +9,6 @@ namespace TaskTip.Models.CommonModel
     public class OptionModel<T>
     {
         public string Name { get; set; }
-        public T Value { get; set; }
+        public T Value { get; set; } = default;
     }
 }

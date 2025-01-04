@@ -7,21 +7,22 @@
       xmlns:uc="clr-namespace:TaskTip.Views.UserControls"
       xmlns:hc="https://handyorg.github.io/handycontrol"
       xmlns:viewModel="clr-namespace:TaskTip.ViewModels"
+      xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
       xmlns:pageModel="clr-namespace:TaskTip.ViewModels.PageModel"
       mc:Ignorable="d" >
 
     <Page.DataContext>
         <pageModel:TaskListPageModel/>
     </Page.DataContext>
-    <hc:Interaction.Triggers>
-        <hc:EventTrigger EventName="Loaded">
-            <hc:InvokeCommandAction Command="{Binding TaskLoadedCommand}"></hc:InvokeCommandAction>
-        </hc:EventTrigger>
-        <hc:EventTrigger EventName="Unloaded">
-            <hc:InvokeCommandAction Command="{Binding TaskUnloadedCommand}"></hc:InvokeCommandAction>
-        </hc:EventTrigger>
-    </hc:Interaction.Triggers>
-    
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding TaskLoadedCommand}"></i:InvokeCommandAction>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Unloaded">
+            <i:InvokeCommandAction Command="{Binding TaskUnloadedCommand}"></i:InvokeCommandAction>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
     <Grid  Background="{StaticResource ThemeBackground}" >
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -44,28 +45,106 @@
             <Border BorderThickness="0" BorderBrush="Transparent" CornerRadius="0,0,6,6">
                 <ScrollViewer x:Name="ListScroll">
                     <ListBox  ItemsSource="{Binding TaskList}" Padding="0" Background="Transparent"
-                              HorizontalAlignment="Stretch" BorderThickness="0" 
-                                hc:ScrollViewerAttach.IsDisabled="True">
-                            <ListBox.ItemContainerStyle>
-                                <Style TargetType="ListBoxItem">
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="ListBoxItem">
-                                                <Border Background="{TemplateBinding Background}">
-                                                    <ContentPresenter />
-                                                </Border>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsSelected" Value="True">
-                                                        <Setter  Property="Background" Value="{StaticResource SelectedBackgroundBrush}" />
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </ListBox.ItemContainerStyle>
-                        </ListBox>
-                        <hc:Interaction.Triggers>
+                HorizontalAlignment="Stretch" BorderThickness="0" 
+                hc:ScrollViewerAttach.IsDisabled="True" FocusManager.GotFocus="ListBox_GotFocus">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListBoxItem">
+                                            <Border Background="{TemplateBinding Background}">
+                                                <ContentPresenter />
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsSelected" Value="True">
+                                                    <Setter  Property="Background" Value="{StaticResource SelectedBackgroundBrush}" />
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border CornerRadius="10" 
+    BorderThickness="1" BorderBrush="Gray" Margin="0,5"
+    Background="{Binding CurrentTaskStatus, Converter={StaticResource TaskProgressConvert}}">
+                                    <Grid HorizontalAlignment="Stretch" Margin="5">
+                                        <Grid.Background>
+                                            Transparent
+                                        </Grid.Background>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <Grid Grid.Row="0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <!-- 勾选框 -->
+                                            <CheckBox IsTabStop="True" Grid.Column="0" 
+                    IsChecked="{Binding IsCompleted}" VerticalAlignment="Center" Margin="5" Focusable="False" >
+                                                <i:Interaction.Triggers>
+                                                    <i:EventTrigger EventName="Checked">
+                                                        <i:InvokeCommandAction Command="{Binding DataContext.ModelChangedCommand,RelativeSource={RelativeSource AncestorType=ListBox}}" CommandParameter="{Binding}"/>
+                                                    </i:EventTrigger>
+                                                    <i:EventTrigger EventName="Unchecked">
+                                                        <i:InvokeCommandAction Command="{Binding DataContext.ModelChangedCommand,RelativeSource={RelativeSource AncestorType=ListBox}}" CommandParameter="{Binding}"/>
+                                                    </i:EventTrigger>
+                                                </i:Interaction.Triggers>
+                                            </CheckBox>
+                                            <!-- 任务标题 -->
+                                            <TextBox Grid.Column="1" AcceptsReturn="False" AcceptsTab="False" 
+                    MaxLength="20" Margin="5" HorizontalAlignment="Stretch" 
+                    Text="{Binding EditTextTitle,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" FontWeight="ExtraBlack" IsEnabled="{Binding IsCompleted,Converter={StaticResource Boolean2BooleanReConverter}}" 
+                    FontSize="15" SelectionStart="5"  
+                    TextWrapping="Wrap" >
+                                                <i:Interaction.Triggers>
+                                                    <i:EventTrigger EventName="TextChanged">
+                                                        <i:InvokeCommandAction Command="{Binding DataContext.ModelChangedCommand,RelativeSource={RelativeSource AncestorType=ListBox}}" CommandParameter="{Binding}"/>
+                                                    </i:EventTrigger>
+                                                </i:Interaction.Triggers>
+                                            </TextBox>
+                                            <!-- 计时按钮 -->
+                                            <Button Grid.Column="2" Background="Transparent" BorderThickness="0"
+                IsEnabled="{Binding IsCompleted,Converter={StaticResource Boolean2BooleanReConverter}}" Focusable="False" Padding="0"
+                Command="{Binding DataContext.SelectPlanTimeCommand,RelativeSource={RelativeSource AncestorType=ListBox}}" CommandParameter="{Binding}">
+                                                <Image Source="{StaticResource Clock}" />
+                                            </Button>
+                                            <!-- 删除按钮 -->
+                                            <Button TabIndex="0" Grid.Column="3" HorizontalAlignment="Right" 
+                Background="Transparent" BorderThickness="0" Padding="0" Margin="5" 
+                Command="{Binding DataContext.DeleteItemCommand,RelativeSource={RelativeSource AncestorType=ListBox}}" CommandParameter="{Binding}" IsEnabled="{Binding IsCompleted,Converter={StaticResource Boolean2BooleanReConverter}}" Focusable="False">
+                                                <Image Source="{StaticResource Trash}" />
+                                            </Button>
+                                        </Grid>
+                                        <!-- 完成线 -->
+                                        <Line HorizontalAlignment="Stretch" x:Name="CompletedLine" X1="0" Y1="20" X2="5500" Y2="20" 
+            Stroke="DimGray" StrokeThickness="3" Visibility="{Binding IsCompleted,Converter={StaticResource Boolean2VisibilityConverter}}" />
+                                        <Grid Grid.Row="1">
+                                            <!-- 任务详细描述 -->
+                                            <TextBox TabIndex="0" 
+                    Text="{Binding EditTextText,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
+                    AcceptsReturn="True" AcceptsTab="True" MinLines="1" 
+                    Visibility="{Binding IsFocus,Converter={StaticResource Boolean2VisibilityConverter}}" Focusable="True" FontSize="12" 
+                    SelectionStart="5" IsEnabled="{Binding IsCompleted,Converter={StaticResource Boolean2BooleanReConverter}}" TextWrapping="Wrap" >
+                                                <i:Interaction.Triggers>
+                                                    <i:EventTrigger EventName="TextChanged">
+                                                        <i:InvokeCommandAction Command="{Binding DataContext.ModelChangedCommand,RelativeSource={RelativeSource AncestorType=ListBox}}" CommandParameter="{Binding}"/>
+                                                    </i:EventTrigger>
+                                                </i:Interaction.Triggers>
+                                            </TextBox>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <hc:Interaction.Triggers>
                         <hc:EventTrigger EventName="ScrollChanged">
                             <hc:InvokeCommandAction Command="{Binding ScrollChangedCommand}" CommandParameter="{Binding ElementName=ListScroll}"></hc:InvokeCommandAction>
                         </hc:EventTrigger>

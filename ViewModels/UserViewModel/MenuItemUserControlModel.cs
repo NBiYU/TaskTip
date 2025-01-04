@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+
 using Newtonsoft.Json;
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,15 +13,17 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using TaskTip.Base;
+
 using TaskTip.Common;
 using TaskTip.Common.Extends;
-using TaskTip.Enums;
 using TaskTip.Models;
 using TaskTip.Models.DataModel;
+using TaskTip.Models.Enums;
 using TaskTip.Services;
 using TaskTip.UserControls;
+using TaskTip.ViewModels.Base;
 using TaskTip.Views.Windows;
+
 using MessageBox = HandyControl.Controls.MessageBox;
 
 namespace TaskTip.ViewModels

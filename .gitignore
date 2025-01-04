@@ -170,7 +170,7 @@ AutoTest.Net/
 DocProject/buildhelp/
 DocProject/Help/*.HxT
 DocProject/Help/*.HxC
-DocProject/Help/*.hhc
+DocProject/Help/*.hi
 DocProject/Help/*.hhk
 DocProject/Help/*.hhp
 DocProject/Help/Html2
@@ -350,8 +350,8 @@ ASALocalRun/
 # Local History for Visual Studio
 .localhistory/
 
-# BeatPulse healthcheck temp database
-healthchecksdb
+# BeatPulse healtiheck temp database
+healtihecksdb
 
 # Backup folder for Package Reference Convert tool in Visual Studio 2017
 MigrationBackup/

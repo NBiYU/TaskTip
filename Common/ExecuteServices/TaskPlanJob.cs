@@ -19,8 +19,11 @@ using MessageBox = System.Windows.MessageBox;
 using TaskTip.Models;
 using TaskTip.Services;
 using System.Reflection.Metadata;
-using TaskTip.Enums;
 using TaskTip.Models.DataModel;
+using TaskTip.Models.Entities;
+using TaskTip.Common.Helpers;
+using TaskTip.Common.Converter.Map;
+using TaskTip.Models.Enums;
 
 namespace TaskTip.Common.ExecuteServices
 {
@@ -36,28 +39,24 @@ namespace TaskTip.Common.ExecuteServices
         {
 
             var guid = context.JobDetail.Key.ToString().Substring(context.JobDetail.Key.ToString().IndexOf("Job") + 3);
-            var path = Path.Combine(GlobalVariable.TaskFilePath, $"{guid}{GlobalVariable.EndFileFormat}");
+            //var path = Path.Combine(GlobalVariable.TaskFilePath, $"{guid}{GlobalVariable.EndFileFormat}");
             var errorMsg = string.Empty;
-
-            if (!File.Exists(path))
-            {
-                errorMsg = $"未检索到与{guid}对应的任务内容";
-            }
 
             var content = new TaskFileModel();
             //还有JSON文件的读取
             try
             {
-                content = JsonConvert.DeserializeObject<TaskFileModel>(File.ReadAllText(path));
+                var db = new SQLiteDB();
+                content = db.GetTaskListByGuid(guid)?.Entity2TaskModel();
 
                 if (content == null)
                 {
-                    errorMsg = $"{path}中并没有找到对应的JSON文件数据";
+                    errorMsg = $"未找到{guid}的数据";
                 }
             }
             catch
             {
-                errorMsg = $"文件 {guid} 异常，解析失败";
+                errorMsg = $"{guid} 异常，获取数据失败";
             }
 
             Application.Current.Dispatcher.Invoke(() =>
@@ -84,7 +83,4 @@ namespace TaskTip.Common.ExecuteServices
         }
 
     }
-
-
-
 }

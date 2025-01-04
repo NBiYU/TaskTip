@@ -3,8 +3,11 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:TaskTip.Views.Pages" xmlns:hc="https://handyorg.github.io/handycontrol"
+      xmlns:local="clr-namespace:TaskTip.Views.Pages" 
+      xmlns:hc="https://handyorg.github.io/handycontrol"
       xmlns:viewModels="clr-namespace:TaskTip.ViewModels.PageModel"
+      xmlns:models="clr-namespace:TaskTip.Models.Entities"
+      xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ComplateWorkTimePage">
@@ -32,6 +35,79 @@
                     </Setter>
                 </Style>
             </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="{x:Type models:WorkInfoModel}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Border Grid.Row="0" BorderThickness="1" BorderBrush="Black" Margin="5">
+                            <Grid Margin="5" >
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="{Binding RecordDate}"  VerticalAlignment="Center" FontSize="15" HorizontalAlignment="Left" Margin="10,0,0,0"/>
+                                <StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
+                                    <Button  BorderThickness="0" Background="Transparent" Command="{Binding DataContext.SaveCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" CommandParameter="{Binding}" Padding="0" >
+                                        <Image  Source="{StaticResource Save}"/>
+                                    </Button>
+                                    <Button BorderThickness="0" Background="Transparent" Command="{Binding DataContext.DelRecordCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" CommandParameter="{Binding}">
+                                        <Image Source="{StaticResource Trash}"/>
+                                    </Button>
+                                    <Button BorderThickness="0" Background="Transparent" Command="{Binding DataContext.ShowCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" CommandParameter="{Binding}" Padding="0" Margin="15,0,15,0">
+                                        <Image Source="{Binding ShowVisibility,Converter={StaticResource Visbility2ImageSourceConverter}}"/>
+                                    </Button>
+                                </StackPanel>
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseLeftButtonDown">
+                                        <i:InvokeCommandAction Command="{Binding DatatContext.ShowCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" CommandParameter="{Binding}"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Grid>
+                        </Border>
+
+                        <StackPanel Grid.Row="1" Margin="20,0,10,20"  Visibility="{Binding ShowVisibility}" >
+                            <StackPanel Grid.Row="0" Orientation="Horizontal" >
+                                <TextBlock Text="记录日期："  VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding RecordDate}"  VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,5,0,0" HorizontalAlignment="Stretch">
+                                <TextBlock Text="工作时长："  HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding WorkTime}"  VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="2" Orientation="Vertical" Margin="0,5,0,0" >
+                                <Grid Grid.Row="2"  Margin="0,5,0,0" >
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="开始时间："  VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1"  Text="{Binding StartTime}"  VerticalAlignment="Center"/>
+                                    <Button Grid.Column="2" Command="{Binding DataContext.ShowSatrtDateSelectCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" CommandParameter="{Binding}" Width="25" Height="25" Padding="0" BorderThickness="0" Background="Transparent">
+                                        <Image Source="{StaticResource Clock}"></Image>
+                                    </Button>
+                                </Grid>
+                                <Grid Grid.Row="2"  Margin="0,5,0,0" >
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="结束时间："  VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding EndTime}" VerticalAlignment="Center"/>
+                                    <Button Grid.Column="2" Command="{Binding DataContext.ShowEndDateSelectCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" CommandParameter="{Binding}" Width="25" Height="25" Padding="0" BorderThickness="0" Background="Transparent">
+                                        <Image Source="{StaticResource Clock}"></Image>
+                                    </Button>
+                                </Grid>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+
+                </DataTemplate>
+            </ListBox.ItemTemplate>
         </ListBox>
         <Border Background="Transparent" Width="50" Height="50" Padding="0" HorizontalAlignment="Right" VerticalAlignment="Bottom"  Margin="0,0,20,75" CornerRadius="25" BorderThickness="1" BorderBrush="#FFE0E0E0">
             <Button Background="{StaticResource ThemeBackground}" Command="{Binding AddWorkInfoListItemCommand}" BorderThickness="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">

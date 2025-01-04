@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using TaskTip.Common;
 using TaskTip.Models.DataModel;
+using TaskTip.Models.Entities;
 using TaskTip.Services;
 using TaskTip.ViewModels.WindowModel;
 
@@ -35,8 +36,8 @@ namespace TaskTip.Views.Windows
         }
         public FloatingTaskView()
         {
-            Left = GlobalVariable.Left;
-            Top = GlobalVariable.Top;
+            Left = WindowResource.Left;
+            Top = WindowResource.Top;
             InitializeComponent();
         }
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -45,7 +46,7 @@ namespace TaskTip.Views.Windows
             {
                 if (e.ClickCount > 1)
                 {
-                    GlobalVariable.TaskMenoViewShow();
+                    WindowResource.TaskMenoViewShow();
                     this.Close();
                 }
                 else
@@ -59,49 +60,6 @@ namespace TaskTip.Views.Windows
             }
             catch { }
 
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            if (DataContext is FloatingTaskVM vm && (sender as Button).DataContext is TaskFileModel fvm)
-            {
-                if (vm.DtlContent == fvm.EditTextText)
-                {
-                    vm.DtlContent = string.Empty;
-                    vm.DtlVisibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    vm.DtlContent = fvm.EditTextText;
-                    vm.DtlVisibility = Visibility.Visible;
-                }
-            }
-        }
-
-        private void CheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            if(sender is CheckBox box && box.DataContext is TaskFileModel model)
-            {
-                model.IsCompleted = true;
-                model.CompletedDateTime = DateTime.Now;
-                WriteModel(model);
-            }
-        }
-
-        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            if (sender is CheckBox box && box.DataContext is TaskFileModel model)
-            {
-                model.IsCompleted = false;
-                model.CompletedDateTime = DateTime.MinValue;
-                WriteModel(model);
-            }
-        }
-        private void WriteModel(TaskFileModel model)
-        {
-            var path = System.IO.Path.Combine(GlobalVariable.TaskFilePath, $"{model.GUID}{GlobalVariable.EndFileFormat}");
-            File.WriteAllText(path,JsonConvert.SerializeObject(model));
-            WeakReferenceMessenger.Default.Send(GlobalVariable.TaskFilePath, Const.CONST_TASK_RELOAD);
         }
     }
 }

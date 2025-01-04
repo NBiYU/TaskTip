@@ -1,0 +1,227 @@
+﻿<Window x:Class="TaskTip.Views.Windows.PopWindow.ClockSelectorPop"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TaskTip.Views.Windows.PopWindow"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen" Width="240" Height="250" ShowInTaskbar="False" Topmost="True">
+    <Window.Resources>
+        <ResourceDictionary>
+            <Style x:Key="NoBorderButton" TargetType="Button">
+                <Setter Property="Background" Value="Transparent"></Setter>
+                <Setter Property="BorderThickness" Value="0"></Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseCaptured" Value="True">
+                        <Setter Property="Background" Value="Transparent"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="TextButton" TargetType="Button">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="FontSize" Value="10"/>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Trigger.Setters>
+                            <Setter Property="Foreground" Value="Blue"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                        </Trigger.Setters>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <Style TargetType="ListBoxItem" x:Key="ListBoxItemSelectedStyle">
+                <Style.Triggers>
+                    <Trigger Property="IsSelected" Value="True">
+                        <Setter Property="Background" Value="Blue"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Style="{StaticResource NoBorderButton}" Content="《" 
+                    Click="PreviewYear_Click"/>
+            <Button Grid.Column="1" Style="{StaticResource NoBorderButton}" Content="&lt;" 
+                    Click="PreviewMonth_Click"/>
+            <Button x:Name="SelectYear" Grid.Column="2" Style="{StaticResource NoBorderButton}"  Click="YearSelector_Click"/>
+            <Button x:Name="SelectMonth" Grid.Column="3" Style="{StaticResource NoBorderButton}" Click="MonthSelector_Click"/>
+            <Button Grid.Column="4" Style="{StaticResource NoBorderButton}" Content=">" Click="NextMonth_Click"/>
+            <Button Grid.Column="5" Style="{StaticResource NoBorderButton}" Content="》" Click="NextYear_Click"/>
+        </Grid>
+        <Border Grid.Row="1" x:Name="TimePopTextInputGrid" BorderThickness="0" BorderBrush="LightGray"
+               HorizontalAlignment="Center">
+            <Grid Background="Transparent" MouseLeftButtonDown="MainGrid_MouseLeftButtonDown">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" VerticalAlignment="Center">时钟</TextBlock>
+                <TextBox x:Name="HourTextBox" Grid.Column="1" Background="Transparent" BorderThickness="0,0,0,1" BorderBrush="Blue" Style="{x:Null}" d:Text="05" Width="30" HorizontalContentAlignment="Center" TextChanged="HourTextChanged"></TextBox>
+                <TextBlock Grid.Column="2" Text=":" VerticalAlignment="Center"></TextBlock>
+                <TextBox x:Name="MinuteTextBox" BorderThickness="0,0,0,1" BorderBrush="Blue" Width="30" HorizontalContentAlignment="Center" Style="{x:Null}" Grid.Column="3" Background="Transparent" d:Text="05" TextChanged="MinuteTextChanged"></TextBox>
+                <TextBlock Grid.Column="4" Text=":" VerticalAlignment="Center"></TextBlock>
+                <TextBox x:Name="SecondTextBox" Grid.Column="5" Background="Transparent" BorderThickness="0,0,0,1" BorderBrush="Blue" Style="{x:Null}" VerticalAlignment="Center" d:Text="05" Width="30" HorizontalContentAlignment="Center" TextChanged="SecondTextChanged"></TextBox>
+            </Grid>
+        </Border>
+        <Popup x:Name="TimePopup" PlacementTarget="{Binding ElementName=TimePopTextInputGrid}" Placement="Bottom"
+               StaysOpen="True" Height="200">
+            <Border Background="White" BorderBrush="Black" BorderThickness="1" >
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <ListBox Grid.Column="0" x:Name="HourListBox" ItemStringFormat="{}{0:D2}" >
+                        </ListBox>
+                        <ListBox Grid.Column="1" x:Name="MinuteListBox" ItemStringFormat="{}{0:D2}" >
+                        </ListBox>
+                        <ListBox Grid.Column="2" x:Name="SecondListBox" ItemStringFormat="{}{0:D2}"  >
+                        </ListBox>
+                    </Grid>
+                    <Grid Grid.Row="1" Margin="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="0" Content="Cancel" Style="{StaticResource TextButton}" Click="TimeCancel_Click"></Button>
+                        <Button Grid.Column="1" Content="Confirm"  Style="{StaticResource TextButton}"  Click="TimeConfrim_Click"></Button>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Popup>
+        <Grid x:Name="DayTimeSelector" Grid.Row="2" Visibility="Collapsed">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid  Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Mon" HorizontalAlignment="Center"></TextBlock>
+                <TextBlock Grid.Column="1" Text="Tue" HorizontalAlignment="Center"></TextBlock>
+                <TextBlock Grid.Column="2" Text="Wed" HorizontalAlignment="Center"></TextBlock>
+                <TextBlock Grid.Column="3" Text="Thu" HorizontalAlignment="Center"></TextBlock>
+                <TextBlock Grid.Column="4" Text="Fri" HorizontalAlignment="Center"></TextBlock>
+                <TextBlock Grid.Column="5" Text="Sat" HorizontalAlignment="Center"></TextBlock>
+                <TextBlock Grid.Column="6" Text="Sun" HorizontalAlignment="Center"></TextBlock>
+            </Grid>
+            <ItemsControl x:Name="DayContainer" Grid.Row="1" >
+                <!-- 定义网格布局 -->
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Rows="6" Columns="7" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <!-- 定义每个单元格的内容 -->
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <ToggleButton Content="{Binding Content}" 
+                                 IsChecked="{Binding IsSelect, Mode=TwoWay}"
+                                      IsEnabled="{Binding IsCurrentMonth}"
+                                  Checked="ToggleButton_Checked"
+                                  Background="Transparent"
+                                  BorderThickness="0"
+                                  Width="25"
+                                 HorizontalAlignment="Center" 
+                                 VerticalAlignment="Center" >
+                            <ToggleButton.Style >
+                                <Style TargetType="ToggleButton">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsChecked" Value="True">
+                                            <Setter Property="Background" Value="LightGray"/>
+                                            <Setter Property="BorderThickness" Value="1"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ToggleButton.Style>
+                        </ToggleButton>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Grid>
+        <Grid Grid.Row="2" x:Name="MonthTimeSelector">
+            <ItemsControl x:Name="MonthContainer" >
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Rows="3" Columns="4" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Content="{Binding}" Style="{StaticResource NoBorderButton}" Click="MonthSelect_Click" ContentStringFormat="{}{0:D2}}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Grid>
+        <Grid Grid.Row="2" x:Name="YearTimeSelector">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Width="50" Content="&lt;" Style="{StaticResource NoBorderButton}" Click="PreviewYearPage_Click"/>
+                <TextBlock x:Name="YearSelectorText" Grid.Column="1" HorizontalAlignment="Center"/>
+                <Button Grid.Column="2" Width="50" Content=">" Style="{StaticResource NoBorderButton}" Click="NextYearPage_Click"/>
+            </Grid>
+            <ItemsControl x:Name="YearContainer" Grid.Row="1" >
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Rows="4" Columns="4"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Content="{Binding}" Style="{StaticResource NoBorderButton}" Click="YearSelect_Click"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Grid>
+        <Grid Grid.Row="3" Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Content="Cancel" Margin="5,0" Click="DateCancel_Click"></Button>
+            <Button Grid.Column="1" Content="Confirm" Margin="5,0" Click="DateConfirm_Click"></Button>
+        </Grid>
+    </Grid>
+</Window>

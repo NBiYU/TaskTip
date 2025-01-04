@@ -9,11 +9,14 @@
     <convert:TaskProgressConvert x:Key="TaskProgressConvert"/>
     <convert:TextFormatConvert x:Key="TextFormatConvert"/>
     <convert:MultiValueConvert x:Key="MultiValueConvert"/>
-    <convert:SyncStatusConvert x:Key="SyncStatusConvert"/>
+    <convert:BooleanToVisibilityConvert x:Key="BooleanToVisibilityConvert"/>
     <convert:NotFileConvert x:Key="NotFileConvert"/>
-    <convert:SyncCheckConvert x:Key="SyncCheckConvert"/>
     <convert:TypeColorConvert x:Key="TypeColorConvert"/>
     <convert:JsonValueConvert x:Key="JsonValueConvert"/>
     <convert:FloatingStyleConvert x:Key="FloatingStyleConvert"/>
     <convert:ControlTypeVisibilityConvert x:Key="ControlTypeVisibilityConvert"/>
+    <convert:Visbility2ImageSourceConverter x:Key="Visbility2ImageSourceConverter"/>
+    <convert:Boolean2StrikethroughConverter x:Key="Boolean2StrikethroughConverter"/>
+    
+    
 </ResourceDictionary>

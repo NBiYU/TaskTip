@@ -5,7 +5,6 @@ namespace TaskTip.Common
     public class Const
     {
         #region Messager
-        public readonly static string CONST_LISTITEM_CHANGED = nameof(CONST_LISTITEM_CHANGED);
         public readonly static string CONST_SYNC_RECEIVE = nameof(CONST_SYNC_RECEIVE);
         public readonly static string CONST_NOTIFY_RECORD_ITEM = nameof(CONST_NOTIFY_RECORD_ITEM);
         public readonly static string CONST_CONFIG_CHANGED = nameof(CONST_CONFIG_CHANGED);
@@ -29,7 +28,6 @@ namespace TaskTip.Common
         public readonly static string CONST_RECORD_RELOAD= nameof(CONST_RECORD_RELOAD);
         public readonly static string CONST_NODE_MOVE= nameof(CONST_NODE_MOVE);
         public readonly static string CONST_RECORD_SAVE_CONFIG= nameof(CONST_RECORD_SAVE_CONFIG);
-        public readonly static string CONST_SCHEDULE_CREATE= nameof(CONST_SCHEDULE_CREATE);
         public readonly static string CONST_MOVE_CHECK_CHANGED = nameof(CONST_MOVE_CHECK_CHANGED);
         public readonly static string CONST_TOOLMAIN_SCREENCHANGED = nameof(CONST_TOOLMAIN_SCREENCHANGED);
         #endregion

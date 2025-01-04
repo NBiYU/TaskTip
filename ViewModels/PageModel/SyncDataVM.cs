@@ -1,30 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.NetworkInformation;
-using System.Net.Sockets;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Markup;
-using System.Windows.Media.Imaging;
-using TaskTip.Common;
-using TaskTip.Common.ExecuteServices;
-using TaskTip.Common.Extends;
-using TaskTip.Enums;
-using TaskTip.Models;
-using TaskTip.Services;
-using TaskTip.ViewModels.UserViewModel;
-using TaskTip.Views.UserControls;
-using Exception = System.Exception;
 
 namespace TaskTip.ViewModels.PageModel
 {

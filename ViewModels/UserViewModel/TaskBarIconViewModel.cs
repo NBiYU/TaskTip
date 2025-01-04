@@ -4,7 +4,8 @@ using System;
 using System.Configuration;
 using System.Windows.Input;
 
-using TaskTip.Enums;
+using TaskTip.Common;
+using TaskTip.Models.Enums;
 using TaskTip.Services;
 using Application = System.Windows.Application;
 
@@ -21,7 +22,7 @@ namespace TaskTip.ViewModels.UserViewModel
             {
                 return new Lazy<RelayCommand>(() => new RelayCommand(() =>
                 {
-                    GlobalVariable.SwitchFloating(GlobalVariable.FloatingStyle);
+                    WindowResource.SwitchFloatingShow(GlobalVariable.FloatingStyle);
                 })).Value;
             }
         }
@@ -35,7 +36,7 @@ namespace TaskTip.ViewModels.UserViewModel
             {
                 return new Lazy<RelayCommand>(() => new RelayCommand(() =>
                 {
-                    GlobalVariable.SwitchFloating(GlobalVariable.FloatingStyle);
+                    WindowResource.SwitchFloatingShow(GlobalVariable.FloatingStyle);
                 })).Value;
             }
         }
@@ -61,7 +62,7 @@ namespace TaskTip.ViewModels.UserViewModel
             {
                 return new Lazy<RelayCommand>(() => new RelayCommand(() =>
                 {
-                    GlobalVariable.CustomSetViewShow();
+                    WindowResource.CustomSetViewShow();
                 })).Value;
             }
         }

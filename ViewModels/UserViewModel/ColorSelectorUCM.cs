@@ -6,14 +6,17 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+
 using HandyControl.Controls;
 using HandyControl.Tools.Extension;
+
 using TaskTip.Common;
-using TaskTip.Enums;
 using TaskTip.Models.DataModel;
+using TaskTip.Models.Enums;
 using TaskTip.Services;
 using TaskTip.Views.UserControls;
 using TaskTip.Views.Windows.PopVM;

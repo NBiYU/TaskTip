@@ -1,23 +1,19 @@
+using CommunityToolkit.Mvvm.Messaging;
+
+using NLog;
+
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media.Imaging;
-using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.Extensions.Configuration;
-using NLog;
+
 using TaskTip.Common;
-using TaskTip.Enums;
-using TaskTip.Pages;
-using TaskTip.ViewModels.WindowModel;
-using TaskTip.Views;
-using TaskTip.Views.Windows;
+using TaskTip.Common.Helpers;
+using TaskTip.Models.Enums;
+
 using ConfigurationManager = System.Configuration.ConfigurationManager;
 using MessageBox = System.Windows.MessageBox;
 
@@ -25,28 +21,25 @@ namespace TaskTip.Services
 {
     public static class GlobalVariable
     {
-
-        #region 共享属性
-        public static double Left { get; set; } = SystemParameters.WorkArea.Height * 0.3;
-        public static double Top {  get; set; } = SystemParameters.WorkArea.Width * 0.3;
-        public static string LocalKey => ConfigurationManager.AppSettings[nameof(LocalKey)] ?? "";
+        #region 从配置中获取
+        public static string LocalKey => GetConfigValue(nameof(LocalKey)) ?? "";
 
         /// <summary>
         /// 悬浮窗图片路径
         /// </summary>
-        public static string FloatingBgPath => ConfigurationManager.AppSettings[nameof(FloatingBgPath)] ?? "";
+        public static string FloatingBgPath => GetConfigValue(nameof(FloatingBgPath)) ?? "";
 
         /// <summary>
         /// 悬浮窗图片自动大小
         /// </summary>
-        public static bool AutoSizeImage => ValueToType(ConfigurationManager.AppSettings[nameof(AutoSizeImage)] ?? "false");
+        public static bool AutoSizeImage => ValueToType(GetConfigValue(nameof(AutoSizeImage)) ?? "false");
         /// <summary>
         /// WCF数据同步服务是否启用
         /// </summary>
-        public static bool CanSyncEnable => ValueToType(ConfigurationManager.AppSettings[nameof(CanSyncEnable)] ?? "false");
+        public static bool CanSyncEnable => ValueToType(GetConfigValue(nameof(CanSyncEnable)) ?? "false");
 
-        public static string RecordVersion => ConfigurationManager.AppSettings[nameof(RecordVersion)] ?? "";
-        public static string RecordMaxVersion => "HTML";
+        public static string RecordVersion => GetConfigValue(nameof(RecordVersion)) ?? "";
+
         /// <summary>
         /// 软件文件夹保存路径
         /// </summary>
@@ -56,11 +49,56 @@ namespace TaskTip.Services
             {
                 var processPathInfo = Process.GetCurrentProcess().MainModule;
                 var runtimePath = processPathInfo.FileName.Split(processPathInfo.ModuleName)[0];
-                var cachePath = ConfigurationManager.AppSettings[nameof(TaskTipPath)];
+                var cachePath = GetConfigValue(nameof(TaskTipPath));
                 return string.IsNullOrEmpty(cachePath) ? runtimePath : cachePath!;
             }
         }
+        public static string WorkFinishTime => GetConfigValue(nameof(WorkFinishTime)) ?? "";
+        public static double SiestaTime => double.Parse(GetConfigValue(nameof(SiestaTime)) ?? "0.0");
+        public static double AgainWorkGapTime => double.Parse(GetConfigValue(nameof(AgainWorkGapTime)) ?? "0");
+        internal static string WorkStartTime => GetConfigValue(nameof(WorkStartTime)) ?? "";
+        /// <summary>
+        /// 悬浮窗宽度
+        /// </summary>
+        public static double FloatingSetWidth => ValueToType(GetConfigValue(nameof(FloatingSetWidth)) ?? "0");
 
+        /// <summary>
+        /// 悬浮窗高度
+        /// </summary>
+        public static double FloatingSetHeight => ValueToType(GetConfigValue(nameof(FloatingSetHeight)) ?? "0");
+        /// <summary>
+        /// 文件后缀名
+        /// </summary>
+        public static string EndFileFormat => GetConfigValue(nameof(EndFileFormat)) ?? "";
+
+        /// <summary>
+        /// 第二天日报生成结束时间
+        /// </summary>
+        public static string DailyTaskEndTime => GetConfigValue(nameof(DailyTaskEndTime)) ?? "11:30";
+
+        /// <summary>
+        /// 是否自动创建明日计划
+        /// </summary>
+        public static bool IsCreateTomorrowPlan => ValueToType(GetConfigValue(nameof(IsCreateTomorrowPlan)) ?? "true");
+
+        /// <summary>
+        /// 是否启用悬浮窗样式
+        /// </summary>
+        public static FloatingStyleEnum FloatingStyle => (FloatingStyleEnum)ValueToType(GetConfigValue(nameof(FloatingStyle)) ?? "1");
+
+        /// <summary>
+        /// 自动删除时间
+        /// </summary>
+        public static int DeleteTimes => ValueToType(GetConfigValue(nameof(DeleteTimes)) ?? "99");
+        public static bool FloatingStatusIsFixed => ValueToType(GetConfigValue(nameof(FloatingStatusIsFixed)) ?? "false");
+
+        public static bool IsEnableAutoDelete => ValueToType(GetConfigValue(nameof(IsEnableAutoDelete)) ?? "false");
+
+        public static int LoadTaskFilePageSize => ValueToType(GetConfigValue(nameof(LoadTaskFilePageSize)) ?? "20");
+
+        #endregion
+
+        #region 间接处理属性
         /// <summary>
         /// 任务文件保存路径
         /// </summary>
@@ -85,49 +123,17 @@ namespace TaskTip.Services
 
         public static string FictionCachePath => Path.Combine(TaskTipPath, "Fictions");
         public static string? WorkTimeRecordPath = Path.Combine(TaskTipPath, "WorkTime.json");
+        public static string[] ThemeStyleKeys => (string[])Application.Current.Resources["ThemeColorArray"];
+        public static string RecordMaxVersion => "HTML";
 
         public static string CustomThemePath { get; set; }
 
         public static string OperationRecordPath { get; set; }
 
-        /// <summary>
-        /// 悬浮窗宽度
-        /// </summary>
-        public static double FloatingSetWidth => ValueToType(ConfigurationManager.AppSettings[nameof(FloatingSetWidth)] ?? "0");
 
-        /// <summary>
-        /// 悬浮窗高度
-        /// </summary>
-        public static double FloatingSetHeight => ValueToType(ConfigurationManager.AppSettings[nameof(FloatingSetHeight)] ?? "0");
+        #endregion
 
-        /// <summary>
-        /// 文件后缀名
-        /// </summary>
-        public static string EndFileFormat => ConfigurationManager.AppSettings[nameof(EndFileFormat)] ?? "";
-
-        /// <summary>
-        /// 第二天日报生成结束时间
-        /// </summary>
-        public static string DailyTaskEndTime => ConfigurationManager.AppSettings[nameof(DailyTaskEndTime)] ?? "11:30";
-
-        /// <summary>
-        /// 是否自动创建明日计划
-        /// </summary>
-        public static bool IsCreateTomorrowPlan => ValueToType(ConfigurationManager.AppSettings[nameof(IsCreateTomorrowPlan)] ?? "true");
-
-        /// <summary>
-        /// 是否启用悬浮窗样式
-        /// </summary>
-        public static FloatingStyleEnum FloatingStyle => (FloatingStyleEnum)ValueToType(ConfigurationManager.AppSettings[nameof(FloatingStyle)] ?? "1");
-
-        /// <summary>
-        /// 自动删除时间
-        /// </summary>
-        public static int DeleteTimes => ValueToType(ConfigurationManager.AppSettings[nameof(DeleteTimes)] ?? "99");
-        public static bool FloatingStatusIsFixed => ValueToType(ConfigurationManager.AppSettings[nameof(FloatingStatusIsFixed)] ?? "false");
-
-        public static bool IsEnableAutoDelete => ValueToType(ConfigurationManager.AppSettings[nameof(IsEnableAutoDelete)] ?? "false");
-
+        #region 工具
         public static Configuration Configurations =
             ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
@@ -135,22 +141,18 @@ namespace TaskTip.Services
 
         public static Logger LogHelper = NLog.LogManager.GetCurrentClassLogger();
 
-        public static string[] ThemeStyleKeys => (string[])Application.Current.Resources["ThemeColorArray"];
 
-        public static string WorkFinishTime => ConfigurationManager.AppSettings[nameof(WorkFinishTime)] ?? "";
-        public static double SiestaTime => double.Parse(ConfigurationManager.AppSettings[nameof(SiestaTime)] ?? "0.0");
-        public static double AgainWorkGapTime => double.Parse(ConfigurationManager.AppSettings[nameof(AgainWorkGapTime)] ?? "0");
-        internal static string WorkStartTime => ConfigurationManager.AppSettings[nameof(WorkStartTime)] ?? "";
-
-        #endregion
-
-        #region 静态页面
-
-        public static RecordPage RecordPage = new();
 
         #endregion
 
         #region 配置操作
+
+        public static string? GetConfigValue(string key)
+        {
+            //return ConfigurationManager.AppSettings[key];
+            var db = new SQLiteDB();
+            return db.GetSysParamByKey(key);
+        }
 
 
         /// <summary>
@@ -163,11 +165,13 @@ namespace TaskTip.Services
         {
             try
             {
-                Configurations.AppSettings.Settings[variableName].Value = variable?.ToString();
-                Configurations.Save();
-                ConfigurationManager.RefreshSection("appSettings");
+                var db = new SQLiteDB();
+                db.UpdateSysParam(variableName, variable);
+                //Configurations.AppSettings.Settings[variableName].Value = variable?.ToString();
+                //Configurations.Save();
+                //ConfigurationManager.RefreshSection("appSettings");
             }
-            catch
+            catch(Exception ex)
             {
                 MessageBox.Show(variableName + "\t与值" + variable?.ToString() + "不匹配");
             }
@@ -182,13 +186,15 @@ namespace TaskTip.Services
         {
             try
             {
-                foreach (var v in val)
-                {
-                    Configurations.AppSettings.Settings[v.Key].Value = v.Value;
-                }
+                //foreach (var v in val)
+                //{
+                //    Configurations.AppSettings.Settings[v.Key].Value = v.Value;
+                //}
 
-                Configurations.Save();
-                ConfigurationManager.RefreshSection("appSettings");
+                //Configurations.Save();
+                //ConfigurationManager.RefreshSection("appSettings");
+                var db = new SQLiteDB();
+                db.UpdateSysParams(val);
 
                 WeakReferenceMessenger.Default.Send(string.Empty, Const.CONST_CONFIG_CHANGED);
             }
@@ -197,7 +203,7 @@ namespace TaskTip.Services
                 MessageBox.Show($"数据刷入配置错误:{e.Message}");
             }
         }
-
+        
 
         /// <summary>
         /// 把string类型转换成字符串对应的类型
@@ -229,286 +235,5 @@ namespace TaskTip.Services
 
 
         #endregion
-
-        #region 窗口显示状态管理
-
-
-        #region FloatingWindow
-
-        public static void SwitchFloating(FloatingStyleEnum styleEnum)
-        {
-            if (styleEnum == FloatingStyleEnum.Image)
-            {
-                GlobalVariable.FloatingViewShow();
-            }
-            else if (styleEnum == FloatingStyleEnum.Title)
-            {
-                GlobalVariable.FloatingTitleStyleViewShow();
-            }
-            else if (styleEnum == FloatingStyleEnum.Status)
-            {
-                GlobalVariable.SysRuntimeStatusViewShow();
-            }
-            else if (styleEnum == FloatingStyleEnum.Task)
-            {
-                FloatingTaskViewShow();
-            }
-        }
-        public static void FloatingClose()
-        {
-            if (FloatingStyle == FloatingStyleEnum.Image)
-            {
-                FloatingViewClose();
-            }
-            else if (FloatingStyle == FloatingStyleEnum.Title)
-            {
-                FloatingTitleStyleViewClose();
-            }
-            else if (FloatingStyle == FloatingStyleEnum.Status)
-            {
-                SysRuntimeStatusViewClose();
-            }
-            else if (FloatingStyle == FloatingStyleEnum.Task)
-            {
-                FloatingTaskViewClose();
-            }
-        }
-        public static void FloatingCloseAll()
-        {
-            FloatingViewClose();
-            FloatingTitleStyleViewClose();
-            SysRuntimeStatusViewClose();
-            FloatingTaskViewClose();
-        }
-
-
-        #region Floating
-        public static FloatingView FloatingView { get; set; } = new();
-        public static void FloatingViewShow(string imagePath = "")
-        {
-
-            if (FloatingView.IsClosed)
-            {
-                FloatingView = new FloatingView();
-            }
-            if (!string.IsNullOrEmpty(imagePath))
-            {
-                FloatingView.FloatingBgImage.Source = new BitmapImage(new Uri(imagePath));
-            }
-            FloatingView.Show();
-        }
-
-        public static void FloatingViewHide()
-        {
-            if (FloatingView.IsClosed)
-            {
-                FloatingView = new FloatingView();
-            }
-            FloatingView.Hide();
-        }
-
-        public static void FloatingViewClose()
-        {
-            if (FloatingView != null && !FloatingView.IsClosed)
-            {
-                FloatingView.Close();
-            }
-        }
-
-        #endregion
-
-        #region FloatingTitleStyle
-        public static FloatingTitleStyleView FloatingTitleStyleView { get; set; } = new();
-        public static void FloatingTitleStyleViewShow()
-        {
-            if (FloatingTitleStyleView.IsClosed)
-            {
-                FloatingTitleStyleView = new FloatingTitleStyleView();
-            }
-            FloatingTitleStyleView.Show();
-        }
-
-        public static void FloatingTitleStyleViewHide()
-        {
-            if (FloatingTitleStyleView.IsClosed)
-            {
-                FloatingTitleStyleView = new FloatingTitleStyleView();
-            }
-            FloatingTitleStyleView.Hide();
-        }
-
-        public static void FloatingTitleStyleViewClose()
-        {
-            if (FloatingTitleStyleView != null && !FloatingTitleStyleView.IsClosed)
-            {
-                FloatingTitleStyleView.Close();
-            }
-        }
-        #endregion
-
-        #region FloatingStatusStyle
-        public static SysRuntimeStatusView SysRuntimeStatusView { get; set; } = new();
-        public static void SysRuntimeStatusViewShow()
-        {
-            if (SysRuntimeStatusView.IsClosed)
-            {
-                SysRuntimeStatusView = new();
-            }
-            SysRuntimeStatusView.Show();
-        }
-
-        public static void SysRuntimeStatusViewHide()
-        {
-            if (SysRuntimeStatusView.IsClosed)
-            {
-                SysRuntimeStatusView = new();
-            }
-            SysRuntimeStatusView.Hide();
-        }
-
-        public static void SysRuntimeStatusViewClose()
-        {
-            if (SysRuntimeStatusView != null && !SysRuntimeStatusView.IsClosed)
-            {
-                SysRuntimeStatusView.Close();
-            }
-        }
-
-        #endregion
-
-        #region FloatingTaskStyle
-
-        private static FloatingTaskView FloatingTaskView = new();
-        public static void FloatingTaskViewShow()
-        {
-            if (FloatingTaskView.IsClosed)
-            {
-                FloatingTaskView = new();
-            }
-            FloatingTaskView.Show();
-        }
-
-        public static void FloatingTaskViewHide()
-        {
-            if (FloatingTaskView.IsClosed)
-            {
-                FloatingTaskView = new();
-            }
-            FloatingTaskView.Hide();
-        }
-
-        public static void FloatingTaskViewClose()
-        {
-            if (FloatingTaskView != null && !FloatingTaskView.IsClosed)
-            {
-                FloatingTaskView.Close();
-            }
-        }
-
-        #endregion
-
-        #endregion
-
-        #region TaskMeno
-        public static TaskMenoView TaskMenoView { get; set; } = new();
-        public static void TaskMenoViewShow()
-        {
-            if (TaskMenoView.IsClosed)
-            {
-                TaskMenoView = new TaskMenoView();
-            }
-            TaskMenoView.Show();
-        }
-        public static void TaskMenoViewHide()
-        {
-            
-            if (TaskMenoView.IsClosed)
-            {
-                TaskMenoView = new TaskMenoView();
-            }
-
-            Left = TaskMenoView.Left + TaskMenoView.Width;
-            Top = TaskMenoView.Top + TaskMenoView.Height;
-            TaskMenoView.Hide();
-        }
-
-        public static void TaskMenoViewClose()
-        {
-            Left = TaskMenoView.Left + TaskMenoView.Width;
-            Top = TaskMenoView.Top + TaskMenoView.Height;
-            if (TaskMenoView != null && !TaskMenoView.IsClosed)
-            {
-                TaskMenoView.Close();
-            }
-        }
-
-        #endregion
-
-        #region CustomSet
-        public static CustomSetView CustomSetView { get; set; } = new();
-        public static void CustomSetViewShow()
-        {
-            if (CustomSetView.IsClosed)
-            {
-                CustomSetView = new CustomSetView();
-            }
-            CustomSetView.Show();
-        }
-
-        public static void CustomSetViewHide()
-        {
-            if (CustomSetView.IsClosed)
-            {
-                CustomSetView = new CustomSetView();
-            }
-            Left = CustomSetView.Left + CustomSetView.Width;
-            Top = CustomSetView.Top + CustomSetView.Height;
-            CustomSetView.Hide();
-        }
-
-        public static void CustomSetViewClose()
-        {
-            Left = CustomSetView.Left + CustomSetView.Width;
-            Top = CustomSetView.Top + CustomSetView.Height;
-            if (CustomSetView != null && !CustomSetView.IsClosed)
-            {
-                CustomSetView.Close();
-            }
-        }
-
-        #endregion
-
-        #region EditFullScreenView
-        public static EditFullScreenView EditFullScreenView { get; set; } = new();
-        public static void EditFullScreenViewShow()
-        {
-            if (EditFullScreenView.IsClosed)
-            {
-                EditFullScreenView = new EditFullScreenView();
-            }
-            EditFullScreenView.Show();
-        }
-
-        public static void EditFullScreenViewHide()
-        {
-            if (EditFullScreenView.IsClosed)
-            {
-                EditFullScreenView = new EditFullScreenView();
-            }
-            EditFullScreenView.Hide();
-        }
-
-        public static void EditFullScreenViewClose()
-        {
-            if (EditFullScreenView != null && !EditFullScreenView.IsClosed)
-            {
-                EditFullScreenView.Close();
-            }
-        }
-
-        #endregion
-
-        #endregion
-
     }
 }

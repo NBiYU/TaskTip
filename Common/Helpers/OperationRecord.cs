@@ -8,8 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using TaskTip.Common.Extends;
 using TaskTip.Services;
-using TaskTip.Enums;
 using TaskTip.Models.DataModel;
+using TaskTip.Models.Entities;
+using TaskTip.Models.Enums;
 
 namespace TaskTip.Common
 {

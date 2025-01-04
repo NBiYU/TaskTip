@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TaskTip.Models.Entities;
 using TaskTip.Services;
 
 namespace TaskTip.Models.DataModel

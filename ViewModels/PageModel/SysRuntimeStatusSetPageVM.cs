@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using TaskTip.Base;
 using TaskTip.Common;
 using TaskTip.Common.Helpers;
 using TaskTip.Models.CommonModel;
 using TaskTip.Models.ConfigModel;
 using TaskTip.Models.SettingModel;
 using TaskTip.Services;
+using TaskTip.ViewModels.Base;
 using TaskTip.Views.UserControls;
 
 namespace TaskTip.ViewModels.PageModel
@@ -51,7 +51,7 @@ namespace TaskTip.ViewModels.PageModel
         private void Init()
         {
             var adapters = NetworkAdapterHelper.GetNetworkInterfaces();
-            var config = ConfigHelper.ReadConfig<SysRuntimeConfigModel>(Const.RuntimeStatusConfig);
+            var config = JsonConfigHelper.ReadConfig<SysRuntimeConfigModel>(Const.RuntimeStatusConfig);
             NetworkCardList = new ObservableCollection<string>(adapters);
             SelectNetworkCard = config?.NetworkCardName;
             ThemeList = new ObservableCollection<ThemeSelectorUC>(GetThemeUC(config));
@@ -88,12 +88,7 @@ namespace TaskTip.ViewModels.PageModel
                     CategoryThemes = ThemeList.Select(x => x.GradientColor).ToList()
                 }
             };
-            var result = ConfigHelper.SaveConfig(model, Const.RuntimeStatusConfig);
-            if (GlobalVariable.FloatingStyle == Enums.FloatingStyleEnum.Status)
-            {
-                GlobalVariable.SysRuntimeStatusViewClose();
-                GlobalVariable.SysRuntimeStatusViewShow();
-            }
+            var result = JsonConfigHelper.SaveConfig(model, Const.RuntimeStatusConfig);
 
             MessageBox.Show($"保存{(result ? "成功" : "失败")}");
         }

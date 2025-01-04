@@ -1,10 +1,12 @@
 ﻿using Newtonsoft.Json.Linq;
+
 using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
-using TaskTip.Enums;
+
 using TaskTip.Models.CommonModel;
+using TaskTip.Models.Enums;
 
 namespace TaskTip.ViewModels.Converters
 {

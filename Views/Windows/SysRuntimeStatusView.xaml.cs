@@ -84,7 +84,7 @@ namespace TaskTip.Views.Windows
         {
             _toeknSource = new CancellationTokenSource();
             _cancelToken = _toeknSource.Token;
-            _config = ConfigHelper.ReadConfig<SysRuntimeConfigModel>(Const.RuntimeStatusConfig);
+            _config = JsonConfigHelper.ReadConfig<SysRuntimeConfigModel>(Const.RuntimeStatusConfig);
 
             InitControl(_config);
 
@@ -221,7 +221,7 @@ namespace TaskTip.Views.Windows
             {
                 _toeknSource?.Cancel();
                 _config.NetworkCardName = menu.Header.ToString();
-                ConfigHelper.SaveConfig(_config, Const.RuntimeStatusConfig);
+                JsonConfigHelper.SaveConfig(_config, Const.RuntimeStatusConfig);
                 Window_Loaded(null, null);
             }
         }
@@ -263,14 +263,14 @@ namespace TaskTip.Views.Windows
             if (e.ClickCount == 2)
             {
                 //任务浮窗起始位置
-                var widthRatio = Width - GlobalVariable.TaskMenoView.Width;
-                var heightRatio = Height - GlobalVariable.TaskMenoView.Height;
-                GlobalVariable.TaskMenoView.Left = Left + widthRatio;
-                GlobalVariable.TaskMenoView.Top = Top + heightRatio;
+                var widthRatio = Width - WindowResource.TaskMenoView.Width;
+                var heightRatio = Height - WindowResource.TaskMenoView.Height;
+                WindowResource.TaskMenoView.Left = Left + widthRatio;
+                WindowResource.TaskMenoView.Top = Top + heightRatio;
 
                 WeakReferenceMessenger.Default.Send(new { }, Const.CONST_OPEN_APPLICATTION);
                 //OpenTaskMenoUI?.Invoke(DateTime.Now, null);
-                GlobalVariable.TaskMenoViewShow();
+                WindowResource.TaskMenoViewShow();
                 if (!IsFixed) this.Hide();
 
             }

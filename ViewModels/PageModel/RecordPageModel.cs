@@ -20,8 +20,9 @@ using System.Windows.Media.Imaging;
 
 using TaskTip.Common;
 using TaskTip.Common.Extends;
-using TaskTip.Enums;
 using TaskTip.Models.DataModel;
+using TaskTip.Models.Entities;
+using TaskTip.Models.Enums;
 using TaskTip.Services;
 
 using Image = System.Windows.Controls.Image;
@@ -175,14 +176,14 @@ namespace TaskTip.ViewModels
             if (_isFullScreen)
             {
                 FullScreenSource = ((BitmapImage)Application.Current.Resources["Fullscreen"]).UriSource; //new Uri("pack://application:,,,/Resources/fullscreen.png");
-                GlobalVariable.EditFullScreenViewShow();
-                GlobalVariable.TaskMenoViewClose();
+                WindowResource.EditFullScreenViewShow();
+                WindowResource.TaskMenoViewClose();
             }
             else
             {
                 FullScreenSource = ((BitmapImage)Application.Current.Resources["ArrowsFullscreen"]).UriSource; //new Uri("pack://application:,,,/Resources/arrows_fullscreen.png");
-                GlobalVariable.EditFullScreenViewClose();
-                GlobalVariable.TaskMenoViewShow();
+                WindowResource.EditFullScreenViewClose();
+                WindowResource.TaskMenoViewShow();
             }
         }
         #endregion

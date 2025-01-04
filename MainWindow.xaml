@@ -4,15 +4,41 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TaskTip"
-        xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:uc="clr-namespace:TaskTip.Views.UserControls"
-        xmlns:page="clr-namespace:TaskTip.Pages"
+        xmlns:test="clr-namespace:TaskTip.Test.Views"
+        xmlns:page="clr-namespace:TaskTip.Pages" 
         mc:Ignorable="d"
-        WindowStartupLocation="CenterScreen"  >
+        WindowStartupLocation="CenterScreen" >
     <Window.Resources>
-        <local:MainWindow x:Key="MainWindow"/>
+        <ResourceDictionary>
+            <Style x:Key="NoBorderButton" TargetType="Button">
+                <Setter Property="Background" Value="Transparent"></Setter>
+                <Setter Property="BorderThickness" Value="0"></Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseCaptured" Value="True">
+                        <Setter Property="Background" Value="Transparent"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="TextButton" TargetType="Button">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="FontSize" Value="10"/>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Trigger.Setters>
+                            <Setter Property="Foreground" Value="Blue"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                        </Trigger.Setters>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </ResourceDictionary>
     </Window.Resources>
     <Grid>
-
+        <Frame Source="Test/Views/RecordPage.xaml">
+            
+        </Frame>
     </Grid>
 </Window>

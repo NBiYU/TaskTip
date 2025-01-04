@@ -1,31 +1,35 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using HandyControl.Tools;
+
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+
 using Quartz;
 using Quartz.Impl;
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using TaskTip.Base;
+
 using TaskTip.Common;
+using TaskTip.Common.Converter.Map;
+using TaskTip.Common.ExecuteServices;
 using TaskTip.Common.Extends;
-using TaskTip.Enums;
-using TaskTip.Models;
+using TaskTip.Common.Helpers;
 using TaskTip.Models.CommonModel;
 using TaskTip.Models.DataModel;
+using TaskTip.Models.Entities;
+using TaskTip.Models.Enums;
 using TaskTip.Services;
+using TaskTip.ViewModels.Base;
 using TaskTip.ViewModels.UserViewModel;
 using TaskTip.Views;
+using TaskTip.Views.Windows.PopWindow;
 
 namespace TaskTip.ViewModels.PageModel
 {
@@ -46,9 +50,9 @@ namespace TaskTip.ViewModels.PageModel
         /// <summary>
         /// 待完成的任务集合
         /// </summary>
-        private ObservableCollection<TaskListItemUserControl> taskList;
+        private ObservableCollection<TaskFileModel> taskList;
 
-        public ObservableCollection<TaskListItemUserControl> TaskList
+        public ObservableCollection<TaskFileModel> TaskList
         {
             get => taskList;
             set { SetProperty(ref taskList, value); }
@@ -58,133 +62,36 @@ namespace TaskTip.ViewModels.PageModel
 
         private ISchedulerFactory schedulerFactory;
         private IScheduler scheduler;
-        private List<TaskFileModel> _fileDataCache;
-
-        /// <summary>
-        /// 生成一个新的TaskListItem空控件
-        /// </summary>
-        /// <returns></returns>
-        private TaskListItemUserControl AddTaskListItemControl(string guid)
-        {
-            if (string.IsNullOrEmpty(guid)) guid = Guid.NewGuid().ToString();
-            var taskControl = new TaskListItemUserControl();
-            var taskControlModel = taskControl.TaskGrid.DataContext as TaskListItemUserControlModel;
-            taskControlModel.GUID = guid;
-            taskControl = InitItemControl(taskControl);
-            return taskControl;
-        }
-
-        private TaskListItemUserControl AddTaskListItemControl(TaskFileModel taskFile)
-        {
-            var taskControl = new TaskListItemUserControl();
-            var taskControlModel = taskControl.TaskGrid.DataContext as TaskListItemUserControlModel;
-            taskControlModel!.PropertySetValue(taskFile, true);
-            taskControl = InitItemControl(taskControl);
-            return taskControl;
-        }
-
-        private TaskListItemUserControl InitItemControl(TaskListItemUserControl control)
-        {
-            FocusManager.AddGotFocusHandler(control, GotFocusText);
-            control.CompletedLine.X2 = TaskMenoWidth * 0.9;
-            control.Width = TaskMenoWidth * 0.9;
-            return control;
-        }
-
-        /// <summary>
-        /// 当失去焦点，其他列表元素的下拓展输入框自动收回
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void GotFocusText(object sender, EventArgs e)
-        {
-            var taskControl = (TaskListItemUserControl)sender;
-            Keyboard.ClearFocus();
-            for (int i = 0; i < taskList.Count; i++)
-            {
-                if (TaskList[i].Guid.Text == taskControl.Guid.Text)
-                {
-                    TaskList[i].EditTaskText.Visibility = Visibility.Visible;
-                    if (TaskList[i].EditTaskTitle.IsFocused)
-                        Keyboard.Focus(TaskList[i].EditTaskTitle);
-                    continue;
-                }
-                TaskList[i].EditTaskText.Visibility = Visibility.Collapsed;
-            }
-        }
-
 
         #region 控件指令处理函数
 
         /// <summary>
-        /// 任务添加指令处理函数
-        /// </summary>
-        [RelayCommand]
-        private void AddTaskList()
-        {
-            WeakReferenceMessenger.Default.Send(new CorrespondenceModel() { GUID = Guid.NewGuid().ToString(), Operation = OperationRequestType.Add }, Const.CONST_LISTITEM_CHANGED);
-
-        }
-
-
-        /// <summary>
-        /// 日报生成事件,???为什么不直接拿TaskMenoList里面的数据呢
+        /// 日报生成事件
         /// </summary>
         [RelayCommand]
         private void SendDailyMessage()
         {
-            var dirPath = GlobalVariable.TaskFilePath;
             var outEndTime = GlobalVariable.DailyTaskEndTime;
-
-            if (!Directory.Exists(dirPath))
-            {
-                MessageBox.Show($"{dirPath}不存在,请前往设置重新设定路径");
-                return;
-            }
-
-            var filePaths = Directory.GetFiles(dirPath);
-            var todayTask = new List<string>();
-            var tomorrowTask = new List<string>();
             var isCreateTomorrowPlan = GlobalVariable.IsCreateTomorrowPlan;
 
-            //从文件中获取当天的任务内容
-            foreach (var filePath in filePaths)
-            {
-                var obj = JsonConvert.DeserializeObject<TaskFileModel>(File.ReadAllText(filePath));
-                try
-                {
-                    //格式： 序号.任务标题：任务内容 ------- 是否完成
-                    //例如： 1.完成日报生成：通过获取当天记录或预计当天完成的任务生成文本并复制到剪切板中 ----- 未完成
+            var outMode = DateTime.Now > DateTime.Parse(outEndTime)
+                ? DateTime.Today
+                : DateTime.Today.AddDays(-1);
+            var db = new SQLiteDB();
+            var todayTask = db.GetTaskListByDate(outMode)
+                .Select(x => x.Entity2TaskModel())
+                .Select((x, i) => $"{i + 1}.{x.EditTextTitle}:{x.EditTextText} ----- {(x.IsCompleted ? "已完成" : "未完成")}");
+            var tomorrowTask = db.GetTaskListByDate(outMode.AddDays(1))
+                .Select(x => x.Entity2TaskModel())
+                .Select((x, i) => $"{i + 1}.{x.EditTextTitle}:{x.EditTextText}");
 
-                    var outMode = DateTime.Now > DateTime.Parse(outEndTime)
-                        ? DateTime.Today
-                        : DateTime.Today.AddDays(-1);
-
-                    if (obj.TaskTimePlan.Date == outMode)
-                        todayTask.Add(todayTask.Count + 1 + "." + obj.EditTextTitle + "：" +
-                                      obj.EditTextText + " ----- " +
-                                      (obj.IsCompleted ? "已完成" : "未完成"));
-
-                    if (isCreateTomorrowPlan && obj.TaskTimePlan.Date == outMode.AddDays(1))
-                    {
-                        tomorrowTask.Add(tomorrowTask.Count + 1 + "." + obj.EditTextTitle + "：" + obj.EditTextText);
-                    }
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show($"获取当天任务内容失败，错误信息：{e}");
-                    throw;
-                }
-            }
-
-
-            if (todayTask.Count != 0)
+            if (todayTask.Count() != 0)
             {
                 var text = string.Join("\n", todayTask.ToArray()) +
-                           "\n\n\n\n明日计划：" + (isCreateTomorrowPlan && tomorrowTask.Count != 0 ? string.Join("\n", tomorrowTask.ToArray()) : "");
+                           "\n\n\n\n明日计划：" + (isCreateTomorrowPlan && tomorrowTask.Count() != 0 ? string.Join("\n", tomorrowTask.ToArray()) : "");
                 Clipboard.SetText(text);
                 MessageBox.Show($"{DateTime.Today.ToString("yyyy-MM-dd ")}的日报已生成到剪贴板中" +
-                                (isCreateTomorrowPlan && tomorrowTask.Count != 0 ? $"{DateTime.Today.AddDays(1).ToString("yyyy-MM-dd ")} 的日报已生成到剪贴板中" : ""));
+                                (isCreateTomorrowPlan && tomorrowTask.Count() != 0 ? $"{DateTime.Today.AddDays(1).ToString("yyyy-MM-dd ")} 的日报已生成到剪贴板中" : ""));
             }
             else
             {
@@ -199,9 +106,8 @@ namespace TaskTip.ViewModels.PageModel
         public void TaskLoaded()
         {
             LoadingVisibility = Visibility.Visible;
-            LoadReadTaskFile(GlobalVariable.TaskFilePath);
+            LoadReadTaskFile();
             LoadingVisibility = Visibility.Collapsed;
-            WeakReferenceMessenger.Default.Send(new CorrespondenceModel() { Message = TaskList }, Const.CONST_TASK_LIST_CHANGED);
         }
 
         [RelayCommand]
@@ -224,7 +130,7 @@ namespace TaskTip.ViewModels.PageModel
                 {
                     _oldScrollableHeight = scrollViewer.ScrollableHeight;
                     LoadingVisibility = Visibility.Visible;
-                    LoadReadTaskFile(GlobalVariable.TaskFilePath);
+                    LoadReadTaskFile();
                     LoadingVisibility = Visibility.Collapsed;
                 }
             }
@@ -238,115 +144,65 @@ namespace TaskTip.ViewModels.PageModel
                 TaskLoaded();
                 return;
             }
-            var searchResult = _fileDataCache.Where(x => x.EditTextTitle.Contains(SearchStr) || x.EditTextText.Contains(SearchStr));
-            TaskList = new ObservableCollection<TaskListItemUserControl>(ReadTaskFile(searchResult.Select(x => x.GUID).ToList()));
+            var db = new SQLiteDB();
+            var bizTasks = db.GetTaskListByText(SearchStr);
+            TaskList = [..bizTasks.Select(x=>new TaskFileModel {
+                    GUID = x.Guid,
+                    TaskTimePlan = x.TaskTimePlan ?? DateTime.MinValue,
+                    CompletedDateTime = x.CompletedDateTime ?? DateTime.MinValue,
+                    IsCompleted = x.IsCompleted == 1,
+                    EditTextTitle = x.EditTextTitle ?? string.Empty,
+                    EditTextText = x.EditTextText ?? string.Empty
+                })];
+            //var searchResult = _fileDataCache.Where(x => x.EditTextTitle.Contains(SearchStr) || x.EditTextText.Contains(SearchStr));
+            //TaskList = new ObservableCollection<TaskListItemUserControl>(ReadTaskFile(searchResult.Select(x => x.GUID).ToList()));
         }
-        #endregion
 
-        #region 外部控件处理事件
-
-
-        private async Task ListItemChanged(CorrespondenceModel corr)
-        {
-            await Application.Current.Dispatcher.Invoke(async () =>
-            {
-                try
-                {
-                    var msgModel = corr.Message as TaskFileModel;
-
-                    if (TaskList.FirstOrDefault(x => x.Guid.Text.ToString() == corr.GUID) != null
-                        && corr.Operation == OperationRequestType.Add)
-                    {
-                        corr.Operation = OperationRequestType.Update;
-                    }
-
-                    switch (corr.Operation)
-                    {
-                        case OperationRequestType.Delete:
-                            var item = TaskList.FirstOrDefault(x => x.Guid.Text == corr.GUID);
-                            if (item == null) return;
-                            var deleteModel = item.TaskGrid.DataContext as TaskListItemUserControlModel;
-                            OperationRecord.OperationRecordWrite(new TcpRequestData() { GUID = corr.GUID, OperationType = corr.Operation, SyncCategory = SyncFileCategory.TaskPlan, FileData = deleteModel.TaskFile });
-                            await DeleteListItem(corr.GUID);
-                            break;
-                        case OperationRequestType.Update:
-                            var control = TaskList.FirstOrDefault(x => x.Guid.Text == corr.GUID);
-                            if (control == null) return;
-
-                            var vm = control.TaskGrid.DataContext as TaskListItemUserControlModel;
-                            if (vm == null) throw new Exception("未找到VM内容");
-
-                            if (vm.TaskFile.Equals(msgModel)) break;
-
-                            vm.PropertySetValue(msgModel);
-
-                            OperationRecord.OperationRecordWrite(new TcpRequestData() { GUID = corr.GUID, OperationType = corr.Operation, SyncCategory = SyncFileCategory.TaskPlan, FileData = msgModel });
-                            break;
-                        case OperationRequestType.Add:
-                            if (msgModel == null)
-                            {
-                                TaskList.Insert(0, AddTaskListItemControl(corr.GUID));
-                            }
-                            else
-                            {
-                                TaskList.Insert(0, AddTaskListItemControl(msgModel));
-                            }
-                            OperationRecord.OperationRecordWrite(new TcpRequestData() { GUID = corr.GUID, OperationType = corr.Operation, SyncCategory = SyncFileCategory.TaskPlan, FileData = msgModel });
-
-                            break;
-                    }
-
-                    WeakReferenceMessenger.Default.Send(new CorrespondenceModel() { Message = TaskList }, Const.CONST_TASK_LIST_CHANGED);
-                }
-                catch (Exception ex)
-                {
-                    GlobalVariable.LogHelper.Error($"【{this}】【事件路由】【{corr.Operation.GetDesc()}】【{corr.GUID}】出现了一点小意外：{ex}");
-                }
-
-            });
-
-        }
+        #region ListBoxItem RelayCommand
 
         /// <summary>
-        /// List删除指令
+        /// 任务添加指令处理函数
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private async Task DeleteListItem(string sender)
+        [RelayCommand]
+        private void AddTaskList()
         {
-            var path = Path.Combine(GlobalVariable.TaskFilePath, sender + GlobalVariable.EndFileFormat);
-
-            try
-            {
-                var tipJovKey = new JobKey($"Tip{sender}");
-                var deleteJovKey = new JobKey($"Delete{sender}");
-                if (await scheduler.CheckExists(tipJovKey))
-                {
-                    await scheduler.DeleteJob(tipJovKey);
-                }
-
-                if (await scheduler.CheckExists(deleteJovKey))
-                {
-                    await scheduler.DeleteJob(deleteJovKey);
-                }
-
-                TaskList.Remove(TaskList.FirstOrDefault(x => x.Guid.Text == sender));
-
-            }
-            catch
-            {
-                //抛出异常一般为定时删除任务存在线程占用，所以开个线程来进行删除
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    TaskList.Remove(TaskList.FirstOrDefault(x => x.Guid.Text == sender && x.IsCompleted.IsChecked == true));
-                });
-            }
-
-            if (File.Exists(path))
-                File.Delete(path);
-
-            ExecuteLogger($"【{this}】【任务删除】【{sender}】 已删除");
+            TaskList.Add(new TaskFileModel() { GUID = Guid.NewGuid().ToString(), IsCompleted = false });
+            TaskListChanged();
         }
+
+        [RelayCommand]
+        public void ModelChanged(TaskFileModel model)
+        {
+            var db = new SQLiteDB();
+            db.UpdateTaskListItem(model);
+            TaskListChanged();
+        }
+        [RelayCommand]
+        public void SelectPlanTime(TaskFileModel model)
+        {
+            var win = new ClockSelectorPop(model.TaskTimePlan == DateTime.MinValue ? DateTime.Now : model.TaskTimePlan);
+            win.Confirmed += async (o, e) =>
+            {
+                if (o != null)
+                {
+                    model.TaskTimePlan = (DateTime)o;
+                    var db = new SQLiteDB();
+                    db.UpdateTaskListItem(model);
+                    model.CurrentTaskStatus = model.TaskFileModel2TaskStatusType();
+                    await AddTaskScheduleJob(model);
+                }
+            };
+            win.ShowDialog();
+        }
+        [RelayCommand]
+        public void DeleteItem(TaskFileModel model)
+        {
+            var db = new SQLiteDB();
+            db.DeleteTaskListItem(model.GUID);
+            TaskList.Remove(model);
+            TaskListChanged();
+        }
+        #endregion
 
         #endregion
 
@@ -357,14 +213,34 @@ namespace TaskTip.ViewModels.PageModel
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async Task AddTaskScheduleJob(TaskTimeModel task)
+        private async Task AddTaskScheduleJob(TaskFileModel task)
         {
-            string errorMsg = await scheduler.CheckExists(task.Job.Key)
-                ? await scheduler.DeleteJob(task.Job.Key) ? "" : $"替换{task.Job.Key}作业异常"
+            if ((task.TaskTimePlan - DateTime.Now).TotalMilliseconds < 500)
+            {
+                return;
+            }
+
+
+            if ((task.TaskTimePlan - DateTime.Now).TotalDays >= GlobalVariable.DeleteTimes)
+            {
+                //MessageBox.Show("计划时间于或等于定时删除时间，请调整");
+                return;
+            }
+
+            IJobDetail job = JobBuilder.Create<TaskPlanJob>()
+                .WithIdentity($"TipJob{task.GUID}", $"Group{task.GUID}")
+                .Build();
+
+            ITrigger trigger = TriggerBuilder.Create()
+                .WithIdentity($"TipTrigger{task.GUID}", $"Group{task.GUID}")
+                .StartAt(task.TaskTimePlan)
+                .Build();
+            string errorMsg = await scheduler.CheckExists(job.Key)
+                ? await scheduler.DeleteJob(job.Key) ? "" : $"替换{job.Key}作业异常"
                 : "";
 
             if (string.IsNullOrEmpty(errorMsg))
-                await scheduler.ScheduleJob(task.Job, task.Trigger);
+                await scheduler.ScheduleJob(job, trigger);
             else
                 MessageBox.Show(errorMsg);
         }
@@ -376,12 +252,9 @@ namespace TaskTip.ViewModels.PageModel
         /// <param name="e"></param>
         private void IsCompletedChanged(CorrespondenceModel corr)
         {
-            SortList();
-        }
-
-        private void SortList()
-        {
-            TaskList = new(TaskList.OrderByDescending(x => (x.TaskGrid.DataContext as TaskListItemUserControlModel)!.CompletedDateTime).OrderBy(x => (x.TaskGrid.DataContext as TaskListItemUserControlModel)!.IsCompleted));
+            TaskList = [..TaskList.OrderBy(x => x.IsCompleted)
+                .OrderByDescending(x => x.CompletedDateTime)];
+            TaskListChanged();
         }
 
 
@@ -389,66 +262,49 @@ namespace TaskTip.ViewModels.PageModel
         /// 加载Task文件夹对应路径的全部文件并生成控件
         /// </summary>
         /// <param name="fileType"></param>
-        private void LoadReadTaskFile(string dirPath)
+        private void LoadReadTaskFile()
         {
-            if (string.IsNullOrEmpty(dirPath) || !Directory.Exists(dirPath))
-                return;
-            var config = new ConfigurationHelper();
+            #region SQLite
 
+            var db = new SQLiteDB();
+            var count = TaskList.Count / GlobalVariable.LoadTaskFilePageSize;
+            var taskModels = db.GetTaskListByPageSize(count, GlobalVariable.LoadTaskFilePageSize)
+                .Select(x => x.Entity2TaskModel());
 
-            var filePaths = Directory.GetFiles(dirPath, "*.task");
-
-            var take = int.Parse(config["Global:LoadTaskFilePageSize"] ?? "0");
-            var modelList = new List<TaskFileModel>();
-
-            foreach (var item in filePaths)
-            {
-                modelList.Add(JsonConvert.DeserializeObject<TaskFileModel>(File.ReadAllText(item)));
-            }
-            var readFile = modelList.OrderByDescending(x => x.CompletedDateTime).OrderBy(x => x.IsCompleted).Skip(TaskList.Count).Take(TaskList.Count + take > filePaths.Length ? filePaths.Length - TaskList.Count : take).ToList();
-            var taskListControl = new List<TaskListItemUserControl>(TaskList);
-            taskListControl.AddRange(ReadTaskFile(readFile.Select(x => x.GUID).ToList()));
-            _fileDataCache = modelList;
-            TaskList = new ObservableCollection<TaskListItemUserControl>(taskListControl);
-
+            TaskList = [.. taskModels];
+            #endregion
+            TaskListChanged();
         }
 
-        private List<TaskListItemUserControl> ReadTaskFile(List<string> files)
+        private void TaskListChanged()
         {
-            var taskListControl = new List<TaskListItemUserControl>();
-            foreach (var filePath in files)
-            {
-                var guid = Path.GetFileNameWithoutExtension(filePath);
-                var taskControl = AddTaskListItemControl(guid);
-                taskListControl.Add(taskControl);
-            }
-            return taskListControl;
+            WeakReferenceMessenger.Default.Send(new CorrespondenceModel() { Message = TaskList }, Const.CONST_TASK_LIST_CHANGED);
         }
-
+        private void TaskListItemStatusChanged(TaskStatusModel taskStatus)
+        {
+            var item = TaskList.FirstOrDefault(x => x.GUID == taskStatus.GUID);
+            if(item != null)
+            {
+                item.CurrentTaskStatus = taskStatus.Status;
+            }
+        }
         #endregion
-
 
         private void InitRegister()
         {
-            WeakReferenceMessenger.Default.Register<string, string>(this, Const.CONST_TASK_RELOAD, (obj, msg) => { TaskList.Clear(); LoadReadTaskFile(msg); });
-            WeakReferenceMessenger.Default.Register<CorrespondenceModel, string>(this, Const.CONST_LISTITEM_CHANGED, async (obj, msg) => { await ListItemChanged(msg); });
-            WeakReferenceMessenger.Default.Register<CorrespondenceModel, string>(this, Const.CONST_TASK_LIST_CHANGED, (obj, msg) => { IsCompletedChanged(msg); });
-            WeakReferenceMessenger.Default.Register<TaskTimeModel, string>(this, Const.CONST_SCHEDULE_CREATE,
-                 async (obj, msg) => { await AddTaskScheduleJob(msg); });
+            WeakReferenceMessenger.Default.Register<string, string>(this, Const.CONST_TASK_RELOAD, (obj, msg) => { TaskList.Clear(); LoadReadTaskFile(); });
+            WeakReferenceMessenger.Default.Register<TaskStatusModel, string>(this, Const.CONST_TASK_STATUS_CHANGED, (o, msg) => TaskListItemStatusChanged(msg));
         }
         private void UnRegister()
         {
             WeakReferenceMessenger.Default.Unregister<string, string>(this, Const.CONST_TASK_RELOAD);
-            WeakReferenceMessenger.Default.Unregister<CorrespondenceModel, string>(this, Const.CONST_LISTITEM_CHANGED);
-            WeakReferenceMessenger.Default.Unregister<CorrespondenceModel, string>(this, Const.CONST_TASK_LIST_CHANGED);
-            WeakReferenceMessenger.Default.Unregister<TaskTimeModel, string>(this, Const.CONST_SCHEDULE_CREATE);
+            WeakReferenceMessenger.Default.Unregister<TaskStatusModel, string>(this, Const.CONST_TASK_STATUS_CHANGED);
         }
-
 
         public TaskListPageModel()
         {
             //需要增加路径不存在判断
-            taskList = new ObservableCollection<TaskListItemUserControl>();
+            taskList = new ObservableCollection<TaskFileModel>();
             VMName = SyncFileCategory.TaskPlan.GetDesc();
 
             schedulerFactory = new StdSchedulerFactory();
@@ -458,6 +314,7 @@ namespace TaskTip.ViewModels.PageModel
             taskMenoWidth = SystemParameters.WorkArea.Height / 3;
 
             InitRegister();
+            TaskLoaded();
         }
 
         ~TaskListPageModel()

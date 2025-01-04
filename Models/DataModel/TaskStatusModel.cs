@@ -1,4 +1,4 @@
-﻿using TaskTip.Enums;
+﻿using TaskTip.Models.Enums;
 
 namespace TaskTip.Models.DataModel
 {

@@ -1,8 +1,11 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+
 using Microsoft.Win32;
+
 using Newtonsoft.Json;
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,14 +16,17 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+
 using TaskTip.Common;
 using TaskTip.Common.Extends;
-using TaskTip.Enums;
 using TaskTip.Models.CommonModel;
+using TaskTip.Models.Enums;
 using TaskTip.Services;
+using TaskTip.ViewModels.Base;
 using TaskTip.Views;
 using TaskTip.Views.UserControls;
 using TaskTip.Views.Windows.PopWindow;
+
 using Application = System.Windows.Application;
 using File = System.IO.File;
 using MessageBox = System.Windows.MessageBox;
@@ -28,7 +34,7 @@ using Path = System.IO.Path;
 
 namespace TaskTip.ViewModels.WindowModel
 {
-    internal partial class CustomSetViewModel : ObservableObject
+    internal partial class CustomSetViewModel : BaseVM
     {
 
         private bool isClose = false;
@@ -339,10 +345,10 @@ namespace TaskTip.ViewModels.WindowModel
             ChangedValue.Clear();
 
 
-            GlobalVariable.SwitchFloating(GlobalVariable.FloatingStyle);
+            WindowResource.SwitchFloatingShow(GlobalVariable.FloatingStyle);
 
             //GlobalVariable.CustomSetViewHide();
-            GlobalVariable.CustomSetViewHide();
+            WindowResource.CustomSetViewHide();
 
 
             isClose = false;
@@ -354,7 +360,7 @@ namespace TaskTip.ViewModels.WindowModel
         [RelayCommand]
         private void Mini()
         {
-            GlobalVariable.CustomSetView.WindowState = WindowState.Minimized;
+            WindowResource.CustomSetView.WindowState = WindowState.Minimized;
         }
 
         /// <summary>
@@ -382,7 +388,7 @@ namespace TaskTip.ViewModels.WindowModel
 
                     GlobalVariable.SaveConfig(ChangedValue);
                     MessageBox.Show("设置已保存");
-                    //GlobalVariable.SwitchFloating(FloatingStyle.Value);
+                    //GlobalVariable.SwitchFloatingShow(FloatingStyle.Value);
                     ChangedValue.Clear();
                     AutoStart(AutoStartUp);
 
@@ -449,11 +455,8 @@ namespace TaskTip.ViewModels.WindowModel
 
         private void IsFloatingStyleChanged()
         {
-            GlobalVariable.SysRuntimeStatusViewClose();
-            GlobalVariable.FloatingTitleStyleViewClose();
-            GlobalVariable.FloatingViewClose();
-            GlobalVariable.TaskMenoViewClose();
-            //GlobalVariable.SwitchFloating(GlobalVariable.FloatingStyle)
+            WindowResource.FloatingCloseAll();
+            //GlobalVariable.SwitchFloatingShow(GlobalVariable.FloatingStyle)
         }
 
         #endregion
@@ -470,7 +473,7 @@ namespace TaskTip.ViewModels.WindowModel
             FloatingBgPath = path;
 
             ImageSource igs = new BitmapImage(new Uri(path));
-            GlobalVariable.FloatingView.FloatingBgImage.Source = igs;
+            WindowResource.FloatingView.FloatingBgImage.Source = igs;
         }
 
         /// <summary>
@@ -518,11 +521,11 @@ namespace TaskTip.ViewModels.WindowModel
             if (AutoSizeImage)
             {
                 FloatingSetVisibility = Visibility.Collapsed;
-                GlobalVariable.FloatingViewHide();
+                WindowResource.FloatingViewHide();
             }
             else
             {
-                GlobalVariable.FloatingViewShow(FloatingBgPath);
+                WindowResource.FloatingViewShow(FloatingBgPath);
                 FloatingSetVisibility = Visibility.Visible;
             }
 
@@ -757,7 +760,7 @@ namespace TaskTip.ViewModels.WindowModel
             if (isClose)
                 return;
 
-            if (ConfigurationManager.AppSettings.Get(varName) == val.ToString())
+            if (GlobalVariable.GetConfigValue(varName) == val.ToString())
                 return;
 
             if (ChangedValue.ContainsKey(varName))
@@ -773,31 +776,22 @@ namespace TaskTip.ViewModels.WindowModel
         private void SelectDateTime(string title)
         {
             var datetime = string.Empty;
-            if (DateTimeGetView.IsClosed)
+            var timeSelector = new ClockSelectorPop();
+            timeSelector.Confirmed += (o, e) =>
             {
-                var taskTime = new DateTimeGetView();
-                taskTime.TitleName.Text = title;
-                taskTime.HideCancekPlan();
-                taskTime.CalendarWithClock.Confirmed += () => {
-                    datetime = taskTime.CalendarWithClock.SelectedDateTime.ToString();
-                    switch (title)
-                    {
-                        case "上班时间":
-                            WorkStartTime = DateTime.Parse(datetime).ToString("HH:mm"); break;
-                        case "下班时间":
-                            WorkFinishTime = DateTime.Parse(datetime).ToString("HH:mm"); break;
-                        default:
-                            MessageBox.Show($"时间选择：未知分支 {title}");
-                            break;
-                    }
-                    taskTime.Close();
-                };
-                taskTime.NoneTime.Click += (o, e) =>
+                var dateTime = (DateTime)o;
+                switch (title)
                 {
-                    datetime = DateTime.MinValue.ToString();
-                };
-                taskTime.Show();
-            }
+                    case "上班时间":
+                        WorkStartTime = dateTime.ToString("HH:mm"); break;
+                    case "下班时间":
+                        WorkFinishTime = dateTime.ToString("HH:mm"); break;
+                    default:
+                        MessageBox.Show($"时间选择：未知分支 {title}");
+                        break;
+                }
+            };
+            timeSelector.ShowDialog();
         }
 
         #endregion

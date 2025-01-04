@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using TaskTip.Models.Entities;
+
 namespace TaskTip.Pages
 {
     /// <summary>
@@ -25,5 +27,22 @@ namespace TaskTip.Pages
             InitializeComponent();
         }
 
+        private void ListBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if(sender is ListBox box && e.OriginalSource is Control originalControl && originalControl.DataContext is TaskFileModel originalModel)
+            {
+                foreach(var item in box.Items)
+                {
+                    var model = (TaskFileModel)item;
+                    if(model.GUID!=originalModel.GUID && model.IsFocus)
+                    {
+                        model.IsFocus = false;
+                    }else if(model.GUID == originalModel.GUID)
+                    {
+                        model.IsFocus = true;
+                    }
+                }
+            }
+        }
     }
 }

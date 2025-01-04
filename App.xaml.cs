@@ -1,22 +1,29 @@
+using Hardcodet.Wpf.TaskbarNotification;
+
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
+using NLog;
+using SQLitePCL;
+
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using Hardcodet.Wpf.TaskbarNotification;
-using NLog;
-using System.Windows;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using TaskTip.Common.ExecuteServices;
-using System.Threading.Tasks;
-using TaskTip.Common.ServiceRegister;
-using Autofac;
-using Newtonsoft.Json;
-using TaskTip.Services;
 using System.Configuration;
-using TaskTip.Common;
+using System.Windows;
+
+using TaskTip.Models.Entities;
 using TaskTip.Models.SettingModel;
-using TaskTip.Common.Helpers;
+using TaskTip.Pages;
+using TaskTip.Services;
+using TaskTip.Views;
+using TaskTip.Views.FictionPage;
+using TaskTip.Views.Pages;
+using TaskTip.Views.ToolPage;
+using TaskTip.Views.Windows;
+using TaskTip.Views.Windows.PopWindow;
+
+using TaskTipProject.Views.Pages;
 
 namespace TaskTip
 {
@@ -26,18 +33,86 @@ namespace TaskTip
     public partial class App : Application
     {
         private TaskbarIcon _taskbarIcon;
+        public IServiceProvider ServiceProvider { get; private set; }
 
+        public IConfiguration Configuration { get; private set; }
         protected override void OnStartup(StartupEventArgs e)
         {
             _taskbarIcon = (TaskbarIcon)FindResource("Icon");
             NLog.LogManager.Setup().LoadConfigurationFromFile("nlog.config");
 
-            var container = ServiceRegister.InitRegister();
-            var tcpService = container.Resolve<IHostedService>();
             //tcpService.StartAsync(new System.Threading.CancellationToken());
             GlobalVariable.JsonConfiguration.TryGetValue<List<GradientColorModel>>("Themes:Default:1:CategoryThemes");
 
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
+            Configuration = builder.Build();
+
+            // ≈‰÷√“¿¿µ◊¢»Î
+            var serviceCollection = new ServiceCollection();
+            ConfigureServices(serviceCollection);
+
+            ServiceProvider = serviceCollection.BuildServiceProvider();
+
+
+
+
+
             base.OnStartup(e);
+        }
+
+        private void ConfigureServices(IServiceCollection services)
+        {
+            // ◊¢≤· DbContext£¨≤¢¥”≈‰÷√Œƒº˛∂¡»°¡¨Ω”◊÷∑˚¥Æ
+            var dir =  AppDomain.CurrentDomain.BaseDirectory;
+            var sqliteDb = $"Data Source={dir}\\Resources\\TaskTipDB.db";
+            services.AddDbContext<TaskTipDbContext>(options =>
+                options.UseSqlite(sqliteDb));
+        }
+
+        private void AddWindow(IServiceCollection services)
+        {
+            services.AddSingleton<MainWindow>();
+            services.AddSingleton<FloatingView>();
+            services.AddSingleton<FloatingTitleStyleView>();
+            services.AddSingleton<FloatingTaskView>();
+            services.AddSingleton<CustomSetView>();
+            services.AddSingleton<EditFullScreenView>();
+            services.AddSingleton<ResoureceLoading>();
+            services.AddSingleton<SysRuntimeStatusView>();
+            services.AddSingleton<TaskMenoView>();
+        }
+
+        private void AddPage(IServiceCollection services)
+        {
+            services.AddSingleton<CustomThemePage>();
+            services.AddSingleton<ComplateWorkTimePage>();
+            services.AddSingleton<RecordPage>();
+            services.AddSingleton<SysRuntimeStatusSetPage>();
+            services.AddSingleton<TaskListPage>();
+            services.AddSingleton<TaskTipView>();
+        }
+
+        private void AddToolPage(IServiceCollection services)
+        {
+            services.AddSingleton<JsonPage>();
+            services.AddSingleton<RegexPage>();
+            services.AddSingleton<ToolMainPage>();
+        }
+
+        private void AddFiction(IServiceCollection services)
+        {
+            services.AddSingleton<FictionAccountPage>();
+            services.AddSingleton<FictionCategoryPage>();
+            services.AddSingleton<FictionSearchPage>();
+            services.AddSingleton<FictionPage>();
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            base.OnExit(e);
         }
     }
 }

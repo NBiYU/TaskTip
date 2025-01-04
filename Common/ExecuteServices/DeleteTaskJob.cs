@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Markup;
 using CommunityToolkit.Mvvm.Messaging;
 using Quartz;
-using TaskTip.Enums;
+using TaskTip.Models.Enums;
 using TaskTip.Models.DataModel;
 using TaskTip.Services;
 
@@ -18,7 +18,7 @@ namespace TaskTip.Common.ExecuteServices
         {
             var guid = context.JobDetail.Key.ToString().Substring(context.JobDetail.Key.ToString().IndexOf("Job") + 3);
 
-            WeakReferenceMessenger.Default.Send(new CorrespondenceModel() { GUID = guid, Operation = OperationRequestType.Delete }, Const.CONST_LISTITEM_CHANGED);
+            //WeakReferenceMessenger.Default.Send(new CorrespondenceModel() { GUID = guid, Operation = OperationRequestType.Delete }, Const.CONST_LISTITEM_CHANGED);
 
             return Task.CompletedTask;
         }

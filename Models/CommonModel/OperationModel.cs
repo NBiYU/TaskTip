@@ -4,7 +4,8 @@ using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
-using TaskTip.Enums;
+
+using TaskTip.Models.Enums;
 
 namespace TaskTip.Models.CommonModel
 {

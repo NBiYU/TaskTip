@@ -3,7 +3,9 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
-using TaskTip.Enums;
+
+using TaskTip.Models.Entities;
+using TaskTip.Models.Enums;
 
 namespace TaskTip.ViewModels.Converters
 {

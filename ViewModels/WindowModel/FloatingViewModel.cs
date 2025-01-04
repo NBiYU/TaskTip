@@ -5,7 +5,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using TaskTip.Common;
-using TaskTip.Enums;
+using TaskTip.Models.Enums;
 using TaskTip.Services;
 using MessageBox = System.Windows.MessageBox;
 

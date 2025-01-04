@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
+
+using TaskTip.Common;
 using TaskTip.Pages;
 using TaskTip.Services;
 
@@ -14,7 +16,7 @@ namespace TaskTip.ViewModels.WindowModel
     {
         public Page FrameRecordPage
         {
-            get => GlobalVariable.RecordPage;
+            get => WindowResource.RecordPage;
         }
 
         public EditFullScreenViewModel()

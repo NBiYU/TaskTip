@@ -1,4 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 
 using Newtonsoft.Json;
 
@@ -13,13 +15,16 @@ using System.Threading.Tasks;
 using System.Windows;
 
 using TaskTip.Common;
+using TaskTip.Common.Converter.Map;
+using TaskTip.Common.Helpers;
 using TaskTip.Models.DataModel;
+using TaskTip.Models.Entities;
 using TaskTip.Services;
 using TaskTip.Views;
 
 namespace TaskTip.ViewModels.WindowModel
 {
-    public partial class FloatingTaskVM : ObservableObject
+    public partial class FloatingTaskVM : ObservableRecipient
     {
         #region 属性
         [ObservableProperty]
@@ -41,8 +46,27 @@ namespace TaskTip.ViewModels.WindowModel
 
         #region 指令
 
-
-
+        [RelayCommand]
+        public void ShowDtlContent(string currentContent)
+        {
+            if (DtlContent == currentContent)
+            {
+                DtlContent = string.Empty;
+                DtlVisibility = Visibility.Collapsed;
+            }
+            else
+            {
+                DtlContent = currentContent;
+                DtlVisibility = Visibility.Visible;
+            }
+        }
+        [RelayCommand]
+        public void ModelChanged(TaskFileModel model)
+        {
+            var db = new SQLiteDB();
+            db.UpdateTaskListItem(model);
+            TaskCount = TopCollection.Count(x => !x.IsCompleted);
+        }
         #endregion
 
         #region 初始化
@@ -50,36 +74,25 @@ namespace TaskTip.ViewModels.WindowModel
         public FloatingTaskVM()
         {
             DtlVisibility = Visibility.Collapsed;
-            LoadReadTaskFile(GlobalVariable.TaskFilePath);
-
-
+            LoadReadTaskFile();
         }
 
         /// <summary>
         /// 加载Task文件夹对应路径的全部文件并生成控件
         /// </summary>
         /// <param name="fileType"></param>
-        private void LoadReadTaskFile(string dirPath)
+        private void LoadReadTaskFile()
         {
-            if (string.IsNullOrEmpty(dirPath) || !Directory.Exists(dirPath))
-                return;
-            var config = new ConfigurationHelper();
+            #region SQLite
 
+            var db = new SQLiteDB();
+            var taskModels = db.GetTaskListByNotIsCompleted()
+                .Select(x => x.Entity2TaskModel());
 
-            var filePaths = Directory.GetFiles(dirPath, "*.task");
-
-            var take = 3;
-            var modelList = new List<TaskFileModel>();
-
-            foreach (var item in filePaths)
-            {
-                modelList.Add(JsonConvert.DeserializeObject<TaskFileModel>(File.ReadAllText(item)));
-            }
-            var readFile = modelList.OrderByDescending(x => x.CompletedDateTime).Where(x => !x.IsCompleted).ToList();
-            TopCollection = new ObservableCollection<TaskFileModel>(readFile);
-            TaskCount = readFile.Count;
+            TopCollection = [.. taskModels];
+            TaskCount = TopCollection.Count;
+            #endregion
         }
-
         #endregion
     }
 }

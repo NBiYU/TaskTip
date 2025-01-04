@@ -9,13 +9,16 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
+
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+
 using Microsoft.VisualBasic;
+
 using TaskTip.Common;
-using TaskTip.Enums;
 using TaskTip.Models.DataModel;
+using TaskTip.Models.Enums;
 using TaskTip.Models.SettingModel;
 using TaskTip.Services;
 using TaskTip.ViewModels.Converters;
