@@ -7,11 +7,16 @@ using System.Windows.Documents;
 using System.Windows.Media.Imaging;
 using System.Windows;
 using System.Windows.Markup;
+using System.Threading;
 
 namespace TaskTip.Common.Converter.Version
 {
-    public class FlowHTMLConverter
+    public class FlowHTMLConverter:BaseConverter
     {
+        public FlowHTMLConverter(IProgress<int> total, IProgress<int> progress, CancellationToken token) : base(total, progress, token)
+        {
+        }
+
         public string ConvertFlowDocumentToHtml(string content)
         {
             if (!content.Contains("<FlowDocument", StringComparison.OrdinalIgnoreCase)) return content;

@@ -53,14 +53,16 @@ namespace TaskTip.Views.Windows.PopWindow
 
         private void Close_OnClick(object sender, RoutedEventArgs e)
         {
-            try
+            if(Owner == null)
             {
                 this.DialogResult = false;
             }
-            catch { }
-
+            else
+            {
+                Close();
+            }
             PopClose?.Invoke(this, EventArgs.Empty);
-            Close();
+
         }
 
         private void PopView_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -77,13 +79,16 @@ namespace TaskTip.Views.Windows.PopWindow
 
         private void Confirm_OnClick(object sender, RoutedEventArgs e)
         {
-            try
+            if (Owner == null)
             {
                 this.DialogResult = true;
             }
-            catch { }
+            else
+            {
+                Close();
+            }
             PopConfirm?.Invoke(_model == null ? this : _model, EventArgs.Empty);
-            Close();
+
         }
 
         protected override void OnClosed(EventArgs e)

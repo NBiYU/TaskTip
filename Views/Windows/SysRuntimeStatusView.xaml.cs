@@ -94,7 +94,7 @@ namespace TaskTip.Views.Windows
                 if (!createResult) MessageBox.Show("创建任务栏窗口失败。");
                 if (_config == null)
                 {
-                    Background = new SolidColorBrush(ThemeHelper.GetSystemThemeColor());
+                    Background = new SolidColorBrush(WinSystemThemeHelper.GetSystemThemeColor());
                 }
                 IsFixed = true;
             }

@@ -9,6 +9,6 @@
   
         <!-- Background overlay -->
     <Grid Background="Transparent">
-        <ProgressBar x:Name="ProgressValue" Grid.Column="0"></ProgressBar>
+
     </Grid>
 </UserControl>

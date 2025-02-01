@@ -6,7 +6,6 @@
         xmlns:local="clr-namespace:TaskTip"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:uc="clr-namespace:TaskTip.Views.UserControls"
-        xmlns:test="clr-namespace:TaskTip.Test.Views"
         xmlns:page="clr-namespace:TaskTip.Pages" 
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen" >
@@ -37,8 +36,5 @@
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
-        <Frame Source="Test/Views/RecordPage.xaml">
-            
-        </Frame>
     </Grid>
 </Window>

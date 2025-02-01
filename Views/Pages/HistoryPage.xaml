@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:TaskTip.Views.Pages" 
       xmlns:hc="https://handyorg.github.io/handycontrol"
+      xmlns:globalVar="clr-namespace:TaskTip.Services"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="HistoryPage">
@@ -24,7 +25,7 @@
                        VerticalAlignment="Center" HorizontalAlignment="Left"/>
             <StackPanel Grid.Column="1" Orientation="Horizontal">
                 <hc:Shield Subject="Author" Status="BIYU" Margin="5" HorizontalAlignment="Right"  Color="#72D79F"/>
-                <hc:Shield Subject="Version" Status="1.1.20231111" Margin="5" HorizontalAlignment="Right"  Color="#1182c3"/>
+                <hc:Shield Subject="Version" Status="{x:Static globalVar:GlobalVariable.Version}" Margin="5" HorizontalAlignment="Right"  Color="#1182c3"/>
             </StackPanel>
         </Grid>
         <Line Grid.Row="1" X1="10" Y1="1" X2="1000" Y2="1" Stroke="DimGray" StrokeThickness="1" ></Line>

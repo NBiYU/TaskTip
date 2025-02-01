@@ -231,7 +231,7 @@ namespace TaskTip.Views.Windows.PopWindow
 
         private void TryClose(bool dialogResult = false)
         {
-            if (Owner != null)
+            if (Owner == null)
             {
                 DialogResult = dialogResult;
             }

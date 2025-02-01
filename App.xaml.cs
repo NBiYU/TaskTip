@@ -41,9 +41,6 @@ namespace TaskTip
             _taskbarIcon = (TaskbarIcon)FindResource("Icon");
             NLog.LogManager.Setup().LoadConfigurationFromFile("nlog.config");
 
-            //tcpService.StartAsync(new System.Threading.CancellationToken());
-            GlobalVariable.JsonConfiguration.TryGetValue<List<GradientColorModel>>("Themes:Default:1:CategoryThemes");
-
             var builder = new ConfigurationBuilder()
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
@@ -56,10 +53,6 @@ namespace TaskTip
 
             ServiceProvider = serviceCollection.BuildServiceProvider();
 
-
-
-
-
             base.OnStartup(e);
         }
 
@@ -70,44 +63,6 @@ namespace TaskTip
             var sqliteDb = $"Data Source={dir}\\Resources\\TaskTipDB.db";
             services.AddDbContext<TaskTipDbContext>(options =>
                 options.UseSqlite(sqliteDb));
-        }
-
-        private void AddWindow(IServiceCollection services)
-        {
-            services.AddSingleton<MainWindow>();
-            services.AddSingleton<FloatingView>();
-            services.AddSingleton<FloatingTitleStyleView>();
-            services.AddSingleton<FloatingTaskView>();
-            services.AddSingleton<CustomSetView>();
-            services.AddSingleton<EditFullScreenView>();
-            services.AddSingleton<ResoureceLoading>();
-            services.AddSingleton<SysRuntimeStatusView>();
-            services.AddSingleton<TaskMenoView>();
-        }
-
-        private void AddPage(IServiceCollection services)
-        {
-            services.AddSingleton<CustomThemePage>();
-            services.AddSingleton<ComplateWorkTimePage>();
-            services.AddSingleton<RecordPage>();
-            services.AddSingleton<SysRuntimeStatusSetPage>();
-            services.AddSingleton<TaskListPage>();
-            services.AddSingleton<TaskTipView>();
-        }
-
-        private void AddToolPage(IServiceCollection services)
-        {
-            services.AddSingleton<JsonPage>();
-            services.AddSingleton<RegexPage>();
-            services.AddSingleton<ToolMainPage>();
-        }
-
-        private void AddFiction(IServiceCollection services)
-        {
-            services.AddSingleton<FictionAccountPage>();
-            services.AddSingleton<FictionCategoryPage>();
-            services.AddSingleton<FictionSearchPage>();
-            services.AddSingleton<FictionPage>();
         }
 
         protected override void OnExit(ExitEventArgs e)

@@ -11,19 +11,19 @@ namespace TaskTip.Common.Extends
 {
     internal static class ClassExtent
     {
-        public static List<TreeInfo> GetFiles(this TreeInfo menuTree)
-        {
-            var list = new List<TreeInfo>();
-            foreach (var tree in menuTree.Menu.Files)
-            {
-                if (tree.Menu.Files.Count != 0)
-                {
-                    list.AddRange(tree.GetFiles());
-                }
-                list.Add(tree);
-            }
-            return list;
-        }
+        //public static List<TreeInfo> GetFiles(this TreeInfo menuTree)
+        //{
+        //    var list = new List<TreeInfo>();
+        //    foreach (var tree in menuTree.Menu.Files)
+        //    {
+        //        if (tree.Menu.Files.Count != 0)
+        //        {
+        //            list.AddRange(tree.GetFiles());
+        //        }
+        //        list.Add(tree);
+        //    }
+        //    return list;
+        //}
 
         public static string GetString(this FlowDocument document)
         {

@@ -34,10 +34,10 @@ namespace TaskTip.Common
             {
                 FloatingTitleStyleViewShow();
             }
-            else if (styleEnum == FloatingStyleEnum.Status)
-            {
-                SysRuntimeStatusViewShow();
-            }
+            //else if (styleEnum == FloatingStyleEnum.Status)
+            //{
+            //    SysRuntimeStatusViewShow();
+            //}
             else if (styleEnum == FloatingStyleEnum.Task)
             {
                 FloatingTaskViewShow();
@@ -53,10 +53,10 @@ namespace TaskTip.Common
             {
                 FloatingTitleStyleViewClose();
             }
-            else if (styleEnum == FloatingStyleEnum.Status)
-            {
-                SysRuntimeStatusViewClose();
-            }
+            //else if (styleEnum == FloatingStyleEnum.Status)
+            //{
+            //    SysRuntimeStatusViewClose();
+            //}
             else if (styleEnum == FloatingStyleEnum.Task)
             {
                 FloatingTaskViewClose();
@@ -72,10 +72,10 @@ namespace TaskTip.Common
             {
                 FloatingTitleStyleViewHide();
             }
-            else if (styleEnum == FloatingStyleEnum.Status)
-            {
-                SysRuntimeStatusViewHide();
-            }
+            //else if (styleEnum == FloatingStyleEnum.Status)
+            //{
+            //    SysRuntimeStatusViewHide();
+            //}
             else if (styleEnum == FloatingStyleEnum.Task)
             {
                 FloatingTaskViewHide();

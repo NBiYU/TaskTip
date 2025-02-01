@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 using TaskTip.Models.Enums;
 
-namespace TaskTip.Models.Entities
+namespace TaskTip.Models.ViewDataModels
 {
     public partial class TaskFileModel:ObservableObject
     {

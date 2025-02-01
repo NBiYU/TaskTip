@@ -66,21 +66,21 @@ namespace TaskTip.Views.UserControls
 
         private void Start()
         {
-            _cts = new CancellationTokenSource();
-            var progress = new Progress<int>(value =>
-            {
-                ProgressValue.Value = ((double)value+1)/ (double)_totalLength * 100;
-            });
-            var total = new Progress<int>(value =>
-            {
-                _totalLength = value;
-            });
-            Dispatcher.BeginInvoke(async () =>
-                {
-                    var result = await WorkFunc(total, progress, _cts.Token);
-                    if(result) WorkState = false;
-                }
-            );
+            //_cts = new CancellationTokenSource();
+            //var progress = new Progress<int>(value =>
+            //{
+            //    ProgressValue.Value = ((double)value+1)/ (double)_totalLength * 100;
+            //});
+            //var total = new Progress<int>(value =>
+            //{
+            //    _totalLength = value;
+            //});
+            //Dispatcher.BeginInvoke(async () =>
+            //    {
+            //        var result = await WorkFunc(total, progress, _cts.Token);
+            //        if(result) WorkState = false;
+            //    }
+            //);
         }
         private void Cancel()
         {

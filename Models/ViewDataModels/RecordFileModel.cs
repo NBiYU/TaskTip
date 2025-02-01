@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TaskTip.Models.Entities
+namespace TaskTip.Models.ViewDataModels
 {
     public class RecordFileModel
     {

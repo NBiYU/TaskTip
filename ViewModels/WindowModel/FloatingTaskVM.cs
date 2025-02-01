@@ -19,6 +19,7 @@ using TaskTip.Common.Converter.Map;
 using TaskTip.Common.Helpers;
 using TaskTip.Models.DataModel;
 using TaskTip.Models.Entities;
+using TaskTip.Models.ViewDataModels;
 using TaskTip.Services;
 using TaskTip.Views;
 
@@ -64,7 +65,7 @@ namespace TaskTip.ViewModels.WindowModel
         public void ModelChanged(TaskFileModel model)
         {
             var db = new SQLiteDB();
-            db.UpdateTaskListItem(model);
+            db.ReplaceTaskListItem(model);
             TaskCount = TopCollection.Count(x => !x.IsCompleted);
         }
         #endregion

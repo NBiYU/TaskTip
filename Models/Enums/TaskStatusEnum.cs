@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using TaskTip.Models.Entities;
+using TaskTip.Models.ViewDataModels;
 
 namespace TaskTip.Models.Enums
 {

@@ -21,6 +21,7 @@ using TaskTip.Services;
 using TaskTip.ViewModels.UserViewModel;
 using TaskTip.Views.UserControls;
 using TaskTip.Views.Windows.PopWindow;
+using TaskTip.Models.ViewDataModels;
 
 namespace TaskTip.ViewModels.PageModel
 {

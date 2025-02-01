@@ -10,7 +10,7 @@ using System.Windows.Documents;
 using System.Windows.Markup;
 
 using TaskTip.Common.Extends;
-using TaskTip.Models.Entities;
+using TaskTip.Models.ViewDataModels;
 using TaskTip.Services;
 
 namespace TaskTip.Common.Converter.Version

@@ -3,14 +3,14 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:view="clr-namespace:TaskTip.UserControls"
       xmlns:viewModel="clr-namespace:TaskTip.ViewModels"   
       xmlns:customControl="clr-namespace:TaskTip.ViewModels.UserViewModel.CustomControl"
       xmlns:hc="https://handyorg.github.io/handycontrol"
       xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
       xmlns:editor="clr-namespace:TaskTip.Views.UserControls.HtmlUC3"
+      xmlns:model="clr-namespace:TaskTip.Models.DataModel"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="450" d:DesignWidth="800" Background="Transparent"
       
       Title="RecordPage">
     <Page.DataContext>
@@ -38,15 +38,62 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="45*"/>
-                <ColumnDefinition Width="109*"/>
             </Grid.ColumnDefinitions>
 
-            <Grid Grid.Column="0">
-                <hc:ScrollViewer x:Name="MenuG" Visibility="{Binding SidewaysVisibility}">
-                    <view:MenuItemUserControl  x:Name="MenuItemRoot" HorizontalAlignment="Left" />
-                </hc:ScrollViewer>
-            </Grid>
+            <Grid Grid.Column="0" Visibility="{Binding SidewaysVisibility}" Width="200">
+                <TreeView ItemsSource="{Binding TreeInfos}" Background="Transparent">
+                    <TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate DataType="{x:Type model:TreeInfo}" ItemsSource="{Binding ChildMenus}">
+                            <TextBlock Text="{Binding Name}" >
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseLeftButtonDown">
+                                        <i:InvokeCommandAction Command="{Binding DataContext.SwitchContentCommand,RelativeSource={RelativeSource AncestorType=TreeView}}" CommandParameter="{Binding}"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </TextBlock>
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
+                    <TreeView.ContextMenu>
+                        <ContextMenu Width="150">
+                            <MenuItem Header="添加文件夹"  Command="{Binding AddFolderCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self},Path=Parent.PlacementTarget.SelectedItem}" 
+                                      Visibility="{Binding RelativeSource={RelativeSource Self},Path=Parent.PlacementTarget.SelectedItem.IsDirectory,Converter={StaticResource Boolean2VisibilityConverter}}">
+                                <MenuItem.Icon>
+                                    <Image Source="{StaticResource Folder}"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="添加文件" Command="{Binding AddFileCommand}" CommandParameter="{Binding  RelativeSource={RelativeSource Self},Path=Parent.PlacementTarget.SelectedItem}"
+                                      Visibility="{Binding RelativeSource={RelativeSource Self},Path=Parent.PlacementTarget.SelectedItem.IsDirectory,Converter={StaticResource Boolean2VisibilityConverter}}">
+                                <MenuItem.Icon>
+                                    <Image Source="{StaticResource File}"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="重命名" Command="{Binding RenameCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self},Path=Parent.PlacementTarget.SelectedItem}">
+                                <MenuItem.Visibility>
+                                    <MultiBinding Converter="{StaticResource AEqualBByRecordFileModel2VisibilityReConverter}">
+                                        <Binding Path="." Source="RootDocument"/>
+                                        <Binding Path="PlacementTarget.SelectedItem" RelativeSource="{RelativeSource AncestorType=ContextMenu}" />
+                                    </MultiBinding>
+                                </MenuItem.Visibility>
+                                <MenuItem.Icon>
+                                    <Image Source="{StaticResource Rename}"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="删除" Command="{Binding DeleteItemCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self},Path=Parent.PlacementTarget.SelectedItem}">
+                                <MenuItem.Visibility>
+                                    <MultiBinding Converter="{StaticResource AEqualBByRecordFileModel2VisibilityReConverter}">
+                                        <Binding Path="." Source="RootDocument"/>
+                                        <Binding Path="PlacementTarget.SelectedItem" RelativeSource="{RelativeSource AncestorType=ContextMenu}" />
+                                    </MultiBinding>
+                                </MenuItem.Visibility>
+                                <MenuItem.Icon>
+                                    <Image Source="{StaticResource Trash}"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </ContextMenu>
+                    </TreeView.ContextMenu>
+                </TreeView>
 
+            </Grid>
             <Grid Grid.Column="1"  Margin="5,0,5,0" Grid.ColumnSpan="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -85,8 +132,8 @@
                         <Image Source="{Binding FullScreenSource}"></Image>
                     </Button>
                 </Grid>
-                <Grid Grid.Row="1" IsEnabled="{Binding OtherControlIsEnable}">
-                    <editor:EditorUC  EditorContent="{Binding TextContent,Mode=TwoWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></editor:EditorUC>
+                <Grid Grid.Row="1" IsEnabled="{Binding OtherControlIsEnable}" Background="Transparent">
+                    <editor:EditorUC   EditorContent="{Binding TextContent,Mode=TwoWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></editor:EditorUC>
                 </Grid>
             </Grid>
         </Grid>

@@ -11,7 +11,7 @@ using System.Windows.Media;
 
 namespace TaskTip.Common.Helpers
 {
-    public static class ThemeHelper
+    public static class WinSystemThemeHelper
     {
 
         public static Color GetSystemThemeColor()

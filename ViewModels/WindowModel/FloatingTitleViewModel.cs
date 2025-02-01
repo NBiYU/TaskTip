@@ -1,22 +1,18 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+
 using System;
 using System.Collections.ObjectModel;
-using System.Configuration;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Media;
-using CommunityToolkit.Mvvm.Messaging;
-using TaskTip.Services;
-using TaskTip.Views;
-using TaskTip.Pages;
+
 using TaskTip.Common;
-using TaskTip.Models.Enums;
 using TaskTip.Models.DataModel;
-using TaskTip.Models.Entities;
-using System.Collections.Generic;
+using TaskTip.Models.ViewDataModels;
+using TaskTip.Services;
 
 namespace TaskTip.ViewModels.WindowModel
 {

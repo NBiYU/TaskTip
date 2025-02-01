@@ -13,7 +13,7 @@ namespace TaskTip.Models.Enums
         Image = 1,
         [Description("标题悬浮")]
         Title,
-        [Description("状态悬浮")]
+        [Description("(弃用)状态悬浮")]
         Status,
         [Description("任务")]
         Task

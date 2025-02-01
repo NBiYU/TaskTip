@@ -40,6 +40,7 @@ namespace TaskTip.Services
 
         public static string RecordVersion => GetConfigValue(nameof(RecordVersion)) ?? "";
 
+        public static string Version => GetConfigValue(nameof(Version)) ?? "";
         /// <summary>
         /// 软件文件夹保存路径
         /// </summary>
@@ -125,7 +126,7 @@ namespace TaskTip.Services
         public static string? WorkTimeRecordPath = Path.Combine(TaskTipPath, "WorkTime.json");
         public static string[] ThemeStyleKeys => (string[])Application.Current.Resources["ThemeColorArray"];
         public static string RecordMaxVersion => "HTML";
-
+        public static string NewVersion => "1.0.20250105";
         public static string CustomThemePath { get; set; }
 
         public static string OperationRecordPath { get; set; }

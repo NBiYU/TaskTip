@@ -18,6 +18,7 @@ using TaskTip.Models.Enums;
 using TaskTip.Models.DataModel;
 using TaskTip.Models.Entities;
 using System.Collections.Generic;
+using TaskTip.Models.ViewDataModels;
 
 namespace TaskTip.ViewModels.WindowModel
 {

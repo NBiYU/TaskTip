@@ -63,8 +63,8 @@
                             </Grid>
                             <Grid Margin="32,15,32,15">
                                 <TextBox Width="495" hc:InfoElement.TitleWidth="250" hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Title="文件保存路径：" HorizontalAlignment="Left"
-                                         Style="{StaticResource TextBoxExtend}" hc:InfoElement.Necessary="True" Text="{Binding TaskTipPath,Mode=TwoWay}"/>
-                                <Button Content="文件" HorizontalAlignment="Right" Margin="10,0,0,0" Command="{Binding GetTaskTipPathCommand}"></Button>
+                                         Style="{StaticResource TextBoxExtend}" hc:InfoElement.Necessary="True" Text="{Binding TaskTipPath,Mode=TwoWay}" IsEnabled="False"/>
+                                <Button Content="文件" HorizontalAlignment="Right" Margin="10,0,0,0" Command="{Binding GetTaskTipPathCommand}" IsEnabled="False"></Button>
                             </Grid>
                         </StackPanel>
 
@@ -72,9 +72,9 @@
                     <TabItem Header="主题" Background="Transparent" >
                         <Frame Source="../Pages/CustomThemePage.xaml" BorderThickness="0"></Frame>
                     </TabItem>
-                    <TabItem Header="状态监控" Background="Transparent">
+                    <!--<TabItem Header="状态监控" Background="Transparent">
                         <Frame Source="../Pages/SysRuntimeStatusSetPage.xaml" BorderThickness="0"></Frame>
-                    </TabItem>
+                    </TabItem>-->
                     <TabItem  Header="挂件" Background="Transparent">
                         <StackPanel Margin="32" >
                             <Grid Margin="32,15,32,15">

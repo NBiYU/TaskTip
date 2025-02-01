@@ -6,7 +6,6 @@ namespace TaskTip.Common
     {
         #region Messager
         public readonly static string CONST_SYNC_RECEIVE = nameof(CONST_SYNC_RECEIVE);
-        public readonly static string CONST_NOTIFY_RECORD_ITEM = nameof(CONST_NOTIFY_RECORD_ITEM);
         public readonly static string CONST_CONFIG_CHANGED = nameof(CONST_CONFIG_CHANGED);
         public readonly static string CONST_MENO_RELOAD = nameof(CONST_MENO_RELOAD);
         public readonly static string CONST_OPEN_APPLICATTION = nameof(CONST_OPEN_APPLICATTION);
@@ -20,7 +19,6 @@ namespace TaskTip.Common
         public readonly static string CONST_HOT_KEY_CLOSE= nameof(CONST_HOT_KEY_CLOSE);
         public readonly static string CONST_HOT_KEY_HIDE= nameof(CONST_HOT_KEY_HIDE);
         public readonly static string CONST_HOT_KEY_SHOW= nameof(CONST_HOT_KEY_SHOW);
-        public readonly static string CONST_LOAD_RECORD_FILE= nameof(CONST_LOAD_RECORD_FILE);
         public readonly static string CONST_FLAOTING_SIZE_CHANGED= nameof(CONST_FLAOTING_SIZE_CHANGED);
         public readonly static string CONST_PREVIEW_COLOR_UPDATE= nameof(CONST_PREVIEW_COLOR_UPDATE);
         public readonly static string CONST_SHOW_CUSTOM= nameof(CONST_SHOW_CUSTOM);

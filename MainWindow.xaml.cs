@@ -28,6 +28,9 @@ namespace TaskTip
 
             var isFirstLoad = InitConfig();
 
+
+            var window = new ResourceUpdateWindow();
+            window.ShowDialog();
             if (isFirstLoad)
             {
                 WindowResource.FloatingCloseAll();
@@ -35,11 +38,7 @@ namespace TaskTip
             }
             else
             {
-                if (!GlobalVariable.RecordVersion.IsNullOrEmpty() && GlobalVariable.RecordVersion != GlobalVariable.RecordMaxVersion)
-                {
-                    var window = new ResoureceLoading();
-                    window.ShowDialog();
-                }
+
                 if (GlobalVariable.FloatingStyle != FloatingStyleEnum.Image)
                 {
                     WindowResource.FloatingCloseAll();
@@ -49,31 +48,32 @@ namespace TaskTip
 
 
             #endregion
-            //this.Close();
+            this.Close();
         }
         private bool InitConfig()
         {
-            var processPathInfo = Process.GetCurrentProcess().MainModule;
-            var runtimePath = processPathInfo.FileName.Split(processPathInfo.ModuleName)[0];
-            var configPath = runtimePath + "config.txt";
-            GlobalVariable.OperationRecordPath = runtimePath + "OperationRecordList.json";
-            GlobalVariable.CustomThemePath = runtimePath + "CustomTheme.json";
+            if (GlobalVariable.Version.IsNullOrEmpty())
+            {
+                return true;
+            }
+
+            //var configPath = runtimePath + "config.txt";
+            //GlobalVariable.OperationRecordPath = runtimePath + "OperationRecordList.json";
 
 
-            if (File.Exists(configPath)) return false;
-            GlobalVariable.SaveConfig("LocalKey", Guid.NewGuid());
 
-            File.WriteAllText(configPath, "Test");
+            //if (File.Exists(configPath)) return false;
+            //GlobalVariable.SaveConfig("LocalKey", Guid.NewGuid());
 
-            Directory.CreateDirectory(GlobalVariable.RecordFilePath);
-            Directory.CreateDirectory(GlobalVariable.TaskFilePath);
-            Directory.CreateDirectory(GlobalVariable.MenoFilePath);
-            Directory.CreateDirectory(GlobalVariable.FictionCachePath);
+            //File.WriteAllText(configPath, "Test");
 
-            File.WriteAllText(GlobalVariable.OperationRecordPath, string.Empty);
-            File.WriteAllText(GlobalVariable.CustomThemePath, string.Empty);
+            //Directory.CreateDirectory(GlobalVariable.RecordFilePath);
+            //Directory.CreateDirectory(GlobalVariable.TaskFilePath);
+            //Directory.CreateDirectory(GlobalVariable.MenoFilePath);
+            //Directory.CreateDirectory(GlobalVariable.FictionCachePath);
 
-
+            //File.WriteAllText(GlobalVariable.OperationRecordPath, string.Empty);
+            //File.WriteAllText(GlobalVariable.CustomThemePath, string.Empty);
 
             return true;
         }

@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -71,7 +72,7 @@ namespace TaskTip.ViewModels.WindowModel
                 IsFloatingStyleChanged();
                 AutoSizeImage = true;
                 IsFloatingImageStyle = FloatingStyle.Value == FloatingStyleEnum.Image;
-                IsFloatingStatusStyle = FloatingStyle.Value == FloatingStyleEnum.Status;
+                //IsFloatingStatusStyle = FloatingStyle.Value == FloatingStyleEnum.Status;
             }
         }
 
@@ -380,11 +381,11 @@ namespace TaskTip.ViewModels.WindowModel
 
                 if (ChangedValue.Count != 0)
                 {
-                    if (ChangedValue.ContainsKey(nameof(TaskTipPath)) && GlobalVariable.TaskTipPath != ChangedValue[nameof(TaskTipPath)])
-                    {
-                        PathChanged();
-                    }
-
+                    //if (ChangedValue.ContainsKey(nameof(TaskTipPath)) && GlobalVariable.TaskTipPath != ChangedValue[nameof(TaskTipPath)])
+                    //{
+                    //    PathChanged();
+                    //}
+                    
 
                     GlobalVariable.SaveConfig(ChangedValue);
                     MessageBox.Show("…Ë÷√“—±£¥Ê");
@@ -735,7 +736,9 @@ namespace TaskTip.ViewModels.WindowModel
                 RegistryKey R_local = Registry.CurrentUser;
                 RegistryKey R_run = R_local.CreateSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run");
 
-                if (isAuto) R_run.SetValue("TaskTip", Application.Current);
+                string exePath = Process.GetCurrentProcess().MainModule.FileName;
+
+                if (isAuto) R_run.SetValue("TaskTip", exePath);
                 else R_run.DeleteValue("TaskTip", false);
 
                 R_run.Close();

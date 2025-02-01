@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+
 using Newtonsoft.Json;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,20 +13,23 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
+
 using TaskTip.Common.Converter;
 using TaskTip.Common.Converter.Version;
 using TaskTip.Common.Extends;
-using TaskTip.Models.Entities;
+using TaskTip.Models.ViewDataModels;
 using TaskTip.Services;
 
 namespace TaskTip.ViewModels.WindowModel
 {
-    public partial class ResourceLoadingVM : ObservableObject
+    public partial class ResourceLoadingVM : ObservableRecipient
     {
         [ObservableProperty]
         public Func<IProgress<int>, IProgress<int>, CancellationToken, Task<bool>> _workFunc;
         [ObservableProperty]
         public string _commadText;
+        [ObservableProperty]
+        private string _stepTip;
         private bool _startOrCancel;
         public bool StartOrCancel
         {
@@ -54,6 +59,7 @@ namespace TaskTip.ViewModels.WindowModel
         {
             var path = GlobalVariable.RecordFilePath;
             var files = Directory.GetFiles(path);
+            App.Current.Dispatcher.Invoke(() => StepTip = $"资源更新中");
             total.Report(files.Length);
             for(var i=0;i < files.Length; i++)
             {
@@ -64,7 +70,7 @@ namespace TaskTip.ViewModels.WindowModel
                     if (content.IsNullOrEmpty()) continue;
                     var obj = JsonConvert.DeserializeObject<RecordFileModel>(content);
                     if (obj?.Text.IsNullOrEmpty() == true) continue;
-                    var converter = new FlowHTMLConverter();
+                    var converter = new FlowHTMLConverter(total,progress,token);
                     obj.Text = converter.ConvertFlowDocumentToHtml(obj.Text);
                     await File.WriteAllTextAsync(files[i], JsonConvert.SerializeObject(obj), token);
                 }
@@ -72,9 +78,9 @@ namespace TaskTip.ViewModels.WindowModel
             
                 progress.Report(i);
             }
-
+            
             GlobalVariable.SaveConfig(nameof(GlobalVariable.RecordVersion), GlobalVariable.RecordMaxVersion);
-            StartOrCancel = false;
+
             return true;
         } 
 

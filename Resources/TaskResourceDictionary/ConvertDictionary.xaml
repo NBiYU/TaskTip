@@ -17,6 +17,7 @@
     <convert:ControlTypeVisibilityConvert x:Key="ControlTypeVisibilityConvert"/>
     <convert:Visbility2ImageSourceConverter x:Key="Visbility2ImageSourceConverter"/>
     <convert:Boolean2StrikethroughConverter x:Key="Boolean2StrikethroughConverter"/>
+    <convert:AEqualBByRecordFileModel2VisibilityReConverter x:Key="AEqualBByRecordFileModel2VisibilityReConverter"/>
     
     
 </ResourceDictionary>

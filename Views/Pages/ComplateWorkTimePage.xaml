@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:TaskTip.Views.Pages" 
       xmlns:hc="https://handyorg.github.io/handycontrol"
       xmlns:viewModels="clr-namespace:TaskTip.ViewModels.PageModel"
-      xmlns:models="clr-namespace:TaskTip.Models.Entities"
+      xmlns:models="clr-namespace:TaskTip.Models.ViewDataModels"
       xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"

@@ -12,7 +12,7 @@ namespace TaskTip.Pages
     {
         public RecordPage()
         {
-            MenuItemUserControlModel.isLoad = false;
+            //MenuItemUserControlModel.isLoad = false;
             InitializeComponent();
 
         }

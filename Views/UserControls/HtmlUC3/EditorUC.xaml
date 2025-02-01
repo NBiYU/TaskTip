@@ -20,7 +20,7 @@
         </Grid.RowDefinitions>
 
         <!-- 工具栏 -->
-        <ScrollViewer Grid.Row="0"  Background="#f3f3f3" ScrollViewer.HorizontalScrollBarVisibility="Visible" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel" >
+        <ScrollViewer Grid.Row="0"  Background="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Visible" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel" >
             <Grid  >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="150"/>
@@ -114,6 +114,6 @@
             </Grid>
         </ScrollViewer>
         <!-- HTML 编辑器 -->
-        <wv2:WebView2 x:Name="WebView" Grid.Row="1" />
+        <wv2:WebView2 DefaultBackgroundColor="Transparent" x:Name="WebView" Grid.Row="1" />
     </Grid>
 </UserControl>

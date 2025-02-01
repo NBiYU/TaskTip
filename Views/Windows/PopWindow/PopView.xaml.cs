@@ -13,7 +13,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using CommunityToolkit.Mvvm.Messaging;
 using TaskTip.Models;
-using TaskTip.UserControls;
 using TaskTip.ViewModels;
 using Control = System.Windows.Forms.Control;
 

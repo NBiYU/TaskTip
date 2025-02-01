@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using TaskTip.Models.Entities;
+using TaskTip.Models.ViewDataModels;
 
 namespace TaskTip.Pages
 {

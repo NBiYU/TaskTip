@@ -8,9 +8,11 @@
         xmlns:windowModel="clr-namespace:TaskTip.ViewModels.WindowModel"
         xmlns:converts="clr-namespace:TaskTip.ViewModels.Converters"
         mc:Ignorable="d"
-        Title="全屏编辑" Height="450" Width="800" Icon="{StaticResource Favicon}" WindowStyle="None" Background="Transparent" AllowsTransparency="True"
-        MouseLeftButtonDown="EditFullScreenView_OnMouseLeftButtonDown" >
-
+        Title="记录编辑器" Height="450" Width="800" Icon="{StaticResource Favicon}" 
+        Background="{DynamicResource ThemeBackgroundColor}" MouseLeftButtonDown="EditFullScreenView_OnMouseLeftButtonDown" >
+    <Window.DataContext>
+        <windowModel:EditFullScreenViewModel/>
+    </Window.DataContext>
     <Window.Resources>
         <ResourceDictionary>
             <windowModel:EditFullScreenViewModel x:Key="EditFullScreenViewModel"/>
@@ -18,8 +20,8 @@
         </ResourceDictionary>
     </Window.Resources>
 
-    <Grid DataContext="{Binding Source={StaticResource EditFullScreenViewModel}}">
-        <Border BorderThickness="1" BorderBrush="Gray"  CornerRadius="7,7,10,10" Background="{DynamicResource ThemeBackgroundColor}">
+    <Grid Background="Transparent">
+        <Border BorderThickness="0" BorderBrush="Gray"  CornerRadius="7,7,10,10" >
             <Frame Content="{Binding FrameRecordPage}"></Frame>
         </Border>
         <Border Background="Transparent" x:Name="FixedBorder" Height="25" Width="25" Margin="-10" HorizontalAlignment="Right" VerticalAlignment="Top" BorderThickness="1" BorderBrush="Black" CornerRadius="25" 

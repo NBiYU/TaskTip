@@ -25,6 +25,7 @@ using TaskTip.Models.CommonModel;
 using TaskTip.Models.DataModel;
 using TaskTip.Models.Entities;
 using TaskTip.Models.Enums;
+using TaskTip.Models.ViewDataModels;
 using TaskTip.Services;
 using TaskTip.ViewModels.Base;
 using TaskTip.ViewModels.UserViewModel;
@@ -154,8 +155,6 @@ namespace TaskTip.ViewModels.PageModel
                     EditTextTitle = x.EditTextTitle ?? string.Empty,
                     EditTextText = x.EditTextText ?? string.Empty
                 })];
-            //var searchResult = _fileDataCache.Where(x => x.EditTextTitle.Contains(SearchStr) || x.EditTextText.Contains(SearchStr));
-            //TaskList = new ObservableCollection<TaskListItemUserControl>(ReadTaskFile(searchResult.Select(x => x.GUID).ToList()));
         }
 
         #region ListBoxItem RelayCommand
@@ -174,7 +173,7 @@ namespace TaskTip.ViewModels.PageModel
         public void ModelChanged(TaskFileModel model)
         {
             var db = new SQLiteDB();
-            db.UpdateTaskListItem(model);
+            db.ReplaceTaskListItem(model);
             TaskListChanged();
         }
         [RelayCommand]
@@ -187,7 +186,7 @@ namespace TaskTip.ViewModels.PageModel
                 {
                     model.TaskTimePlan = (DateTime)o;
                     var db = new SQLiteDB();
-                    db.UpdateTaskListItem(model);
+                    db.ReplaceTaskListItem(model);
                     model.CurrentTaskStatus = model.TaskFileModel2TaskStatusType();
                     await AddTaskScheduleJob(model);
                 }
